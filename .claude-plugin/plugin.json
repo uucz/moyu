@@ -1,0 +1,18 @@
+{
+  "name": "moyu",
+  "version": "1.0.0",
+  "description": "Anti-over-engineering skill for AI coding agents. Teaches your AI when to stop.",
+  "author": "uucz",
+  "license": "MIT",
+  "homepage": "https://github.com/uucz/moyu",
+  "repository": "https://github.com/uucz/moyu",
+  "keywords": [
+    "ai",
+    "agent",
+    "skill",
+    "over-engineering",
+    "minimalism",
+    "coding",
+    "productivity"
+  ]
+}

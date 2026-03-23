@@ -1,0 +1,23 @@
+{
+  "name": "moyu",
+  "display_name": "摸鱼 (Moyu)",
+  "tagline": "Teach your AI agent when to stop over-engineering",
+  "category": "Productivity",
+  "tags": [
+    "anti-over-engineering",
+    "minimalism",
+    "code-quality",
+    "scope-control"
+  ],
+  "platforms": [
+    "claude-code",
+    "cursor",
+    "codex-cli",
+    "vscode",
+    "windsurf",
+    "cline",
+    "kiro",
+    "codebuddy"
+  ],
+  "languages": ["zh-CN", "en"]
+}
