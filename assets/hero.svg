@@ -1,63 +1,57 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 320" fill="none">
   <defs>
-    <radialGradient id="glow" cx="50%" cy="45%" r="50%">
-      <stop offset="0%" stop-color="#1e3a5f" stop-opacity="0.4"/>
-      <stop offset="100%" stop-color="#0a0f1a" stop-opacity="0"/>
+    <radialGradient id="glow" cx="50%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#d97757" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#141413" stop-opacity="0"/>
     </radialGradient>
   </defs>
 
   <!-- Background -->
-  <rect width="800" height="320" rx="12" fill="#0d1117"/>
+  <rect width="800" height="320" rx="12" fill="#141413"/>
   <rect width="800" height="320" rx="12" fill="url(#glow)"/>
 
-  <!-- Subtle grid dots -->
-  <g opacity="0.06" fill="#58a6ff">
-    <circle cx="50" cy="40" r="1"/><circle cx="100" cy="40" r="1"/><circle cx="150" cy="40" r="1"/><circle cx="200" cy="40" r="1"/><circle cx="250" cy="40" r="1"/><circle cx="300" cy="40" r="1"/><circle cx="350" cy="40" r="1"/><circle cx="400" cy="40" r="1"/><circle cx="450" cy="40" r="1"/><circle cx="500" cy="40" r="1"/><circle cx="550" cy="40" r="1"/><circle cx="600" cy="40" r="1"/><circle cx="650" cy="40" r="1"/><circle cx="700" cy="40" r="1"/><circle cx="750" cy="40" r="1"/>
-    <circle cx="50" cy="80" r="1"/><circle cx="100" cy="80" r="1"/><circle cx="150" cy="80" r="1"/><circle cx="200" cy="80" r="1"/><circle cx="250" cy="80" r="1"/><circle cx="300" cy="80" r="1"/><circle cx="350" cy="80" r="1"/><circle cx="400" cy="80" r="1"/><circle cx="450" cy="80" r="1"/><circle cx="500" cy="80" r="1"/><circle cx="550" cy="80" r="1"/><circle cx="600" cy="80" r="1"/><circle cx="650" cy="80" r="1"/><circle cx="700" cy="80" r="1"/><circle cx="750" cy="80" r="1"/>
-    <circle cx="50" cy="240" r="1"/><circle cx="100" cy="240" r="1"/><circle cx="150" cy="240" r="1"/><circle cx="200" cy="240" r="1"/><circle cx="250" cy="240" r="1"/><circle cx="300" cy="240" r="1"/><circle cx="350" cy="240" r="1"/><circle cx="400" cy="240" r="1"/><circle cx="450" cy="240" r="1"/><circle cx="500" cy="240" r="1"/><circle cx="550" cy="240" r="1"/><circle cx="600" cy="240" r="1"/><circle cx="650" cy="240" r="1"/><circle cx="700" cy="240" r="1"/><circle cx="750" cy="240" r="1"/>
-    <circle cx="50" cy="280" r="1"/><circle cx="100" cy="280" r="1"/><circle cx="150" cy="280" r="1"/><circle cx="200" cy="280" r="1"/><circle cx="250" cy="280" r="1"/><circle cx="300" cy="280" r="1"/><circle cx="350" cy="280" r="1"/><circle cx="400" cy="280" r="1"/><circle cx="450" cy="280" r="1"/><circle cx="500" cy="280" r="1"/><circle cx="550" cy="280" r="1"/><circle cx="600" cy="280" r="1"/><circle cx="650" cy="280" r="1"/><circle cx="700" cy="280" r="1"/><circle cx="750" cy="280" r="1"/>
+  <!-- Decorative thin line -->
+  <line x1="340" y1="42" x2="460" y2="42" stroke="#b0aea5" stroke-width="0.5" opacity="0.3"/>
+
+  <!-- Top quote -->
+  <text x="400" y="36" font-family="Georgia, 'Lora', serif" font-size="11" fill="#b0aea5" text-anchor="middle" font-style="italic" letter-spacing="1">Restraint is the highest form of engineering.</text>
+
+  <!-- Fish icon — minimal, elegant -->
+  <g transform="translate(400, 105)" opacity="0.9">
+    <!-- Fish body - simple arc -->
+    <path d="M-28 0 Q-10 -18 12 -8 Q28 -2 28 0 Q28 2 12 8 Q-10 18 -28 0Z" fill="#d97757" opacity="0.85"/>
+    <!-- Tail -->
+    <path d="M-28 0 L-42 -12 L-38 0 L-42 12 Z" fill="#d97757" opacity="0.65"/>
+    <!-- Eye -->
+    <circle cx="14" cy="-2" r="3" fill="#141413"/>
+    <circle cx="15" cy="-3" r="1.2" fill="#faf9f5" opacity="0.8"/>
+    <!-- Bubbles -->
+    <circle cx="36" cy="-8" r="2.5" fill="none" stroke="#6a9bcc" stroke-width="0.8" opacity="0.4"/>
+    <circle cx="44" cy="-16" r="1.8" fill="none" stroke="#6a9bcc" stroke-width="0.6" opacity="0.3"/>
   </g>
 
-  <!-- Top accent line -->
-  <line x1="300" y1="55" x2="500" y2="55" stroke="#30363d" stroke-width="1"/>
+  <!-- Title -->
+  <text x="400" y="165" font-family="Poppins, Arial, sans-serif" font-size="42" font-weight="600" fill="#faf9f5" text-anchor="middle" letter-spacing="2">摸鱼</text>
+  <text x="400" y="195" font-family="Poppins, Arial, sans-serif" font-size="16" font-weight="300" fill="#d97757" text-anchor="middle" letter-spacing="10">M O Y U</text>
 
-  <!-- Chinese subtitle above title -->
-  <text x="400" y="48" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="#8b949e" text-anchor="middle" letter-spacing="6">克制是最高形式的工程能力</text>
+  <!-- Subtitle -->
+  <text x="400" y="224" font-family="Georgia, 'Lora', serif" font-size="13" fill="#b0aea5" text-anchor="middle" letter-spacing="0.5">Anti-Over-Engineering for AI Coding Agents</text>
 
-  <!-- Main title -->
-  <text x="400" y="120" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="72" font-weight="700" fill="#e6edf3" text-anchor="middle" letter-spacing="-2">摸鱼</text>
-  <text x="400" y="160" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="28" font-weight="300" fill="#58a6ff" text-anchor="middle" letter-spacing="8">MOYU</text>
+  <!-- Decorative line -->
+  <line x1="320" y1="242" x2="480" y2="242" stroke="#b0aea5" stroke-width="0.5" opacity="0.2"/>
 
-  <!-- Tagline -->
-  <text x="400" y="192" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#8b949e" text-anchor="middle" letter-spacing="1">Anti-Over-Engineering for AI Coding Agents</text>
+  <!-- Stats -->
+  <g transform="translate(400, 272)" text-anchor="middle" font-family="Poppins, Arial, sans-serif">
+    <text x="-180" y="0" font-size="22" font-weight="600" fill="#d97757">−66%</text>
+    <text x="-180" y="16" font-size="9" fill="#b0aea5" letter-spacing="1">LESS CODE</text>
 
-  <!-- Bottom accent line -->
-  <line x1="300" y1="210" x2="500" y2="210" stroke="#30363d" stroke-width="1"/>
+    <text x="-60" y="0" font-size="22" font-weight="600" fill="#6a9bcc">10</text>
+    <text x="-60" y="16" font-size="9" fill="#b0aea5" letter-spacing="1">PLATFORMS</text>
 
-  <!-- Stats badges row -->
-  <g transform="translate(400, 240)" text-anchor="middle">
-    <!-- −66% code -->
-    <g transform="translate(-180, 0)">
-      <rect x="-52" y="-14" width="104" height="28" rx="14" fill="#238636" opacity="0.15" stroke="#238636" stroke-width="1" stroke-opacity="0.4"/>
-      <text y="5" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#3fb950">−66% code</text>
-    </g>
-    <!-- 10 platforms -->
-    <g transform="translate(-60, 0)">
-      <rect x="-52" y="-14" width="104" height="28" rx="14" fill="#1f6feb" opacity="0.15" stroke="#1f6feb" stroke-width="1" stroke-opacity="0.4"/>
-      <text y="5" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#58a6ff">10 platforms</text>
-    </g>
-    <!-- 5 variants -->
-    <g transform="translate(60, 0)">
-      <rect x="-52" y="-14" width="104" height="28" rx="14" fill="#8957e5" opacity="0.15" stroke="#8957e5" stroke-width="1" stroke-opacity="0.4"/>
-      <text y="5" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#bc8cff">5 variants</text>
-    </g>
-    <!-- 3 languages -->
-    <g transform="translate(180, 0)">
-      <rect x="-52" y="-14" width="104" height="28" rx="14" fill="#da3633" opacity="0.15" stroke="#da3633" stroke-width="1" stroke-opacity="0.4"/>
-      <text y="5" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#f85149">3 languages</text>
-    </g>
+    <text x="60" y="0" font-size="22" font-weight="600" fill="#788c5d">5</text>
+    <text x="60" y="16" font-size="9" fill="#b0aea5" letter-spacing="1">VARIANTS</text>
+
+    <text x="180" y="0" font-size="22" font-weight="600" fill="#d97757">3</text>
+    <text x="180" y="16" font-size="9" fill="#b0aea5" letter-spacing="1">LANGUAGES</text>
   </g>
-
-  <!-- Bottom tagline -->
-  <text x="400" y="295" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#484f58" text-anchor="middle" letter-spacing="2">PUA 让 AI 996 · 摸鱼让 AI 准时下班</text>
 </svg>
