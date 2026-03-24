@@ -1,5 +1,20 @@
 # Changelog
 
+## v1.2.0 (2026-03-24)
+
+### Added
+- Hero image (SVG) for visual identity
+- Colorful platform badges row (10 platforms)
+- Japanese README (`README.ja.md`)
+- `.github` infrastructure: CONTRIBUTING.md, issue/PR templates
+- CI/Release workflow (auto-release on tag push)
+- "Three Schools of AI Coding" ecosystem positioning (PUA × NoPUA × Moyu)
+- Before/After code comparison prominently displayed in README
+
+### Changed
+- GitHub description updated to bilingual (Chinese + English)
+- marketplace.json platforms array completed (added antigravity, opencode)
+
 ## v1.1.0 (2026-03-23)
 
 ### Added

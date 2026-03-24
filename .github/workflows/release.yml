@@ -1,0 +1,35 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: echo "version=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+
+      - name: Extract changelog for this version
+        id: changelog
+        run: |
+          version="${{ steps.version.outputs.version }}"
+          # Extract section for this version from CHANGELOG.md
+          awk "/^## ${version//./\\.}/{found=1; next} /^## v/{if(found) exit} found" CHANGELOG.md > release_notes.md
+          if [ ! -s release_notes.md ]; then
+            echo "Release $version" > release_notes.md
+          fi
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: release_notes.md
+          generate_release_notes: false

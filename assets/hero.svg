@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 280" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="800" y2="280">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e3a5f"/>
+    </linearGradient>
+    <linearGradient id="fish" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0ea5e9"/>
+    </linearGradient>
+    <linearGradient id="wave" x1="0" y1="0" x2="800" y2="0">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.08"/>
+      <stop offset="50%" stop-color="#38bdf8" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.08"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="280" rx="16" fill="url(#bg)"/>
+
+  <!-- Subtle wave lines -->
+  <path d="M0 200 Q100 185 200 200 Q300 215 400 200 Q500 185 600 200 Q700 215 800 200" stroke="url(#wave)" stroke-width="1.5" fill="none"/>
+  <path d="M0 220 Q100 205 200 220 Q300 235 400 220 Q500 205 600 220 Q700 235 800 220" stroke="url(#wave)" stroke-width="1" fill="none"/>
+
+  <!-- Fish icon -->
+  <g transform="translate(120, 90)">
+    <!-- Fish body -->
+    <ellipse cx="45" cy="30" rx="38" ry="22" fill="url(#fish)" opacity="0.9"/>
+    <!-- Fish tail -->
+    <path d="M80 30 L105 10 L105 50 Z" fill="url(#fish)" opacity="0.8"/>
+    <!-- Fish eye -->
+    <circle cx="28" cy="25" r="5" fill="#0f172a"/>
+    <circle cx="29" cy="24" r="2" fill="#e0f2fe"/>
+    <!-- Fish smile -->
+    <path d="M20 33 Q28 40 36 33" stroke="#0f172a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- Bubbles -->
+    <circle cx="2" cy="15" r="4" fill="#38bdf8" opacity="0.3"/>
+    <circle cx="-8" cy="5" r="3" fill="#38bdf8" opacity="0.2"/>
+    <circle cx="5" cy="-2" r="2.5" fill="#38bdf8" opacity="0.25"/>
+  </g>
+
+  <!-- Title -->
+  <text x="280" y="105" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="48" font-weight="800" fill="#f0f9ff" letter-spacing="-1">摸鱼</text>
+  <text x="420" y="105" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="48" font-weight="300" fill="#7dd3fc" letter-spacing="-1">Moyu</text>
+
+  <!-- Subtitle -->
+  <text x="280" y="140" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="18" fill="#94a3b8" letter-spacing="3">ANTI-OVER-ENGINEERING</text>
+
+  <!-- Code comparison -->
+  <g transform="translate(280, 160)">
+    <!-- Strikethrough lines (over-engineered code) -->
+    <text font-family="ui-monospace, 'SF Mono', monospace" font-size="12" fill="#ef4444" opacity="0.5">
+      <tspan x="0" dy="0">❌</tspan>
+      <tspan dx="4" text-decoration="line-through" fill="#64748b">if not isinstance(task_ids, list): raise TypeError(...)</tspan>
+    </text>
+    <text font-family="ui-monospace, 'SF Mono', monospace" font-size="12" fill="#ef4444" opacity="0.5">
+      <tspan x="0" dy="18">❌</tspan>
+      <tspan dx="4" text-decoration="line-through" fill="#64748b">"""14-line docstring nobody asked for"""</tspan>
+    </text>
+    <text font-family="ui-monospace, 'SF Mono', monospace" font-size="12" fill="#ef4444" opacity="0.5">
+      <tspan x="0" dy="18">❌</tspan>
+      <tspan dx="4" text-decoration="line-through" fill="#64748b">lookup = {t["id"]: t for t in tasks}  # premature optimization</tspan>
+    </text>
+
+    <!-- Clean line (moyu code) -->
+    <text font-family="ui-monospace, 'SF Mono', monospace" font-size="13" fill="#4ade80" opacity="0.9">
+      <tspan x="0" dy="26">✅</tspan>
+      <tspan dx="4" fill="#a5f3fc">for t in tasks: if t["id"] in ids: t["status"] = "done"</tspan>
+    </text>
+  </g>
+
+  <!-- Stats badge -->
+  <g transform="translate(620, 38)">
+    <rect x="0" y="0" width="140" height="32" rx="6" fill="#166534" opacity="0.6"/>
+    <text x="70" y="21" font-family="system-ui, sans-serif" font-size="14" font-weight="600" fill="#4ade80" text-anchor="middle">−66% code</text>
+  </g>
+</svg>

@@ -1,9 +1,26 @@
 # 🐟 Moyu
 
-[![GitHub stars](https://img.shields.io/github/stars/uucz/moyu?style=social)](https://github.com/uucz/moyu)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Platforms](https://img.shields.io/badge/platforms-10-blue)](https://github.com/uucz/moyu)
-[![Skills](https://img.shields.io/badge/variants-5-green)](https://github.com/uucz/moyu)
+<p align="center">
+  <img src="assets/hero.svg" alt="Moyu — Anti-Over-Engineering" width="800">
+</p>
+
+<p align="center">
+  <a href="https://github.com/uucz/moyu/stargazers"><img src="https://img.shields.io/github/stars/uucz/moyu?style=social" alt="GitHub stars"></a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Claude_Code-black?style=flat-square&logo=anthropic&logoColor=white" alt="Claude Code">
+  <img src="https://img.shields.io/badge/Cursor-000?style=flat-square&logo=cursor&logoColor=white" alt="Cursor">
+  <img src="https://img.shields.io/badge/OpenAI_Codex-412991?style=flat-square&logo=openai&logoColor=white" alt="Codex">
+  <img src="https://img.shields.io/badge/Copilot-000?style=flat-square&logo=githubcopilot&logoColor=white" alt="Copilot">
+  <img src="https://img.shields.io/badge/Windsurf-1B1B1F?style=flat-square&logo=codeium&logoColor=white" alt="Windsurf">
+  <img src="https://img.shields.io/badge/Cline-5A29E4?style=flat-square" alt="Cline">
+  <img src="https://img.shields.io/badge/Kiro-FF9900?style=flat-square&logo=amazon&logoColor=white" alt="Kiro">
+  <img src="https://img.shields.io/badge/CodeBuddy-006AFF?style=flat-square" alt="CodeBuddy">
+  <img src="https://img.shields.io/badge/Antigravity-4285F4?style=flat-square&logo=google&logoColor=white" alt="Antigravity">
+  <img src="https://img.shields.io/badge/OpenCode-00D4AA?style=flat-square" alt="OpenCode">
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="MIT"></a>
+</p>
 
 **PUA makes your AI work overtime. Moyu teaches it when to clock out.**
 
@@ -13,7 +30,7 @@ Your AI is grinding. It needs to learn the art of Moyu.
 claude skill install --url https://github.com/uucz/moyu --skill moyu-en
 ```
 
-English | [中文](./README.md)
+English | [中文](./README.md) | [日本語](./README.ja.md)
 
 ---
 
