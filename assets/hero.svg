@@ -1,92 +1,101 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 340" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 300" fill="none">
   <defs>
-    <!-- Warm ambient glow behind the fish mark -->
-    <radialGradient id="ambient" cx="50%" cy="38%" r="40%">
-      <stop offset="0%" stop-color="#d97757" stop-opacity="0.10"/>
-      <stop offset="70%" stop-color="#d97757" stop-opacity="0.03"/>
+    <linearGradient id="fish-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#e08a6a"/>
+      <stop offset="100%" stop-color="#c96a47"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="32%" cy="50%" r="35%">
+      <stop offset="0%" stop-color="#d97757" stop-opacity="0.08"/>
       <stop offset="100%" stop-color="#141413" stop-opacity="0"/>
     </radialGradient>
-    <!-- Subtle ring gradient -->
-    <radialGradient id="ring" cx="50%" cy="50%" r="50%">
-      <stop offset="85%" stop-color="#d97757" stop-opacity="0.12"/>
-      <stop offset="100%" stop-color="#d97757" stop-opacity="0"/>
-    </radialGradient>
+    <clipPath id="rounded">
+      <rect width="800" height="300" rx="12"/>
+    </clipPath>
   </defs>
 
-  <!-- ===== BACKGROUND ===== -->
-  <rect width="800" height="340" rx="14" fill="#141413"/>
-  <rect width="800" height="340" rx="14" fill="url(#ambient)"/>
+  <g clip-path="url(#rounded)">
+    <!-- Background -->
+    <rect width="800" height="300" fill="#141413"/>
+    <rect width="800" height="300" fill="url(#glow)"/>
 
-  <!-- Subtle grain texture dots -->
-  <g opacity="0.025" fill="#faf9f5">
-    <circle cx="120" cy="60" r="0.8"/><circle cx="230" cy="45" r="0.6"/><circle cx="380" cy="30" r="0.7"/>
-    <circle cx="520" cy="55" r="0.8"/><circle cx="650" cy="40" r="0.6"/><circle cx="710" cy="70" r="0.7"/>
-    <circle cx="90" cy="280" r="0.6"/><circle cx="200" cy="300" r="0.8"/><circle cx="580" cy="290" r="0.7"/>
-    <circle cx="700" cy="310" r="0.6"/><circle cx="450" cy="315" r="0.8"/><circle cx="340" cy="305" r="0.6"/>
-  </g>
+    <!-- ===== LEFT: FISH MARK ===== -->
+    <g transform="translate(240, 150) scale(1.8)">
+      <!-- Shadow / depth -->
+      <ellipse cx="4" cy="4" rx="36" ry="20" fill="#000" opacity="0.15"/>
 
-  <!-- ===== FISH LOGO MARK ===== -->
-  <!-- Outer ring — very subtle halo -->
-  <circle cx="400" cy="108" r="52" fill="none" stroke="#b0aea5" stroke-width="0.4" opacity="0.15"/>
+      <!-- Fish body — smooth, organic -->
+      <path d="M-36 0 C-28 -22, 8 -24, 30 -10 C38 -4, 38 4, 30 10 C8 24, -28 22, -36 0Z"
+            fill="url(#fish-grad)"/>
 
-  <g transform="translate(400, 108)">
-    <!-- Fish body — refined geometric shape -->
-    <path d="M-22 0 C-14 -16, 10 -16, 24 -6 C30 -2, 30 2, 24 6 C10 16, -14 16, -22 0Z" fill="#d97757"/>
-    <!-- Tail — clean chevron -->
-    <path d="M-22 0 L-36 -14 L-28 0 L-36 14 Z" fill="#d97757" opacity="0.7"/>
-    <!-- Fin — subtle detail -->
-    <path d="M-2 -10 Q4 -18 10 -12" stroke="#141413" stroke-width="1.2" fill="none" opacity="0.3" stroke-linecap="round"/>
-    <!-- Eye — sharp, alive -->
-    <circle cx="14" cy="-3" r="3.5" fill="#141413"/>
-    <circle cx="15.5" cy="-4" r="1.4" fill="#faf9f5"/>
-    <!-- Gill line -->
-    <path d="M6 -6 Q4 0 6 6" stroke="#141413" stroke-width="0.8" fill="none" opacity="0.2" stroke-linecap="round"/>
-  </g>
+      <!-- Tail -->
+      <path d="M-34 0 L-52 -18 L-42 0 L-52 18 Z" fill="#d97757" opacity="0.6"/>
 
-  <!-- ===== BRAND MARK ===== -->
-  <!-- Chinese title + English as unified wordmark -->
-  <text x="400" y="192" font-family="Poppins, 'Noto Sans SC', Arial, sans-serif" font-size="46" font-weight="700" fill="#faf9f5" text-anchor="middle" letter-spacing="4">摸鱼</text>
-  <text x="400" y="216" font-family="Poppins, Arial, sans-serif" font-size="15" font-weight="400" fill="#d97757" text-anchor="middle" letter-spacing="4">MOYU</text>
+      <!-- Body highlight — gives volume -->
+      <path d="M-20 -6 C-10 -18, 16 -18, 28 -8 C30 -6, 20 -4, 6 -6 C-4 -8, -14 -6, -20 -6Z"
+            fill="#faf9f5" opacity="0.08"/>
 
-  <!-- ===== TAGLINE ===== -->
-  <text x="400" y="248" font-family="Georgia, 'Lora', 'Noto Serif SC', serif" font-size="12.5" fill="#b0aea5" text-anchor="middle" font-style="italic">Anti-Over-Engineering for AI Coding Agents</text>
-
-  <!-- ===== STATS BAR ===== -->
-  <!-- Thin separator -->
-  <line x1="220" y1="268" x2="580" y2="268" stroke="#b0aea5" stroke-width="0.3" opacity="0.15"/>
-
-  <g transform="translate(400, 300)" text-anchor="middle">
-    <!-- −66% -->
-    <g transform="translate(-195, 0)">
-      <text y="-4" font-family="Poppins, Arial, sans-serif" font-size="20" font-weight="700" fill="#d97757">−66%</text>
-      <text y="12" font-family="Poppins, Arial, sans-serif" font-size="8.5" fill="#b0aea5" letter-spacing="1.5">CODE</text>
+      <!-- Eye -->
+      <circle cx="18" cy="-5" r="5" fill="#141413"/>
+      <circle cx="19.5" cy="-6.5" r="2" fill="#faf9f5" opacity="0.9"/>
     </g>
 
-    <!-- Divider dot -->
-    <circle cx="-120" cy="2" r="1.5" fill="#b0aea5" opacity="0.2"/>
+    <!-- ===== RIGHT: TEXT ===== -->
 
-    <!-- 10 Platforms -->
-    <g transform="translate(-65, 0)">
-      <text y="-4" font-family="Poppins, Arial, sans-serif" font-size="20" font-weight="700" fill="#6a9bcc">10</text>
-      <text y="12" font-family="Poppins, Arial, sans-serif" font-size="8.5" fill="#b0aea5" letter-spacing="1.5">PLATFORMS</text>
+    <!-- Title -->
+    <text x="420" y="118" font-family="'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', sans-serif"
+          font-size="56" font-weight="700" fill="#faf9f5">摸鱼</text>
+
+    <!-- Subtitle -->
+    <text x="422" y="150" font-family="Arial, Helvetica, sans-serif"
+          font-size="18" font-weight="400" fill="#d97757" letter-spacing="2">Moyu</text>
+
+    <!-- Tagline -->
+    <text x="422" y="180" font-family="Georgia, serif"
+          font-size="13" fill="#b0aea5" font-style="italic">Anti-over-engineering for AI coding agents</text>
+
+    <!-- Stats row -->
+    <g transform="translate(422, 216)" font-family="Arial, Helvetica, sans-serif">
+      <text x="0" y="0" font-size="18" font-weight="700" fill="#d97757">−66%</text>
+      <text x="52" y="0" font-size="11" fill="#b0aea5">less code</text>
+
+      <circle cx="118" cy="-3" r="1.2" fill="#e8e6dc" opacity="0.3"/>
+
+      <text x="130" y="0" font-size="18" font-weight="700" fill="#6a9bcc">10</text>
+      <text x="152" y="0" font-size="11" fill="#b0aea5">platforms</text>
+
+      <circle cx="218" cy="-3" r="1.2" fill="#e8e6dc" opacity="0.3"/>
+
+      <text x="230" y="0" font-size="18" font-weight="700" fill="#788c5d">5</text>
+      <text x="244" y="0" font-size="11" fill="#b0aea5">variants</text>
     </g>
 
-    <!-- Divider dot -->
-    <circle cx="10" cy="2" r="1.5" fill="#b0aea5" opacity="0.2"/>
-
-    <!-- 5 Variants -->
-    <g transform="translate(65, 0)">
-      <text y="-4" font-family="Poppins, Arial, sans-serif" font-size="20" font-weight="700" fill="#788c5d">5</text>
-      <text y="12" font-family="Poppins, Arial, sans-serif" font-size="8.5" fill="#b0aea5" letter-spacing="1.5">VARIANTS</text>
+    <!-- ===== BACKGROUND CONCEPT: code lines being reduced ===== -->
+    <!-- Left side: many lines (over-engineered) — very subtle -->
+    <g opacity="0.04" stroke="#d97757" stroke-width="1" stroke-linecap="round">
+      <line x1="56" y1="60" x2="150" y2="60"/>
+      <line x1="56" y1="72" x2="136" y2="72"/>
+      <line x1="56" y1="84" x2="160" y2="84"/>
+      <line x1="56" y1="96" x2="120" y2="96"/>
+      <line x1="56" y1="108" x2="145" y2="108"/>
+      <line x1="56" y1="120" x2="130" y2="120"/>
+      <line x1="56" y1="132" x2="155" y2="132"/>
+      <line x1="56" y1="144" x2="115" y2="144"/>
+      <line x1="56" y1="156" x2="140" y2="156"/>
+      <line x1="56" y1="168" x2="125" y2="168"/>
+      <line x1="56" y1="180" x2="150" y2="180"/>
+      <line x1="56" y1="192" x2="135" y2="192"/>
+      <line x1="56" y1="204" x2="145" y2="204"/>
+      <line x1="56" y1="216" x2="110" y2="216"/>
+      <line x1="56" y1="228" x2="155" y2="228"/>
     </g>
 
-    <!-- Divider dot -->
-    <circle cx="120" cy="2" r="1.5" fill="#b0aea5" opacity="0.2"/>
-
-    <!-- 3 Languages -->
-    <g transform="translate(195, 0)">
-      <text y="-4" font-family="Poppins, Arial, sans-serif" font-size="20" font-weight="700" fill="#d97757">3</text>
-      <text y="12" font-family="Poppins, Arial, sans-serif" font-size="8.5" fill="#b0aea5" letter-spacing="1.5">LANGUAGES</text>
+    <!-- Right side: few lines (moyu) — subtle -->
+    <g opacity="0.04" stroke="#788c5d" stroke-width="1" stroke-linecap="round">
+      <line x1="660" y1="112" x2="740" y2="112"/>
+      <line x1="660" y1="124" x2="725" y2="124"/>
+      <line x1="660" y1="136" x2="750" y2="136"/>
+      <line x1="660" y1="148" x2="715" y2="148"/>
+      <line x1="660" y1="160" x2="735" y2="160"/>
     </g>
   </g>
 </svg>
