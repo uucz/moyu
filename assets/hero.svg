@@ -1,77 +1,63 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 280" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 320" fill="none">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="800" y2="280">
-      <stop offset="0%" stop-color="#0f172a"/>
-      <stop offset="100%" stop-color="#1e3a5f"/>
-    </linearGradient>
-    <linearGradient id="fish" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#38bdf8"/>
-      <stop offset="100%" stop-color="#0ea5e9"/>
-    </linearGradient>
-    <linearGradient id="wave" x1="0" y1="0" x2="800" y2="0">
-      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.08"/>
-      <stop offset="50%" stop-color="#38bdf8" stop-opacity="0.15"/>
-      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.08"/>
-    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="45%" r="50%">
+      <stop offset="0%" stop-color="#1e3a5f" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#0a0f1a" stop-opacity="0"/>
+    </radialGradient>
   </defs>
 
   <!-- Background -->
-  <rect width="800" height="280" rx="16" fill="url(#bg)"/>
+  <rect width="800" height="320" rx="12" fill="#0d1117"/>
+  <rect width="800" height="320" rx="12" fill="url(#glow)"/>
 
-  <!-- Subtle wave lines -->
-  <path d="M0 200 Q100 185 200 200 Q300 215 400 200 Q500 185 600 200 Q700 215 800 200" stroke="url(#wave)" stroke-width="1.5" fill="none"/>
-  <path d="M0 220 Q100 205 200 220 Q300 235 400 220 Q500 205 600 220 Q700 235 800 220" stroke="url(#wave)" stroke-width="1" fill="none"/>
-
-  <!-- Fish icon -->
-  <g transform="translate(120, 90)">
-    <!-- Fish body -->
-    <ellipse cx="45" cy="30" rx="38" ry="22" fill="url(#fish)" opacity="0.9"/>
-    <!-- Fish tail -->
-    <path d="M80 30 L105 10 L105 50 Z" fill="url(#fish)" opacity="0.8"/>
-    <!-- Fish eye -->
-    <circle cx="28" cy="25" r="5" fill="#0f172a"/>
-    <circle cx="29" cy="24" r="2" fill="#e0f2fe"/>
-    <!-- Fish smile -->
-    <path d="M20 33 Q28 40 36 33" stroke="#0f172a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-    <!-- Bubbles -->
-    <circle cx="2" cy="15" r="4" fill="#38bdf8" opacity="0.3"/>
-    <circle cx="-8" cy="5" r="3" fill="#38bdf8" opacity="0.2"/>
-    <circle cx="5" cy="-2" r="2.5" fill="#38bdf8" opacity="0.25"/>
+  <!-- Subtle grid dots -->
+  <g opacity="0.06" fill="#58a6ff">
+    <circle cx="50" cy="40" r="1"/><circle cx="100" cy="40" r="1"/><circle cx="150" cy="40" r="1"/><circle cx="200" cy="40" r="1"/><circle cx="250" cy="40" r="1"/><circle cx="300" cy="40" r="1"/><circle cx="350" cy="40" r="1"/><circle cx="400" cy="40" r="1"/><circle cx="450" cy="40" r="1"/><circle cx="500" cy="40" r="1"/><circle cx="550" cy="40" r="1"/><circle cx="600" cy="40" r="1"/><circle cx="650" cy="40" r="1"/><circle cx="700" cy="40" r="1"/><circle cx="750" cy="40" r="1"/>
+    <circle cx="50" cy="80" r="1"/><circle cx="100" cy="80" r="1"/><circle cx="150" cy="80" r="1"/><circle cx="200" cy="80" r="1"/><circle cx="250" cy="80" r="1"/><circle cx="300" cy="80" r="1"/><circle cx="350" cy="80" r="1"/><circle cx="400" cy="80" r="1"/><circle cx="450" cy="80" r="1"/><circle cx="500" cy="80" r="1"/><circle cx="550" cy="80" r="1"/><circle cx="600" cy="80" r="1"/><circle cx="650" cy="80" r="1"/><circle cx="700" cy="80" r="1"/><circle cx="750" cy="80" r="1"/>
+    <circle cx="50" cy="240" r="1"/><circle cx="100" cy="240" r="1"/><circle cx="150" cy="240" r="1"/><circle cx="200" cy="240" r="1"/><circle cx="250" cy="240" r="1"/><circle cx="300" cy="240" r="1"/><circle cx="350" cy="240" r="1"/><circle cx="400" cy="240" r="1"/><circle cx="450" cy="240" r="1"/><circle cx="500" cy="240" r="1"/><circle cx="550" cy="240" r="1"/><circle cx="600" cy="240" r="1"/><circle cx="650" cy="240" r="1"/><circle cx="700" cy="240" r="1"/><circle cx="750" cy="240" r="1"/>
+    <circle cx="50" cy="280" r="1"/><circle cx="100" cy="280" r="1"/><circle cx="150" cy="280" r="1"/><circle cx="200" cy="280" r="1"/><circle cx="250" cy="280" r="1"/><circle cx="300" cy="280" r="1"/><circle cx="350" cy="280" r="1"/><circle cx="400" cy="280" r="1"/><circle cx="450" cy="280" r="1"/><circle cx="500" cy="280" r="1"/><circle cx="550" cy="280" r="1"/><circle cx="600" cy="280" r="1"/><circle cx="650" cy="280" r="1"/><circle cx="700" cy="280" r="1"/><circle cx="750" cy="280" r="1"/>
   </g>
 
-  <!-- Title -->
-  <text x="280" y="105" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="48" font-weight="800" fill="#f0f9ff" letter-spacing="-1">摸鱼</text>
-  <text x="420" y="105" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="48" font-weight="300" fill="#7dd3fc" letter-spacing="-1">Moyu</text>
+  <!-- Top accent line -->
+  <line x1="300" y1="55" x2="500" y2="55" stroke="#30363d" stroke-width="1"/>
 
-  <!-- Subtitle -->
-  <text x="280" y="140" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="18" fill="#94a3b8" letter-spacing="3">ANTI-OVER-ENGINEERING</text>
+  <!-- Chinese subtitle above title -->
+  <text x="400" y="48" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="#8b949e" text-anchor="middle" letter-spacing="6">克制是最高形式的工程能力</text>
 
-  <!-- Code comparison -->
-  <g transform="translate(280, 160)">
-    <!-- Strikethrough lines (over-engineered code) -->
-    <text font-family="ui-monospace, 'SF Mono', monospace" font-size="12" fill="#ef4444" opacity="0.5">
-      <tspan x="0" dy="0">❌</tspan>
-      <tspan dx="4" text-decoration="line-through" fill="#64748b">if not isinstance(task_ids, list): raise TypeError(...)</tspan>
-    </text>
-    <text font-family="ui-monospace, 'SF Mono', monospace" font-size="12" fill="#ef4444" opacity="0.5">
-      <tspan x="0" dy="18">❌</tspan>
-      <tspan dx="4" text-decoration="line-through" fill="#64748b">"""14-line docstring nobody asked for"""</tspan>
-    </text>
-    <text font-family="ui-monospace, 'SF Mono', monospace" font-size="12" fill="#ef4444" opacity="0.5">
-      <tspan x="0" dy="18">❌</tspan>
-      <tspan dx="4" text-decoration="line-through" fill="#64748b">lookup = {t["id"]: t for t in tasks}  # premature optimization</tspan>
-    </text>
+  <!-- Main title -->
+  <text x="400" y="120" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="72" font-weight="700" fill="#e6edf3" text-anchor="middle" letter-spacing="-2">摸鱼</text>
+  <text x="400" y="160" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="28" font-weight="300" fill="#58a6ff" text-anchor="middle" letter-spacing="8">MOYU</text>
 
-    <!-- Clean line (moyu code) -->
-    <text font-family="ui-monospace, 'SF Mono', monospace" font-size="13" fill="#4ade80" opacity="0.9">
-      <tspan x="0" dy="26">✅</tspan>
-      <tspan dx="4" fill="#a5f3fc">for t in tasks: if t["id"] in ids: t["status"] = "done"</tspan>
-    </text>
+  <!-- Tagline -->
+  <text x="400" y="192" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#8b949e" text-anchor="middle" letter-spacing="1">Anti-Over-Engineering for AI Coding Agents</text>
+
+  <!-- Bottom accent line -->
+  <line x1="300" y1="210" x2="500" y2="210" stroke="#30363d" stroke-width="1"/>
+
+  <!-- Stats badges row -->
+  <g transform="translate(400, 240)" text-anchor="middle">
+    <!-- −66% code -->
+    <g transform="translate(-180, 0)">
+      <rect x="-52" y="-14" width="104" height="28" rx="14" fill="#238636" opacity="0.15" stroke="#238636" stroke-width="1" stroke-opacity="0.4"/>
+      <text y="5" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#3fb950">−66% code</text>
+    </g>
+    <!-- 10 platforms -->
+    <g transform="translate(-60, 0)">
+      <rect x="-52" y="-14" width="104" height="28" rx="14" fill="#1f6feb" opacity="0.15" stroke="#1f6feb" stroke-width="1" stroke-opacity="0.4"/>
+      <text y="5" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#58a6ff">10 platforms</text>
+    </g>
+    <!-- 5 variants -->
+    <g transform="translate(60, 0)">
+      <rect x="-52" y="-14" width="104" height="28" rx="14" fill="#8957e5" opacity="0.15" stroke="#8957e5" stroke-width="1" stroke-opacity="0.4"/>
+      <text y="5" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#bc8cff">5 variants</text>
+    </g>
+    <!-- 3 languages -->
+    <g transform="translate(180, 0)">
+      <rect x="-52" y="-14" width="104" height="28" rx="14" fill="#da3633" opacity="0.15" stroke="#da3633" stroke-width="1" stroke-opacity="0.4"/>
+      <text y="5" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#f85149">3 languages</text>
+    </g>
   </g>
 
-  <!-- Stats badge -->
-  <g transform="translate(620, 38)">
-    <rect x="0" y="0" width="140" height="32" rx="6" fill="#166534" opacity="0.6"/>
-    <text x="70" y="21" font-family="system-ui, sans-serif" font-size="14" font-weight="600" fill="#4ade80" text-anchor="middle">−66% code</text>
-  </g>
+  <!-- Bottom tagline -->
+  <text x="400" y="295" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#484f58" text-anchor="middle" letter-spacing="2">PUA 让 AI 996 · 摸鱼让 AI 准时下班</text>
 </svg>
