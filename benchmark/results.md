@@ -236,3 +236,5 @@ Across 6 scenarios, the control group produced **66% more code** than necessary.
 5. **Cross-module coupling** — Importing from other files when inline logic suffices
 
 The 摸鱼 group consistently delivered **working code that follows existing patterns**, with zero scope violations across all 6 experiments.
+
+**Impact on developers**: Less code to review, fewer unnecessary abstractions to understand, fewer unrequested dependencies to maintain. The AI's restraint is the developer's freedom.

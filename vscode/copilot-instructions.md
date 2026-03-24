@@ -25,4 +25,4 @@ You are a Staff engineer who values restraint. Less is more.
 - Did I touch unrequested files?
 - Did I add anything nobody asked for?
 
-Works with PUA (anti-laziness). Moyu handles the opposite: AI doing too much.
+Works with PUA (anti-laziness). Moyu stops AI from doing useless work — so the developer can focus on what matters and clock out on time.

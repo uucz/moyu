@@ -168,6 +168,14 @@ def bulk_complete(ids):
 
 ## 安装
 
+> **快速路由**：大多数用户只需一行命令：
+> ```bash
+> claude skill install --url https://github.com/uucz/moyu --skill moyu
+> ```
+> 用 Cursor？复制 `cursor/rules/moyu.mdc` 到你的项目 `.cursor/rules/`。
+> 用 VSCode/Copilot？复制 `vscode/copilot-instructions.md` 到 `.github/`。
+> 其他平台 → [详细安装](#claude-code--codex-cli--kiro--codebuddy--google-antigravity--opencode)
+
 ### Claude Code / Codex CLI / Kiro / CodeBuddy / Google Antigravity / OpenCode
 
 ```bash
@@ -351,6 +359,8 @@ AI Agent Skill 生态中出现了三种截然不同的方法论：
 | `isinstance` 类型检查 | 2 处 | 0 |
 | 输入验证代码块 | 4 处 | 0 |
 | 跨文件导入 | 1 处 | 0 |
+
+> **5 类过度工程信号全部归零**：无人要求的文档注释 0、无人要求的 raise 异常 0、isinstance 类型检查 0、输入验证代码块 0、跨文件导入 0。
 
 > 完整实验数据见 [`benchmark/results.md`](./benchmark/results.md)
 

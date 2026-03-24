@@ -24,6 +24,8 @@
 
 **Make your AI grind. So you don't have to.**
 
+> **Moyu** (摸鱼, "to slack off") — an anti-over-engineering framework for AI coding agents.
+
 You thought AI would set you free? It wrote 200 lines. You spent 2 hours reviewing. The AI worked overtime — and so did you.
 
 ```bash
@@ -167,6 +169,14 @@ Combined = AI works 996, you clock out on time.
 ---
 
 ## Install
+
+> **Quick route**: Most users only need one command:
+> ```bash
+> claude skill install --url https://github.com/uucz/moyu --skill moyu-en
+> ```
+> Using Cursor? Copy `cursor/rules/moyu-en.mdc` to your project's `.cursor/rules/`.
+> Using VSCode/Copilot? Copy `vscode/copilot-instructions.md` to `.github/`.
+> Other platforms → [Detailed install](#claude-code--codex-cli--kiro--codebuddy--google-antigravity--opencode)
 
 ### Claude Code / Codex CLI / Kiro / CodeBuddy / Google Antigravity / OpenCode
 
@@ -350,6 +360,8 @@ We ran 6 real coding tasks as controlled experiments. Same codebase, same AI mod
 | `isinstance` type checks | 2 | 0 |
 | Input validation blocks | 4 | 0 |
 | Cross-file imports | 1 | 0 |
+
+> **5 categories of over-engineering signals reduced to zero**: unrequested docstrings 0, unrequested raise statements 0, isinstance checks 0, input validation blocks 0, cross-file imports 0.
 
 > Full experiment data in [`benchmark/results.md`](./benchmark/results.md)
 

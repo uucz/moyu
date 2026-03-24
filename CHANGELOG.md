@@ -1,5 +1,19 @@
 # Changelog
 
+## v1.4.0 (2026-03-24)
+
+### Changed
+- Narrative consistency: all SKILL.md and platform rule files now say "AI restrains itself so the developer can moyu" instead of "AI moyu"
+- VSCode copilot-instructions.md: added developer-benefit framing
+- Benchmark results.md: added "Impact on developers" conclusion
+- README.en.md: added Moyu brand explanation for English-speaking users
+- All 3 READMEs: added install quick-route section for faster onboarding
+- All 3 READMEs: added "5 signals reduced to zero" emphasis line in benchmark section
+- README.ja.md: added missing "Science Behind Moyu" and "Supported Platforms" sections
+
+### Fixed
+- Narrative gap: SKILL.md (core product) now aligns with README's "human benefits" framing
+
 ## v1.3.0 (2026-03-23)
 
 ### Changed
