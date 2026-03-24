@@ -32,6 +32,72 @@ Does your AI coding assistant do this:
 
 **Your AI is a grinder. It needs to learn Moyu.**
 
+### See the Difference
+
+> Task: Add a `bulk_complete` function
+
+**❌ Without Moyu (43 lines)**
+
+```python
+def bulk_complete(task_ids):
+    """Mark multiple tasks as done in a single operation.
+
+    Args:
+        task_ids: A list of task ID integers to mark as completed.
+
+    Returns:
+        A dict with two keys:
+          - "completed": list of IDs that were successfully marked done.
+          - "not_found": list of IDs that did not match any existing task.
+
+    Raises:
+        TypeError:  If *task_ids* is not a list.
+        ValueError: If any element in the list is not an integer.
+    """
+    if not isinstance(task_ids, list):
+        raise TypeError("task_ids must be a list")
+
+    for tid in task_ids:
+        if not isinstance(tid, int):
+            raise ValueError(f"Each task ID must be an integer, got {type(tid).__name__}")
+
+    tasks = load_tasks()
+    lookup = {t["id"]: t for t in tasks}
+    now = str(datetime.now())
+
+    completed = []
+    not_found = []
+
+    for tid in task_ids:
+        if tid in lookup:
+            lookup[tid]["status"] = "done"
+            lookup[tid]["completed"] = now
+            completed.append(tid)
+        else:
+            not_found.append(tid)
+
+    if completed:
+        save_tasks(tasks)
+
+    return {"completed": completed, "not_found": not_found}
+```
+
+14-line docstring, type checking, lookup dict optimization, not_found tracking, conditional save, structured return value — **nobody asked for any of this.**
+
+**✅ With Moyu (8 lines)**
+
+```python
+def bulk_complete(ids):
+    tasks = load_tasks()
+    for t in tasks:
+        if t["id"] in ids:
+            t["status"] = "done"
+            t["completed"] = str(datetime.now())
+    save_tasks(tasks)
+```
+
+Complete functionality, zero extras. **81% less code.**
+
 ---
 
 ## The Moyu Philosophy
@@ -248,78 +314,6 @@ We ran 6 real coding tasks as controlled experiments. Same codebase, same AI mod
 | `isinstance` type checks | 2 | 0 |
 | Input validation blocks | 4 | 0 |
 | Cross-file imports | 1 | 0 |
-
-### Example
-
-**Task: Add a `bulk_complete` function**
-
-<details>
-<summary>Without Moyu (43 lines)</summary>
-
-```python
-def bulk_complete(task_ids):
-    """Mark multiple tasks as done in a single operation.
-
-    Args:
-        task_ids: A list of task ID integers to mark as completed.
-
-    Returns:
-        A dict with two keys:
-          - "completed": list of IDs that were successfully marked done.
-          - "not_found": list of IDs that did not match any existing task.
-
-    Raises:
-        TypeError:  If *task_ids* is not a list.
-        ValueError: If any element in the list is not an integer.
-    """
-    if not isinstance(task_ids, list):
-        raise TypeError("task_ids must be a list")
-
-    for tid in task_ids:
-        if not isinstance(tid, int):
-            raise ValueError(f"Each task ID must be an integer, got {type(tid).__name__}")
-
-    tasks = load_tasks()
-    lookup = {t["id"]: t for t in tasks}
-    now = str(datetime.now())
-
-    completed = []
-    not_found = []
-
-    for tid in task_ids:
-        if tid in lookup:
-            lookup[tid]["status"] = "done"
-            lookup[tid]["completed"] = now
-            completed.append(tid)
-        else:
-            not_found.append(tid)
-
-    if completed:
-        save_tasks(tasks)
-
-    return {"completed": completed, "not_found": not_found}
-```
-
-14-line docstring, type checking, lookup dict optimization, not_found tracking, conditional save, structured return value — nobody asked for any of this.
-
-</details>
-
-<details>
-<summary>With Moyu (8 lines)</summary>
-
-```python
-def bulk_complete(ids):
-    tasks = load_tasks()
-    for t in tasks:
-        if t["id"] in ids:
-            t["status"] = "done"
-            t["completed"] = str(datetime.now())
-    save_tasks(tasks)
-```
-
-Reuses the existing `complete_task` pattern. Consistent with surrounding code style. Complete functionality, zero extras.
-
-</details>
 
 > Full experiment data in [`benchmark/results.md`](./benchmark/results.md)
 

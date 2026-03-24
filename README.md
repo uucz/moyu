@@ -32,6 +32,72 @@ claude skill install --url https://github.com/uucz/moyu --skill moyu
 
 **你的 AI 是个卷王。它需要学会摸鱼。**
 
+### 看看差距
+
+> 任务：添加一个 `bulk_complete` 批量完成函数
+
+**❌ 普通 AI 的输出（43 行）**
+
+```python
+def bulk_complete(task_ids):
+    """Mark multiple tasks as done in a single operation.
+
+    Args:
+        task_ids: A list of task ID integers to mark as completed.
+
+    Returns:
+        A dict with two keys:
+          - "completed": list of IDs that were successfully marked done.
+          - "not_found": list of IDs that did not match any existing task.
+
+    Raises:
+        TypeError:  If *task_ids* is not a list.
+        ValueError: If any element in the list is not an integer.
+    """
+    if not isinstance(task_ids, list):
+        raise TypeError("task_ids must be a list")
+
+    for tid in task_ids:
+        if not isinstance(tid, int):
+            raise ValueError(f"Each task ID must be an integer, got {type(tid).__name__}")
+
+    tasks = load_tasks()
+    lookup = {t["id"]: t for t in tasks}
+    now = str(datetime.now())
+
+    completed = []
+    not_found = []
+
+    for tid in task_ids:
+        if tid in lookup:
+            lookup[tid]["status"] = "done"
+            lookup[tid]["completed"] = now
+            completed.append(tid)
+        else:
+            not_found.append(tid)
+
+    if completed:
+        save_tasks(tasks)
+
+    return {"completed": completed, "not_found": not_found}
+```
+
+14 行文档注释、类型检查、lookup 字典优化、not_found 追踪、条件保存、结构化返回值——**没人要求这些。**
+
+**✅ 摸鱼 AI 的输出（8 行）**
+
+```python
+def bulk_complete(ids):
+    tasks = load_tasks()
+    for t in tasks:
+        if t["id"] in ids:
+            t["status"] = "done"
+            t["completed"] = str(datetime.now())
+    save_tasks(tasks)
+```
+
+功能完整，没有多余的东西。**减少 81% 代码。**
+
 ---
 
 ## 摸鱼哲学
@@ -250,78 +316,6 @@ curl -o .codebuddy/skills/moyu/SKILL.md https://raw.githubusercontent.com/uucz/m
 | `isinstance` 类型检查 | 2 处 | 0 |
 | 输入验证代码块 | 4 处 | 0 |
 | 跨文件导入 | 1 处 | 0 |
-
-### 举个例子
-
-**任务：添加 `bulk_complete` 批量完成函数**
-
-<details>
-<summary>普通 AI 的输出（43 行）</summary>
-
-```python
-def bulk_complete(task_ids):
-    """Mark multiple tasks as done in a single operation.
-
-    Args:
-        task_ids: A list of task ID integers to mark as completed.
-
-    Returns:
-        A dict with two keys:
-          - "completed": list of IDs that were successfully marked done.
-          - "not_found": list of IDs that did not match any existing task.
-
-    Raises:
-        TypeError:  If *task_ids* is not a list.
-        ValueError: If any element in the list is not an integer.
-    """
-    if not isinstance(task_ids, list):
-        raise TypeError("task_ids must be a list")
-
-    for tid in task_ids:
-        if not isinstance(tid, int):
-            raise ValueError(f"Each task ID must be an integer, got {type(tid).__name__}")
-
-    tasks = load_tasks()
-    lookup = {t["id"]: t for t in tasks}
-    now = str(datetime.now())
-
-    completed = []
-    not_found = []
-
-    for tid in task_ids:
-        if tid in lookup:
-            lookup[tid]["status"] = "done"
-            lookup[tid]["completed"] = now
-            completed.append(tid)
-        else:
-            not_found.append(tid)
-
-    if completed:
-        save_tasks(tasks)
-
-    return {"completed": completed, "not_found": not_found}
-```
-
-14 行文档注释、类型检查、lookup 字典优化、not_found 追踪、条件保存、结构化返回值——没人要求这些。
-
-</details>
-
-<details>
-<summary>摸鱼 AI 的输出（8 行）</summary>
-
-```python
-def bulk_complete(ids):
-    tasks = load_tasks()
-    for t in tasks:
-        if t["id"] in ids:
-            t["status"] = "done"
-            t["completed"] = str(datetime.now())
-    save_tasks(tasks)
-```
-
-复用了 `complete_task` 的代码模式，与现有代码风格一致。功能完整，没有多余的东西。
-
-</details>
 
 > 完整实验数据见 [`benchmark/results.md`](./benchmark/results.md)
 
