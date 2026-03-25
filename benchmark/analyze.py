@@ -28,11 +28,11 @@ CHARTS_DIR = RESULTS_DIR / "charts"
 
 # Brand colors
 COLORS = {
-    "control": "#6b7280",
-    "baseline-concise": "#3b82f6",
-    "moyu-lite": "#8b5cf6",
-    "moyu-standard": "#10b981",
-    "moyu-strict": "#f59e0b",
+    "control": "#9c9a91",
+    "baseline-concise": "#6a9bcc",
+    "moyu-lite": "#b0aea5",
+    "moyu-standard": "#d97757",
+    "moyu-strict": "#141413",
 }
 CONDITION_ORDER = ["control", "baseline-concise", "moyu-lite", "moyu-standard", "moyu-strict"]
 CONDITION_LABELS = {
@@ -344,8 +344,8 @@ def chart_correctness(df, filename):
             test_rates.append(0)
 
     width = 0.35
-    ax.bar(x - width/2, syntax_rates, width, label="Syntax Valid", color="#10b981", alpha=0.8)
-    ax.bar(x + width/2, test_rates, width, label="Tests Passed", color="#3b82f6", alpha=0.8)
+    ax.bar(x - width/2, syntax_rates, width, label="Syntax Valid", color="#d97757", alpha=0.8)
+    ax.bar(x + width/2, test_rates, width, label="Tests Passed", color="#6a9bcc", alpha=0.8)
 
     ax.set_ylabel("Rate (%)")
     ax.set_title("Correctness by Condition")
