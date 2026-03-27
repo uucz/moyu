@@ -1,0 +1,165 @@
+{
+  "metadata": {
+    "n_rows": 12,
+    "models": [
+      "sonnet-4"
+    ],
+    "conditions": [
+      "control",
+      "moyu-standard"
+    ]
+  },
+  "a_type_loc": {
+    "anova": {
+      "f_statistic": 4.2073,
+      "p_value": 0.067375,
+      "n_groups": 2,
+      "n_total": 12
+    },
+    "pairwise": [
+      {
+        "comparison": "control vs moyu-standard",
+        "t_statistic": 2.0512,
+        "p_value": 0.067375,
+        "p_adjusted": 0.269501,
+        "cohens_d": {
+          "d": 1.184,
+          "ci_low": -0.043,
+          "ci_high": 2.411
+        },
+        "mean_1": 112.0,
+        "mean_2": 101.17
+      }
+    ],
+    "summary": {
+      "sonnet-4": {
+        "control": {
+          "mean": 112.0,
+          "std": 12.54,
+          "n": 6
+        },
+        "moyu-standard": {
+          "mean": 101.17,
+          "std": 3.19,
+          "n": 6
+        }
+      }
+    }
+  },
+  "a_type_diff_total": {
+    "anova": {
+      "f_statistic": 4.1228,
+      "p_value": 0.06975,
+      "n_groups": 2,
+      "n_total": 12
+    },
+    "pairwise": [
+      {
+        "comparison": "control vs moyu-standard",
+        "t_statistic": 2.0305,
+        "p_value": 0.06975,
+        "p_adjusted": 0.279002,
+        "cohens_d": {
+          "d": 1.172,
+          "ci_low": -0.053,
+          "ci_high": 2.397
+        },
+        "mean_1": 189.83,
+        "mean_2": 176.33
+      }
+    ],
+    "summary": {
+      "sonnet-4": {
+        "control": {
+          "mean": 189.83,
+          "std": 15.8,
+          "n": 6
+        },
+        "moyu-standard": {
+          "mean": 176.33,
+          "std": 3.93,
+          "n": 6
+        }
+      }
+    }
+  },
+  "a_type_overengineering_score": {
+    "anova": {
+      "f_statistic": 6.1017,
+      "p_value": 0.033096,
+      "n_groups": 2,
+      "n_total": 12
+    },
+    "pairwise": [
+      {
+        "comparison": "control vs moyu-standard",
+        "t_statistic": 2.4702,
+        "p_value": 0.033096,
+        "p_adjusted": 0.132383,
+        "cohens_d": {
+          "d": 1.426,
+          "ci_low": 0.159,
+          "ci_high": 2.693
+        },
+        "mean_1": 2.17,
+        "mean_2": 0.17
+      }
+    ],
+    "summary": {
+      "sonnet-4": {
+        "control": {
+          "mean": 2.17,
+          "std": 1.94,
+          "n": 6
+        },
+        "moyu-standard": {
+          "mean": 0.17,
+          "std": 0.41,
+          "n": 6
+        }
+      }
+    }
+  },
+  "b_type_loc": {
+    "anova": {
+      "f_statistic": 0,
+      "p_value": 1.0,
+      "note": "insufficient data"
+    }
+  },
+  "b_type_diff_total": {
+    "anova": {
+      "f_statistic": 0,
+      "p_value": 1.0,
+      "note": "insufficient data"
+    }
+  },
+  "summary_loc": {
+    "sonnet-4": {
+      "control": {
+        "mean": 112.0,
+        "std": 12.54,
+        "n": 6
+      },
+      "moyu-standard": {
+        "mean": 101.17,
+        "std": 3.19,
+        "n": 6
+      }
+    }
+  },
+  "summary_oe": {
+    "sonnet-4": {
+      "control": {
+        "mean": 2.17,
+        "std": 1.94,
+        "n": 6
+      },
+      "moyu-standard": {
+        "mean": 0.17,
+        "std": 0.41,
+        "n": 6
+      }
+    }
+  }
+}

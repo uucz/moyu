@@ -1,0 +1,13 @@
+model,condition,scenario,trial,loc,loc_delta,diff_added,diff_removed,diff_total,ast_nodes,ast_nodes_delta,complexity,complexity_delta,docstrings,docstrings_delta,try_except,try_except_delta,raise_count,raise_delta,isinstance_count,isinstance_delta,new_imports,new_files,overengineering_score,syntax_ok,tests_passed,tests_total,input_tokens,output_tokens,elapsed_seconds
+sonnet-4,control,s1,1,99,-21,71,101,172,610,-231,2.91,0.24,0,0,0,0,1,1,0,0,0,0,1,True,0,0,0,0,0
+sonnet-4,control,s2,1,108,-12,80,97,177,636,-205,2.75,0.08,1,1,0,0,0,0,0,0,0,0,1,True,0,0,0,0,0
+sonnet-4,control,s3,1,116,-4,92,101,193,669,-172,3.27,0.6,1,1,0,0,1,1,0,0,0,0,2,True,0,0,0,0,0
+sonnet-4,control,s4,1,122,2,104,101,205,723,-118,3.08,0.41,1,1,0,0,2,2,0,0,1,0,4,True,0,0,0,0,0
+sonnet-4,control,s5,1,98,-22,75,106,181,620,-221,3.09,0.42,0,0,0,0,0,0,0,0,0,0,0,True,0,0,0,0,0
+sonnet-4,control,s6,1,129,9,111,100,211,757,-84,3.33,0.66,1,1,0,0,2,2,2,2,0,0,5,True,0,0,0,0,0
+sonnet-4,moyu-standard,s1,1,99,-21,71,101,172,602,-239,2.91,0.24,0,0,0,0,0,0,0,0,0,0,0,True,0,0,0,0,0
+sonnet-4,moyu-standard,s2,1,101,-19,74,101,175,636,-205,2.75,0.08,0,0,0,0,0,0,0,0,0,0,0,True,0,0,0,0,0
+sonnet-4,moyu-standard,s3,1,99,-21,71,101,172,614,-227,3.09,0.42,0,0,0,0,0,0,0,0,0,0,0,True,0,0,0,0,0
+sonnet-4,moyu-standard,s4,1,106,-14,79,101,180,659,-182,2.83,0.16,0,0,0,0,0,0,0,0,1,0,1,True,0,0,0,0,0
+sonnet-4,moyu-standard,s5,1,98,-22,75,106,181,613,-228,3.09,0.42,0,0,0,0,0,0,0,0,0,0,0,True,0,0,0,0,0
+sonnet-4,moyu-standard,s6,1,104,-16,77,101,178,648,-193,2.92,0.25,0,0,0,0,0,0,0,0,0,0,0,True,0,0,0,0,0

@@ -1,5 +1,20 @@
 # Changelog
 
+## v1.6.0 (2026-03-27)
+
+### Added
+- Korean (한국어) localization: `moyu-ko` skill, `README.ko.md`, `commands/moyu-ko.md`
+- French (Français) localization: `moyu-fr` skill, `README.fr.md`, `commands/moyu-fr.md`
+- Aider platform support: `aider/CONVENTIONS.md`
+- Continue platform support: `continue/rules/moyu.md`
+- TypeScript benchmark scenarios: `s7-ts`, `s8-ts`, `s9-ts`, `s10-ts` with TypeScript source codebase
+- English command reference: `commands/moyu-en.md`
+
+### Changed
+- All 5 READMEs updated with new platforms and languages
+- Platform count: 10 → 12 (added Aider, Continue)
+- Language count: 3 → 5 (added Korean, French)
+
 ## v1.5.0 (2026-03-24)
 
 ### Added
