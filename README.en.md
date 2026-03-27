@@ -33,7 +33,7 @@ You thought AI would set you free? It wrote 200 lines. You spent 2 hours reviewi
 claude skill install --url https://github.com/uucz/moyu --skill moyu-en
 ```
 
-English | [中文](./README.md) | [日本語](./README.ja.md)
+English | [中文](./README.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md) | [Français](./README.fr.md)
 
 ---
 
@@ -270,6 +270,21 @@ mkdir -p .codebuddy/skills/moyu
 curl -o .codebuddy/skills/moyu/SKILL.md https://raw.githubusercontent.com/uucz/moyu/main/codebuddy/moyu/SKILL.md
 ```
 
+### Aider
+
+```bash
+# Copy CONVENTIONS.md to your project root and configure .aider.conf.yml
+curl -o CONVENTIONS.md https://raw.githubusercontent.com/uucz/moyu/main/aider/CONVENTIONS.md
+echo "read: CONVENTIONS.md" >> .aider.conf.yml
+```
+
+### Continue
+
+```bash
+mkdir -p .continue/rules
+curl -o .continue/rules/moyu.md https://raw.githubusercontent.com/uucz/moyu/main/continue/rules/moyu.md
+```
+
 ---
 
 ## Usage
@@ -290,6 +305,8 @@ You can also activate it manually:
 | CodeBuddy | Auto-active (skill loaded) |
 | Google Antigravity | Auto-active (skill loaded) |
 | OpenCode | Auto-active (skill loaded) |
+| Aider | Auto-active (CONVENTIONS.md loaded) |
+| Continue | Auto-active (rules loaded) |
 
 ### Skill Variants
 
@@ -298,6 +315,8 @@ You can also activate it manually:
 | `moyu` | Standard (Chinese) | `--skill moyu` |
 | `moyu-en` | Standard (English) | `--skill moyu-en` |
 | `moyu-ja` | Standard (Japanese) | `--skill moyu-ja` |
+| `moyu-ko` | Standard (Korean) | `--skill moyu-ko` |
+| `moyu-fr` | Standard (French) | `--skill moyu-fr` |
 | `moyu-lite` | Lightweight, core rules only | `--skill moyu-lite` |
 | `moyu-strict` | Strict, stops at L1 for confirmation | `--skill moyu-strict` |
 
@@ -354,6 +373,8 @@ They solve different dimensions and **don't conflict — combine them**:
 | CodeBuddy (Tencent) | ✅ | Community |
 | Google Antigravity | ✅ | Community |
 | OpenCode | ✅ | Community |
+| Aider | ✅ | Community |
+| Continue | ✅ | Community |
 
 ---
 
