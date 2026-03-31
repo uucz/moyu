@@ -276,12 +276,12 @@ section{padding:80px 0}
     </div>
     <div class="stats-grid fade-in" style="animation-delay:.1s">
       <div class="stat-card">
-        <span class="stat-value" id="kn-experiments">540</span>
+        <span class="stat-value" id="kn-experiments">1420</span>
         <span class="stat-label" data-lang="zh">实验次数</span>
         <span class="stat-label" data-lang="en">Experiments</span>
       </div>
       <div class="stat-card">
-        <span class="stat-value" id="kn-models">3</span>
+        <span class="stat-value" id="kn-models">8</span>
         <span class="stat-label" data-lang="zh">LLM 模型</span>
         <span class="stat-label" data-lang="en">LLM Models</span>
       </div>
@@ -484,8 +484,8 @@ def test_add():
       <span data-lang="en">Methodology</span>
     </h2>
     <p class="section-sub fade-in">
-      <span data-lang="zh">3 个模型 x 5 种条件 x 12 个场景 x 3 次试验 = 540 次实验</span>
-      <span data-lang="en">3 Models x 5 Conditions x 12 Scenarios x 3 Trials = 540 Experiments</span>
+      <span data-lang="zh">8 个模型 x 5 种条件 x 12 个场景 x 3 次试验 = 1420 次实验</span>
+      <span data-lang="en">8 Models x 5 Conditions x 12 Scenarios x 3 Trials = 1420 Experiments</span>
     </p>
 
     <details class="method-details fade-in">
@@ -558,8 +558,13 @@ def test_add():
           <thead><tr><th data-lang="zh">模型</th><th data-lang="en">Model</th><th data-lang="zh">提供商</th><th data-lang="en">Provider</th></tr></thead>
           <tbody>
             <tr><td>Claude Sonnet 4</td><td>Anthropic</td></tr>
-            <tr><td>GPT-4o</td><td>OpenAI</td></tr>
-            <tr><td>Gemini 2.5 Pro</td><td>Google</td></tr>
+            <tr><td>GPT-5.4</td><td>OpenAI</td></tr>
+            <tr><td>GPT-5 Codex</td><td>OpenAI</td></tr>
+            <tr><td>Grok 4.1 Fast</td><td>xAI</td></tr>
+            <tr><td>Grok 4.20 Beta</td><td>xAI</td></tr>
+            <tr><td>LongCat Flash Chat</td><td>LongCat</td></tr>
+            <tr><td>LongCat Flash Thinking</td><td>LongCat</td></tr>
+            <tr><td>LongCat Flash Lite</td><td>LongCat</td></tr>
           </tbody>
         </table>
       </div>
@@ -898,7 +903,7 @@ def test_add():
   };
   var CONDITIONS = ['Control','Baseline-Concise','Moyu-Lite','Moyu-Standard','Moyu-Strict'];
   var CONDITION_COLORS = [CHART_COLORS.control, CHART_COLORS['baseline-concise'], CHART_COLORS['moyu-lite'], CHART_COLORS['moyu-standard'], CHART_COLORS['moyu-strict']];
-  var MODELS = ['Claude Sonnet 4','GPT-4o','Gemini 2.5 Pro'];
+  var MODELS = ['Claude Sonnet 4','GPT-5.4','GPT-5 Codex','Grok 4.1 Fast','Grok 4.20 Beta','LongCat Flash Chat','LongCat Flash Thinking','LongCat Flash Lite'];
   var MODEL_KEYS = ['sonnet-4','gpt-4o','gemini-2.5-pro'];
   var MODEL_COLORS = ['#d97757','#6a9bcc','#788c5d'];
 
