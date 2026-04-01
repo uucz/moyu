@@ -5,6 +5,10 @@
 </p>
 
 <p align="center">
+  <img src="assets/demo.gif" alt="Moyu Demo — Before vs After" width="600">
+</p>
+
+<p align="center">
   <a href="https://github.com/uucz/moyu/stargazers"><img src="https://img.shields.io/github/stars/uucz/moyu?style=social" alt="GitHub stars"></a>
 </p>
 
