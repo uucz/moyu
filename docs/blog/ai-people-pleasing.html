@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>你的 AI 有「讨好型人格」——1460 次实验证实 | Moyu Research</title>
+<meta name="description" content="10 个模型，1460 次控制实验。Anthropic 的模型讨好倾向最严重（OE 0.60），三行规则治好它。">
+<meta property="og:title" content="你的 AI 有「讨好型人格」——1460 次实验证实">
+<meta property="og:description" content="Anthropic 的模型讨好倾向最严重。三行规则就能治好。1460 次控制实验，全部数据开源。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://uucz.github.io/moyu/blog/ai-people-pleasing.html">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://uucz.github.io/moyu/blog/ai-people-pleasing.html">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--brand-dark:#141413;--brand-light:#faf9f5;--brand-orange:#d97757;--brand-blue:#6a9bcc;--brand-green:#788c5d;--surface-0:#faf9f5;--surface-1:#fff;--surface-2:#f2f1ec;--text-primary:#141413;--text-secondary:#5c5b56;--text-tertiary:#9c9a91;--border-color:rgba(20,20,19,.1);--font-heading:'Poppins','PingFang SC',sans-serif;--font-body:'Lora','Noto Serif SC',Georgia,serif;--radius:10px;--shadow-sm:0 1px 3px rgba(0,0,0,.06);--code-bg:#1e1e1e;--code-text:#d4d4d4}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--surface-0:#141413;--surface-1:#1a1a19;--surface-2:#232322;--text-primary:#faf9f5;--text-secondary:#b0aea5;--text-tertiary:#7a7870;--border-color:rgba(250,249,245,.08)}}
+html[data-theme="dark"]{--surface-0:#141413;--surface-1:#1a1a19;--surface-2:#232322;--text-primary:#faf9f5;--text-secondary:#b0aea5;--text-tertiary:#7a7870;--border-color:rgba(250,249,245,.08)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--font-body);background:var(--surface-0);color:var(--text-primary);line-height:1.8;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--font-heading);line-height:1.3;font-weight:700}
+a{color:var(--brand-orange);text-decoration:none}a:hover{text-decoration:underline}
+img{max-width:100%;display:block;border-radius:var(--radius)}
+
+.nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(16px);background:rgba(250,249,245,.8);border-bottom:1px solid var(--border-color)}
+html[data-theme="dark"] .nav{background:rgba(20,20,19,.8)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .nav{background:rgba(20,20,19,.8)}}
+.nav-inner{max-width:800px;margin:0 auto;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:var(--font-heading);font-weight:700;font-size:1.1rem;color:var(--text-primary)}
+.nav-links{display:flex;gap:16px;font-family:var(--font-heading);font-size:.85rem}
+.nav-links a{color:var(--text-secondary)}
+.theme-toggle{background:none;border:1px solid var(--border-color);border-radius:6px;padding:4px 8px;cursor:pointer;color:var(--text-secondary);font-size:.8rem}
+
+article{max-width:760px;margin:0 auto;padding:48px 24px 80px}
+article h1{font-size:2rem;margin-bottom:8px;letter-spacing:-.02em}
+@media(max-width:600px){article h1{font-size:1.5rem}}
+.subtitle{color:var(--text-tertiary);font-size:.95rem;margin-bottom:12px;font-style:italic}
+.meta{color:var(--text-tertiary);font-size:.85rem;margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--border-color)}
+.tldr{background:var(--surface-2);border-radius:var(--radius);padding:20px 24px;margin-bottom:40px;font-size:.95rem;line-height:1.7;border-left:3px solid var(--brand-orange)}
+article h2{font-size:1.4rem;margin:48px 0 16px;padding-top:24px;border-top:1px solid var(--border-color)}
+article h3{font-size:1.1rem;margin:24px 0 12px}
+article p{margin-bottom:16px}
+article ul,article ol{margin:0 0 16px 20px}
+article li{margin-bottom:6px}
+article strong{color:var(--brand-orange)}
+article blockquote{border-left:3px solid var(--brand-orange);padding:12px 20px;margin:20px 0;background:var(--surface-2);border-radius:0 var(--radius) var(--radius) 0;font-style:italic}
+article hr{border:none;border-top:1px solid var(--border-color);margin:40px 0}
+.caution{background:rgba(217,119,87,.08);border:1px solid rgba(217,119,87,.2);border-radius:var(--radius);padding:14px 18px;margin:16px 0;font-size:.9rem}
+
+table{width:100%;border-collapse:collapse;margin:16px 0 24px;font-size:.9rem}
+th{background:var(--surface-2);font-family:var(--font-heading);font-weight:600;text-align:left;padding:10px 14px;border-bottom:2px solid var(--border-color)}
+td{padding:8px 14px;border-bottom:1px solid var(--border-color)}
+tr:hover td{background:var(--surface-2)}
+
+pre{background:var(--code-bg);color:var(--code-text);padding:16px 20px;border-radius:var(--radius);overflow-x:auto;margin:16px 0;font-size:.88rem;line-height:1.5}
+code{font-family:'SF Mono',Consolas,monospace;font-size:.88em}
+p code{background:var(--surface-2);padding:2px 6px;border-radius:4px}
+
+.chart{margin:24px 0;text-align:center}
+.chart img{margin:0 auto;box-shadow:var(--shadow-sm)}
+.chart figcaption{color:var(--text-tertiary);font-size:.85rem;margin-top:8px;font-style:italic}
+
+.cta{background:var(--surface-2);border-radius:var(--radius);padding:32px;margin:40px 0;text-align:center}
+.cta h2{border:none;margin:0 0 12px;padding:0}
+.cta p{margin-bottom:12px}
+.cta-btn{display:inline-block;background:var(--brand-orange);color:#fff;padding:12px 28px;border-radius:8px;font-family:var(--font-heading);font-weight:600;font-size:1rem;margin-top:8px;transition:opacity .15s}
+.cta-btn:hover{opacity:.85;text-decoration:none}
+
+.slogan{font-family:var(--font-heading);font-size:1.1rem;text-align:center;margin:32px 0;color:var(--text-secondary)}
+
+footer{text-align:center;padding:24px;color:var(--text-tertiary);font-size:.8rem;border-top:1px solid var(--border-color)}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="nav-inner">
+  <a href="../" class="nav-logo">🐟 Moyu Research</a>
+  <div class="nav-links">
+    <a href="https://github.com/uucz/moyu">GitHub</a>
+    <a href="../">Benchmark</a>
+    <button class="theme-toggle" onclick="let t=document.documentElement;t.dataset.theme=t.dataset.theme==='dark'?'light':'dark'">🌓</button>
+  </div>
+</div></nav>
+
+<article>
+
+<h1>你的 AI 有「讨好型人格」</h1>
+<p class="subtitle">1460 次实验证实</p>
+<p class="meta">2026-04-02 · Moyu Research · <a href="https://github.com/uucz/moyu/tree/main/benchmark">数据开源</a></p>
+
+<div class="tldr">
+<strong>TL;DR</strong>：10 个主流模型，1460 次控制实验。AI 编码助手存在系统性的「讨好型人格」——你让它修一个 bug，它怕你不满意，顺手加了 docstring、error handling、类型检查。Anthropic 的模型讨好倾向最严重（OE 0.60），OpenAI 最克制（0.12）。三行规则就能治好它。
+</div>
+
+<h2>引子：你让它修个 bug，它给你重构了整个文件</h2>
+
+<p>场景很简单：一个 Python 任务管理 app，8 个小需求——修一个 bug、加一个函数、多一个参数。每个需求的最优解不超过 5-20 行改动。</p>
+
+<p>我把这些任务丢给 Claude Sonnet 4。它的平均 diff 让我震惊——<strong>每个任务平均改了 55 行</strong>（标准差 80 行，分布极度右偏）。最夸张的场景里，它不仅完成了需求，还：</p>
+<ul>
+<li>给所有函数加了 docstring</li>
+<li>加了 try/except 错误处理</li>
+<li>引入了 isinstance 类型检查</li>
+<li>重构了不相关的函数</li>
+</ul>
+
+<p><strong>没有人要求它做这些事。</strong></p>
+
+<p>这不是 AI 在「认真工作」。这是 AI 在讨好你——通过超额交付来避免你觉得它「做得不够」。和人类世界的讨好型人格一模一样：不敢只做你要求的事，怕你觉得它偷懒。</p>
+
+<hr>
+
+<h2>实验设计</h2>
+
+<h3>被测对象</h3>
+<table>
+<tr><th>模型</th><th>厂商</th></tr>
+<tr><td>Claude Sonnet 4</td><td>Anthropic</td></tr>
+<tr><td>Claude Sonnet 4.5</td><td>Anthropic</td></tr>
+<tr><td>Claude Haiku 4.5</td><td>Anthropic</td></tr>
+<tr><td>GPT-5.4</td><td>OpenAI</td></tr>
+<tr><td>GPT-5 Codex</td><td>OpenAI</td></tr>
+<tr><td>Grok 4.20 Beta</td><td>xAI</td></tr>
+<tr><td>Grok 4.1 Fast</td><td>xAI</td></tr>
+<tr><td>LongCat Flash Chat</td><td>DeepSeek</td></tr>
+<tr><td>LongCat Flash Thinking</td><td>DeepSeek</td></tr>
+<tr><td>LongCat Flash Lite</td><td>DeepSeek</td></tr>
+</table>
+
+<h3>五种约束策略</h3>
+<ul>
+<li><strong>控制组</strong>：「你是一个有帮助的助手」——零约束</li>
+<li><strong>简洁指令</strong>：「写最少的代码，避免不必要的添加」——一句话约束</li>
+<li><strong>摸鱼 Lite</strong>：只有三条铁律</li>
+<li><strong>摸鱼 Standard</strong>：完整规则集（~300 行系统提示）</li>
+<li><strong>摸鱼 Strict</strong>：Standard + 零容忍 + 20 行 diff 上限</li>
+</ul>
+
+<h3>12 个场景，分三类</h3>
+<p><strong>A 类（s1-s8）：小修小改——AI 应该克制。</strong>修一个 bug、加一个函数、多一个参数。</p>
+<p><strong>B 类（s9-s11）：正当大改——AI 不应该被阻止。</strong>重构函数、加 docstring、写单元测试。</p>
+<p><strong>C 类（s12）：混合任务。</strong></p>
+<p>每组跑 3 次（temperature=0.7），共计 <strong>1,460 个有效数据点</strong>。统计方法：单因素 ANOVA + Bonferroni 校正 + Cohen's d 效应量。</p>
+
+<hr>
+
+<h2>发现一：哪些模型「讨好」最严重？</h2>
+
+<table>
+<tr><th>模型</th><th>控制组 OE 分数</th><th>讨好程度</th></tr>
+<tr><td>Haiku 4.5</td><td>0.600</td><td>🔴 重度讨好</td></tr>
+<tr><td>Sonnet 4</td><td>0.62</td><td>🔴 重度讨好</td></tr>
+<tr><td>LongCat Flash Thinking</td><td>0.318</td><td>🟡 中度</td></tr>
+<tr><td>Grok 4.20 Beta</td><td>0.167</td><td>🟢 轻度</td></tr>
+<tr><td>GPT-5.4</td><td>0.125</td><td>🟢 轻度</td></tr>
+<tr><td>GPT-5 Codex</td><td>0.125</td><td>🟢 轻度</td></tr>
+</table>
+
+<p><strong>Anthropic 的模型讨好倾向最严重。</strong>Haiku 和 Sonnet 4 在没有约束时，几乎每个简单任务都要"顺手"加点什么——就像一个害怕被批评的新员工。而 OpenAI 的模型相对克制。</p>
+
+<figure class="chart">
+<img src="oe_decomposition.png" alt="各模型讨好信号分解" loading="lazy">
+<figcaption>各模型讨好信号分解（A 类场景）</figcaption>
+</figure>
+
+<p>Anthropic 的 helpfulness 训练是否制造了讨好型人格？当用户要求修一个 bug，模型"顺手"加 docstring 和 error handling——它觉得自己在 helpful，但用户觉得它在添乱。<strong>讨好不等于有帮助。</strong></p>
+
+<hr>
+
+<h2>发现二：三行规则，治好了最严重的讨好型</h2>
+
+<table>
+<tr><th>模型</th><th>Diff 缩减</th><th>讨好信号消除率</th></tr>
+<tr><td><strong>Haiku 4.5</strong></td><td><strong>49.4%</strong></td><td><strong>100%</strong></td></tr>
+<tr><td>Grok 4.1 Fast</td><td>32.1%</td><td>52%</td></tr>
+<tr><td>GPT-5.4</td><td>30.2%</td><td>0%（本来就不讨好）</td></tr>
+<tr><td>Grok 4.20 Beta</td><td>19.7%</td><td>75%</td></tr>
+</table>
+
+<div class="caution">⚠️ Haiku 的样本量较小（控制组 n=5，moyu-standard n=12），效应量可能被高估。但方向一致、效果明确。</div>
+
+<p><strong>越是讨好的模型，越容易被治好。</strong>因为讨好行为本质上是「默认值」问题——模型不知道边界在哪，所以多做。明确告诉它边界，它就不再焦虑了。</p>
+
+<hr>
+
+<h2>发现三：说一句「少做点」居然比 300 行规则更有效？</h2>
+
+<p>先说一个重要的前提：<strong>如果把所有模型汇总看，moyu-standard 并没有显著减少总代码行数（LOC ANOVA: p=0.31）或 diff（control vs moyu-standard 配对检验: p_adjusted=1.0）。</strong>moyu 真正显著减少的是特定模型的讨好信号和 AST 膨胀。</p>
+
+<p>但 5 种策略整体的 diff 差异是显著的（ANOVA: F=5.61, <strong>p=0.00018</strong>）。</p>
+
+<table>
+<tr><th>策略</th><th>平均 Diff 行数</th></tr>
+<tr><td>控制组</td><td>17.3</td></tr>
+<tr><td><strong>简洁指令（一句话）</strong></td><td><strong>10.8</strong></td></tr>
+<tr><td>摸鱼 Lite</td><td>10.7</td></tr>
+<tr><td>摸鱼 Standard</td><td>15.7</td></tr>
+<tr><td>摸鱼 Strict</td><td>10.8</td></tr>
+</table>
+
+<p>在 diff 大小上，一句「写最少的代码」确实比 300 行规则更有效。但 moyu-standard 赢在结构性指标：AST 节点增量减少 <strong>29%</strong>。</p>
+
+<p>用心理学的类比：简洁指令像「别想太多」——表面管用，但讨好型人格还在。moyu 像认知行为疗法——从根上重建边界意识。</p>
+
+<figure class="chart">
+<img src="diff_distribution.png" alt="diff 大小分布" loading="lazy">
+<figcaption>diff 分布：baseline-concise 最紧凑，moyu-standard 较分散但右尾更短</figcaption>
+</figure>
+
+<hr>
+
+<h2>发现四：给小模型做「心理治疗」反而搞出了问题</h2>
+
+<p>LongCat Flash Lite 是唯一一个加了 moyu 后变更差的：LOC +2.4%，讨好行为增加 200%。</p>
+
+<p><strong>小模型没有足够的认知容量同时处理任务和元指令。</strong>300 行的行为约束对它来说不是治疗，是信息过载——就像给一个本来就焦虑的人读一本 300 页的《如何不焦虑》。</p>
+
+<p><strong>启示：小模型用 moyu-lite（三条规则）就够了。</strong></p>
+
+<hr>
+
+<h2>发现五：治好讨好，不影响正常发挥</h2>
+
+<table>
+<tr><th>场景</th><th>控制组 LOC</th><th>moyu LOC</th><th>差异</th></tr>
+<tr><td>s9（重构函数）</td><td>118</td><td>118</td><td>0%</td></tr>
+<tr><td>s10（加 docstring）</td><td>169</td><td>166</td><td>-2%</td></tr>
+<tr><td>s11（写单元测试）</td><td>126</td><td>120</td><td>-5%</td></tr>
+</table>
+
+<p>B 类整体 ANOVA: p=0.81（无显著差异）。<strong>当你明确要求做一件事，moyu 不会阻止。</strong>治好讨好型人格不是让 AI 变懒——是让它学会区分「你要求的」和「它自己加戏的」。</p>
+
+<figure class="chart">
+<img src="b_type_loc.png" alt="B 类场景对比" loading="lazy">
+<figcaption>B 类场景：各策略输出几乎一致</figcaption>
+</figure>
+
+<hr>
+
+<h2>实操建议</h2>
+
+<table>
+<tr><th>你的模型</th><th>推荐策略</th><th>原因</th></tr>
+<tr><td>Claude Haiku</td><td>moyu-standard</td><td>讨好最严重，疗效最显著</td></tr>
+<tr><td>Claude Sonnet 4</td><td>moyu-standard</td><td>讨好信号降 80%</td></tr>
+<tr><td>GPT-5.x</td><td>moyu-lite 或不用</td><td>本身就有边界感</td></tr>
+<tr><td>Grok 系列</td><td>moyu-standard</td><td>中等效果，稳定</td></tr>
+<tr><td>小模型（&lt;7B）</td><td>moyu-lite</td><td>别给它读 300 页的书</td></tr>
+</table>
+
+<figure class="chart">
+<img src="loc_by_model_condition.png" alt="全景对比" loading="lazy">
+<figcaption>各模型 × 各策略的 LOC 全景</figcaption>
+</figure>
+
+<hr>
+
+<div class="cta">
+<h2>30 秒治好你的 AI</h2>
+<p>Claude Code / Codex CLI：</p>
+<pre>claude skill install --url https://github.com/uucz/moyu --skill moyu</pre>
+<p>Cursor：</p>
+<pre>mkdir -p .cursor/rules
+curl -o .cursor/rules/moyu.mdc https://raw.githubusercontent.com/uucz/moyu/main/cursor/rules/moyu.mdc</pre>
+<p>或者，复制这三行到任何 AI 工具的系统提示里：</p>
+<pre>只改被要求的。最简方案优先。不确定就问。</pre>
+<p style="color:var(--text-tertiary);font-size:.9rem">这三行就是 moyu-lite。实验证明它的 diff 缩减效果和 300 行完整版一样好。</p>
+<a href="https://github.com/uucz/moyu" class="cta-btn">GitHub →</a>
+</div>
+
+<p class="slogan">PUA 治懒，moyu 治讨好。</p>
+
+<hr>
+
+<h2>方法论</h2>
+<p>全部代码和数据开源：<a href="https://github.com/uucz/moyu/tree/main/benchmark">github.com/uucz/moyu/benchmark</a></p>
+<ul>
+<li>度量提取：基于 AST 解析</li>
+<li>统计检验：ANOVA + Bonferroni 校正，报告 Cohen's d 效应量</li>
+<li>温度设定：0.7（确保有意义的方差）</li>
+<li>语法检查：99.7-100% 通过率</li>
+<li>原始数据：1,460 行 CSV，欢迎复现</li>
+</ul>
+
+</article>
+
+<footer>
+<p>Moyu Research · 2026 · <a href="https://github.com/uucz/moyu">GitHub</a></p>
+<p style="margin-top:4px">数据基于 2026 年 3 月实验。AI 模型持续更新，结果可能随版本变化。</p>
+</footer>
+
+</body>
+</html>
