@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Blog | Moyu Research</title>
+<meta name="description" content="Moyu Research blog — AI coding behavior experiments and findings.">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--brand-dark:#141413;--brand-light:#faf9f5;--brand-orange:#d97757;--brand-blue:#6a9bcc;--brand-green:#788c5d;--surface-0:#faf9f5;--surface-1:#fff;--surface-2:#f2f1ec;--text-primary:#141413;--text-secondary:#5c5b56;--text-tertiary:#9c9a91;--border-color:rgba(20,20,19,.1);--font-heading:'Poppins','PingFang SC',sans-serif;--font-body:'Lora','Noto Serif SC',Georgia,serif;--radius-sm:6px;--radius:10px;--radius-lg:14px;--shadow-sm:0 1px 3px rgba(0,0,0,.06);--shadow-md:0 4px 12px rgba(0,0,0,.07);--code-bg:#1e1e1e;--code-text:#d4d4d4}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--surface-0:#141413;--surface-1:#1a1a19;--surface-2:#232322;--text-primary:#faf9f5;--text-secondary:#b0aea5;--text-tertiary:#7a7870;--border-color:rgba(250,249,245,.08)}}
+html[data-theme="dark"]{--surface-0:#141413;--surface-1:#1a1a19;--surface-2:#232322;--text-primary:#faf9f5;--text-secondary:#b0aea5;--text-tertiary:#7a7870;--border-color:rgba(250,249,245,.08)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--font-body);background:var(--surface-0);color:var(--text-primary);line-height:1.7;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--font-heading);line-height:1.3;font-weight:700}
+a{color:var(--brand-orange);text-decoration:none}a:hover{text-decoration:underline}
+
+.nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:rgba(250,249,245,.8);border-bottom:1px solid var(--border-color);transition:background .2s}
+html[data-theme="dark"] .nav{background:rgba(20,20,19,.8)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .nav{background:rgba(20,20,19,.8)}}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:8px;font-family:var(--font-heading);font-weight:700;font-size:1.1rem;color:var(--text-primary)}
+.nav-logo svg{width:28px;height:28px}
+.nav-links{display:flex;align-items:center;gap:20px;font-family:var(--font-heading);font-size:.85rem}
+.nav-links a{color:var(--text-secondary);transition:color .15s}
+.nav-links a:hover{color:var(--brand-orange);text-decoration:none}
+.nav-btn{background:none;border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:4px 10px;cursor:pointer;color:var(--text-secondary);font-family:var(--font-heading);font-size:.8rem;transition:all .15s;display:flex;align-items:center;gap:4px}
+.nav-btn:hover{border-color:var(--brand-orange);color:var(--brand-orange)}
+.nav-btn svg{width:16px;height:16px}
+
+.container{max-width:760px;margin:0 auto;padding:80px 24px}
+.container h1{font-size:2rem;margin-bottom:48px}
+
+.post-card{background:var(--surface-1);border:1px solid var(--border-color);border-radius:var(--radius);padding:28px 32px;margin-bottom:20px;transition:transform .2s,box-shadow .2s}
+.post-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.post-card h2{font-size:1.3rem;margin-bottom:8px}
+.post-card h2 a{color:var(--text-primary)}
+.post-card h2 a:hover{color:var(--brand-orange);text-decoration:none}
+.post-card .post-meta{color:var(--text-tertiary);font-size:.85rem;margin-bottom:12px}
+.post-card p{color:var(--text-secondary);font-size:.95rem;line-height:1.6}
+
+footer{text-align:center;padding:24px;color:var(--text-tertiary);font-size:.8rem;border-top:1px solid var(--border-color);margin-top:80px}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="nav-inner">
+  <a href="../" class="nav-logo">
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g fill="#c96a47">
+        <rect x="0" y="9" width="4" height="4"/><rect x="0" y="13" width="4" height="4"/>
+        <rect x="0" y="17" width="4" height="4"/><rect x="0" y="21" width="4" height="4"/>
+        <rect x="4" y="11" width="4" height="4"/><rect x="4" y="19" width="4" height="4"/>
+      </g>
+      <g fill="var(--brand-orange)">
+        <rect x="8" y="9" width="4" height="4"/><rect x="12" y="9" width="4" height="4"/><rect x="16" y="9" width="4" height="4"/>
+        <rect x="8" y="13" width="4" height="4"/><rect x="12" y="13" width="4" height="4"/><rect x="16" y="13" width="4" height="4"/>
+        <rect x="20" y="13" width="4" height="4"/><rect x="24" y="13" width="4" height="4"/>
+        <rect x="8" y="17" width="4" height="4"/><rect x="12" y="17" width="4" height="4"/><rect x="16" y="17" width="4" height="4"/>
+        <rect x="20" y="17" width="4" height="4"/><rect x="24" y="17" width="4" height="4"/>
+        <rect x="8" y="21" width="4" height="4"/><rect x="12" y="21" width="4" height="4"/><rect x="16" y="21" width="4" height="4"/>
+      </g>
+      <rect x="20" y="13" width="4" height="4" fill="#fff"/>
+      <rect x="22" y="13" width="2" height="2" fill="#141413"/>
+    </svg>
+    <span>Moyu</span>
+  </a>
+  <div class="nav-links">
+    <a href="../">Research</a>
+    <a href="./" style="color:var(--brand-orange)">Blog</a>
+    <a href="https://github.com/uucz/moyu">GitHub</a>
+    <button class="nav-btn" onclick="let t=document.documentElement;t.dataset.theme=t.dataset.theme==='dark'?'light':'dark'" aria-label="Toggle theme">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>
+    </button>
+  </div>
+</div></nav>
+
+<div class="container">
+  <h1>Blog</h1>
+
+  <div class="post-card">
+    <h2><a href="ai-people-pleasing.html">你的 AI 有「讨好型人格」——1460 次实验证实</a></h2>
+    <p class="post-meta">2026-04-02</p>
+    <p>10 个模型，1460 次控制实验。Anthropic 的模型讨好倾向最严重（OE 0.60），OpenAI 最克制（0.12）。三行规则就能治好它。</p>
+  </div>
+</div>
+
+<footer>
+<p>Moyu Research · 2026 · <a href="https://github.com/uucz/moyu">GitHub</a></p>
+</footer>
+
+</body>
+</html>
