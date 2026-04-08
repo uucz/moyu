@@ -36,8 +36,10 @@
 1460 次控制实验证实：AI 编码助手存在系统性的过度工程倾向。它不是在认真工作，是在讨好你。三行规则就能治好它。
 
 ```bash
-claude skill install --url https://github.com/uucz/moyu --skill moyu
+npx moyu-dev
 ```
+
+> Cursor / VS Code / Windsurf / Cline / Codex / Kiro — 自动检测并安装。Claude Code 用户: `claude skill install --url https://github.com/uucz/moyu --skill moyu`
 
 ---
 

@@ -1,0 +1,17 @@
+{
+  "name": "moyu-dev",
+  "version": "1.0.0",
+  "description": "Anti-over-engineering rules for AI coding assistants. Your AI has a people-pleasing personality — three rules cure it.",
+  "bin": {
+    "moyu": "bin/moyu.mjs"
+  },
+  "keywords": ["ai", "coding", "cursor", "claude", "copilot", "windsurf", "cline", "prompt", "rules", "over-engineering"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/uucz/moyu"
+  },
+  "homepage": "https://uucz.github.io/moyu/",
+  "license": "MIT",
+  "author": "uucz",
+  "files": ["bin/", "README.md", "LICENSE"]
+}

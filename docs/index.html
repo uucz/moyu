@@ -301,7 +301,7 @@ section{padding:80px 0}
       <span data-lang="en">Moyu is an anti-over-engineering prompt strategy that keeps AI coding assistants from doing more than they should.</span>
     </p>
     <div class="install-box fade-in" id="install-cmd" title="Click to copy">
-      <span>claude skill install --url https://github.com/uucz/moyu --skill moyu</span>
+      <span>npx moyu-dev</span>
       <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
     </div>
     <div class="stats-grid fade-in" style="animation-delay:.1s">
@@ -871,7 +871,7 @@ section{padding:80px 0}
   const installCmd = document.getElementById('install-cmd');
   const toast = document.getElementById('toast');
   installCmd.addEventListener('click', function(){
-    navigator.clipboard.writeText('claude skill install --url https://github.com/uucz/moyu --skill moyu').then(function(){
+    navigator.clipboard.writeText('npx moyu-dev').then(function(){
       var lang = html.getAttribute('lang');
       toast.textContent = lang === 'zh-CN' ? 'Copied!' : 'Copied!';
       toast.classList.add('show');

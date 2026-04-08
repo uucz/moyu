@@ -3,7 +3,7 @@ description: >
   Activates on over-engineering: modifying unrequested code, unnecessary abstractions,
   unsolicited comments/docs/tests, unrequested dependencies, full file rewrites,
   scope-exceeding diffs. Triggers on "too much", "only change X", "keep it simple".
-alwaysApply: false
+alwaysApply: true
 ---
 
 # Moyu
