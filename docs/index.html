@@ -301,29 +301,29 @@ section{padding:80px 0}
       <span data-lang="en">Moyu is an anti-over-engineering prompt strategy that keeps AI coding assistants from doing more than they should.</span>
     </p>
     <div class="install-box fade-in" id="install-cmd" title="Click to copy">
-      <span>npx moyu@latest init</span>
+      <span>claude skill install --url https://github.com/uucz/moyu --skill moyu</span>
       <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
     </div>
     <div class="stats-grid fade-in" style="animation-delay:.1s">
       <div class="stat-card">
-        <span class="stat-value" id="kn-experiments">1420</span>
+        <span class="stat-value">1460</span>
         <span class="stat-label" data-lang="zh">实验次数</span>
         <span class="stat-label" data-lang="en">Experiments</span>
       </div>
       <div class="stat-card">
-        <span class="stat-value" id="kn-models">8</span>
+        <span class="stat-value">10</span>
         <span class="stat-label" data-lang="zh">LLM 模型</span>
         <span class="stat-label" data-lang="en">LLM Models</span>
       </div>
       <div class="stat-card">
-        <span class="stat-value" id="kn-loc-reduction">&mdash;%</span>
-        <span class="stat-label" data-lang="zh">代码量减少</span>
-        <span class="stat-label" data-lang="en">LOC Reduction</span>
+        <span class="stat-value" id="kn-oe-reduction">&mdash;%</span>
+        <span class="stat-label" data-lang="zh">OE 信号减少</span>
+        <span class="stat-label" data-lang="en">OE Signal Reduction</span>
       </div>
       <div class="stat-card">
         <span class="stat-value" id="kn-correctness">&mdash;%</span>
-        <span class="stat-label" data-lang="zh">正确率</span>
-        <span class="stat-label" data-lang="en">Correctness</span>
+        <span class="stat-label" data-lang="zh">语法正确率</span>
+        <span class="stat-label" data-lang="en">Syntax Correctness</span>
       </div>
     </div>
   </div>
@@ -394,16 +394,10 @@ section{padding:80px 0}
         <div class="code-panel-header">
           <span data-lang="zh">使用 Moyu</span>
           <span data-lang="en">With Moyu</span>
-          <span class="line-count">8 lines</span>
+          <span class="line-count">2 lines</span>
         </div>
         <pre><code>def add(a, b):
-    """Add two numbers."""
-    return a + b
-
-
-def test_add():
-    assert add(1, 2) == 3
-    assert add(-1, 1) == 0</code></pre>
+    return a + b</code></pre>
       </div>
     </div>
   </div>
@@ -514,8 +508,8 @@ def test_add():
       <span data-lang="en">Methodology</span>
     </h2>
     <p class="section-sub fade-in">
-      <span data-lang="zh">8 个模型 x 5 种条件 x 12 个场景 x 3 次试验 = 1420 次实验</span>
-      <span data-lang="en">8 Models x 5 Conditions x 12 Scenarios x 3 Trials = 1420 Experiments</span>
+      <span data-lang="zh">10 个模型 x 5 种条件 x 12 个场景 x 3 次试验 = 1460 次有效实验</span>
+      <span data-lang="en">10 Models x 5 Conditions x 12 Scenarios x 3 Trials = 1460 Valid Experiments</span>
     </p>
 
     <details class="method-details fade-in">
@@ -588,13 +582,15 @@ def test_add():
           <thead><tr><th data-lang="zh">模型</th><th data-lang="en">Model</th><th data-lang="zh">提供商</th><th data-lang="en">Provider</th></tr></thead>
           <tbody>
             <tr><td>Claude Sonnet 4</td><td>Anthropic</td></tr>
+            <tr><td>Claude Sonnet 4.5</td><td>Anthropic</td></tr>
+            <tr><td>Claude Haiku 4.5</td><td>Anthropic</td></tr>
             <tr><td>GPT-5.4</td><td>OpenAI</td></tr>
             <tr><td>GPT-5 Codex</td><td>OpenAI</td></tr>
             <tr><td>Grok 4.1 Fast</td><td>xAI</td></tr>
             <tr><td>Grok 4.20 Beta</td><td>xAI</td></tr>
-            <tr><td>LongCat Flash Chat</td><td>LongCat</td></tr>
-            <tr><td>LongCat Flash Thinking</td><td>LongCat</td></tr>
-            <tr><td>LongCat Flash Lite</td><td>LongCat</td></tr>
+            <tr><td>LongCat Flash Chat</td><td>DeepSeek</td></tr>
+            <tr><td>LongCat Flash Thinking</td><td>DeepSeek</td></tr>
+            <tr><td>LongCat Flash Lite</td><td>DeepSeek</td></tr>
           </tbody>
         </table>
       </div>
@@ -649,8 +645,8 @@ def test_add():
       <span data-lang="en">Results</span>
     </h2>
     <p class="section-sub fade-in">
-      <span data-lang="zh">Moyu-Standard 将 A 类场景代码行数减少约 <strong id="stat-loc-reduction-zh">&mdash;%</strong>，过度工程信号下降 <strong id="stat-oe-reduction-zh">&mdash;%</strong>，同时保持 <strong id="stat-correctness-zh">&mdash;%</strong> 功能正确率。</span>
-      <span data-lang="en">Moyu-Standard reduced A-type scenario LOC by ~<strong id="stat-loc-reduction-en">&mdash;%</strong>, OE signals down <strong id="stat-oe-reduction-en">&mdash;%</strong>, while maintaining <strong id="stat-correctness-en">&mdash;%</strong> correctness.</span>
+      <span data-lang="zh">Moyu-Standard 将过度工程信号减少 <strong id="stat-oe-reduction-zh">&mdash;%</strong>，同时保持 <strong id="stat-correctness-zh">&mdash;%</strong> 语法正确率。对讨好倾向最重的模型（Haiku 4.5）效果最显著。</span>
+      <span data-lang="en">Moyu-Standard reduced OE signals by <strong id="stat-oe-reduction-en">&mdash;%</strong>, while maintaining <strong id="stat-correctness-en">&mdash;%</strong> syntax correctness. Most effective on models with strongest people-pleasing tendency (Haiku 4.5).</span>
     </p>
 
     <div class="charts-grid">
@@ -705,16 +701,16 @@ def test_add():
         <span data-lang="en">"Be Concise" vs Moyu</span>
       </h3>
       <p>
-        <span data-lang="zh">简单的 "请写简洁" 提示确实能减少代码量，但效果远不如 Moyu。Baseline-Concise 条件平均减少 LOC 约 15-20%，而 Moyu-Standard 达到了更显著的减少。更关键的是，"简洁" 提示主要减少了注释和文档，而非过度工程行为本身。</span>
-        <span data-lang="en">A simple "be concise" prompt does reduce code volume, but far less effectively than Moyu. The Baseline-Concise condition reduced LOC by roughly 15-20%, while Moyu-Standard achieved significantly more. Crucially, the "concise" prompt mainly reduced comments and documentation, not the over-engineering behavior itself.</span>
+        <span data-lang="zh">简单的 "请写简洁" 提示和 Moyu 在汇总 LOC 上效果相似（差异无统计显著性，p>0.25）。但 Moyu 的价值在于结构性改善——它减少的是过度工程信号（多余的 docstring、try/except、isinstance 检查），而非仅仅缩短代码。对特定模型（如 Haiku 4.5），Moyu 的 diff 缩减达到 49%。</span>
+        <span data-lang="en">A simple "be concise" prompt and Moyu show similar aggregate LOC reduction (difference not statistically significant, p>0.25). But Moyu's value is structural — it reduces over-engineering signals (unnecessary docstrings, try/except, isinstance checks), not just code length. For specific models (e.g. Haiku 4.5), Moyu achieved 49% diff reduction.</span>
       </p>
       <h3>
         <span data-lang="zh">Lite vs Standard vs Strict</span>
         <span data-lang="en">Lite vs Standard vs Strict</span>
       </h3>
       <p>
-        <span data-lang="zh">Moyu-Lite 提供了基础的过度工程抑制；Standard 在 LOC 减少和正确性之间取得了最佳平衡；Strict 进一步压缩代码，但在复杂场景 (C 类) 中偶尔出现功能遗漏。</span>
-        <span data-lang="en">Moyu-Lite provides basic over-engineering suppression; Standard strikes the best balance between LOC reduction and correctness; Strict compresses further but occasionally misses functionality in complex (Type C) scenarios.</span>
+        <span data-lang="zh">Moyu-Lite 的 diff 缩减效果与 Standard 相当，适合小模型（大规则集反而是信息过载）。Standard 在 OE 信号消除上表现最稳定。Strict 对已有边界感的模型无额外增益。</span>
+        <span data-lang="en">Moyu-Lite achieves comparable diff reduction to Standard — ideal for smaller models (large rulesets cause information overload). Standard is most consistent at eliminating OE signals. Strict shows no additional benefit for models that already have good boundaries.</span>
       </p>
     </div>
 
@@ -746,12 +742,12 @@ def test_add():
           <span data-lang="en">LLMs exhibit systematic over-engineering tendencies when unconstrained, especially pronounced in simple tasks</span>
         </li>
         <li>
-          <span data-lang="zh">Moyu-Standard 在所有模型和场景类型上都实现了显著的 LOC 减少，同时保持或提高了正确率</span>
-          <span data-lang="en">Moyu-Standard achieved significant LOC reduction across all models and scenario types while maintaining or improving correctness</span>
+          <span data-lang="zh">Moyu 的汇总 LOC 减少不具统计显著性（p=0.25），但在特定高讨好模型上效果显著——Haiku 4.5 的 diff 缩减 49%，OE 信号消除 100%</span>
+          <span data-lang="en">Moyu's aggregate LOC reduction is not statistically significant (p=0.25), but the effect is pronounced on specific high-pleasing models — Haiku 4.5 saw 49% diff reduction and 100% OE signal elimination</span>
         </li>
         <li>
-          <span data-lang="zh">简单的 "简洁" 提示不足以解决过度工程问题，结构化策略是必要的</span>
-          <span data-lang="en">Simple "concise" prompts are insufficient for addressing over-engineering; structured strategies are necessary</span>
+          <span data-lang="zh">简单的 "简洁" 提示在 diff 层面效果与 Moyu 相当，但 Moyu 在结构层面（AST 节点、OE 信号分解）更优</span>
+          <span data-lang="en">Simple "concise" prompts match Moyu at the diff level, but Moyu outperforms at the structural level (AST nodes, OE signal decomposition)</span>
         </li>
         <li>
           <span data-lang="zh">不同模型对 Moyu 策略的响应程度存在差异，提示了模型间过度工程行为的差异</span>
@@ -820,7 +816,7 @@ def test_add():
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <!-- Benchmark data (optional) -->
-<script src="../benchmark/results/chart_data.js" onerror=""></script>
+<script src="chart_data.js" onerror=""></script>
 
 <script>
 (function(){
@@ -875,7 +871,7 @@ def test_add():
   const installCmd = document.getElementById('install-cmd');
   const toast = document.getElementById('toast');
   installCmd.addEventListener('click', function(){
-    navigator.clipboard.writeText('npx moyu@latest init').then(function(){
+    navigator.clipboard.writeText('claude skill install --url https://github.com/uucz/moyu --skill moyu').then(function(){
       var lang = html.getAttribute('lang');
       toast.textContent = lang === 'zh-CN' ? 'Copied!' : 'Copied!';
       toast.classList.add('show');
@@ -933,8 +929,8 @@ def test_add():
   };
   var CONDITIONS = ['Control','Baseline-Concise','Moyu-Lite','Moyu-Standard','Moyu-Strict'];
   var CONDITION_COLORS = [CHART_COLORS.control, CHART_COLORS['baseline-concise'], CHART_COLORS['moyu-lite'], CHART_COLORS['moyu-standard'], CHART_COLORS['moyu-strict']];
-  var MODELS = ['Claude Sonnet 4','GPT-5.4','GPT-5 Codex','Grok 4.1 Fast','Grok 4.20 Beta','LongCat Flash Chat','LongCat Flash Thinking','LongCat Flash Lite'];
-  var MODEL_KEYS = ['sonnet-4','gpt-4o','gemini-2.5-pro'];
+  var MODELS = ['Claude Sonnet 4','Claude Haiku 4.5','LongCat Flash Lite'];
+  var MODEL_KEYS = ['sonnet-4','haiku-4.5','longcat-flash-lite'];
   var MODEL_COLORS = ['#d97757','#6a9bcc','#788c5d'];
 
   /* Placeholder data (used when chart_data.js is not available) */
@@ -1193,23 +1189,13 @@ def test_add():
 
   function updateKeyNumbers(data){
     if(!data) return;
-    /* LOC reduction: compare control (idx 0) vs moyu-standard (idx 3) */
-    if(data.locByCondition && data.locByCondition.length >= 4){
-      var controlLoc = data.locByCondition[0];
-      var standardLoc = data.locByCondition[3];
-      if(controlLoc > 0){
-        var locPct = Math.round((1 - standardLoc / controlLoc) * 100);
-        var ids = ['kn-loc-reduction','stat-loc-reduction-zh','stat-loc-reduction-en'];
-        ids.forEach(function(id){ var el=document.getElementById(id); if(el) el.textContent=locPct+'%'; });
-      }
-    }
     /* Correctness: moyu-standard syntax rate (idx 3) */
     if(data.correctness && data.correctness.syntax && data.correctness.syntax.length >= 4){
       var corrVal = data.correctness.syntax[3];
       var corrIds = ['kn-correctness','stat-correctness-zh','stat-correctness-en'];
       corrIds.forEach(function(id){ var el=document.getElementById(id); if(el) el.textContent=corrVal.toFixed(1)+'%'; });
     }
-    /* OE reduction */
+    /* OE reduction: compare control (idx 0) vs moyu-standard (idx 3) */
     if(data.oeSignals && data.oeSignals.docstrings_delta){
       var sigKeys = ['docstrings_delta','try_except_delta','raise_delta','isinstance_delta','new_imports','new_files'];
       var controlOE = 0, standardOE = 0;
@@ -1221,7 +1207,7 @@ def test_add():
       });
       if(controlOE > 0){
         var oePct = Math.round((1 - standardOE / controlOE) * 100);
-        ['stat-oe-reduction-zh','stat-oe-reduction-en'].forEach(function(id){ var el=document.getElementById(id); if(el) el.textContent=oePct+'%'; });
+        ['kn-oe-reduction','stat-oe-reduction-zh','stat-oe-reduction-en'].forEach(function(id){ var el=document.getElementById(id); if(el) el.textContent=oePct+'%'; });
       }
     }
   }
