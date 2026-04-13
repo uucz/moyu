@@ -28,14 +28,16 @@ CHARTS_DIR = RESULTS_DIR / "charts"
 
 # Brand colors
 COLORS = {
+    "neutral": "#c4c2b9",
     "control": "#9c9a91",
     "baseline-concise": "#6a9bcc",
     "moyu-lite": "#b0aea5",
     "moyu-standard": "#d97757",
     "moyu-strict": "#141413",
 }
-CONDITION_ORDER = ["control", "baseline-concise", "moyu-lite", "moyu-standard", "moyu-strict"]
+CONDITION_ORDER = ["neutral", "control", "baseline-concise", "moyu-lite", "moyu-standard", "moyu-strict"]
 CONDITION_LABELS = {
+    "neutral": "Neutral\n(No Prompt)",
     "control": "Control",
     "baseline-concise": "Baseline\n(Concise)",
     "moyu-lite": "Moyu\nLite",
@@ -102,6 +104,8 @@ def pairwise_comparisons(df, metric, scenarios=None):
         data = data[data["scenario"].isin(scenarios)]
 
     pairs = [
+        ("neutral", "control"),
+        ("neutral", "moyu-standard"),
         ("control", "moyu-standard"),
         ("baseline-concise", "moyu-standard"),
         ("moyu-lite", "moyu-standard"),
@@ -180,7 +184,7 @@ def chart_grouped_bar(df, metric, title, ylabel, filename, scenarios=None):
     n_models = len(models)
     n_conds = len(CONDITION_ORDER)
     x = np.arange(n_models)
-    width = 0.15
+    width = 0.13
 
     fig, ax = plt.subplots(figsize=(10, 5))
 

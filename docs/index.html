@@ -13,6 +13,7 @@
 <meta name="twitter:title" content="Moyu - Anti-Over-Engineering for AI Coding">
 <meta name="twitter:description" content="Your AI worked overtime. So did you. Moyu keeps AI from overdoing it.">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
@@ -25,83 +26,8 @@
 }
 </script>
 <style>
-/* ===== CSS Variables ===== */
-:root {
-  --brand-dark: #141413;
-  --brand-light: #faf9f5;
-  --brand-orange: #d97757;
-  --brand-blue: #6a9bcc;
-  --brand-green: #788c5d;
-  --surface-0: #faf9f5;
-  --surface-1: #ffffff;
-  --surface-2: #f2f1ec;
-  --text-primary: #141413;
-  --text-secondary: #5c5b56;
-  --text-tertiary: #9c9a91;
-  --border-color: rgba(20,20,19,.1);
-  --font-heading: 'Poppins', 'PingFang SC', sans-serif;
-  --font-body: 'Lora', 'Noto Serif SC', Georgia, serif;
-  --radius-sm: 6px;
-  --radius: 10px;
-  --radius-lg: 14px;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,.06);
-  --shadow-md: 0 4px 12px rgba(0,0,0,.07);
-  --code-bg: #1e1e1e;
-  --code-text: #d4d4d4;
-}
-
-@media(prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --surface-0: #141413;
-    --surface-1: #1a1a19;
-    --surface-2: #232322;
-    --text-primary: #faf9f5;
-    --text-secondary: #b0aea5;
-    --text-tertiary: #7a7870;
-    --border-color: rgba(250,249,245,.08);
-  }
-}
-html[data-theme="dark"]{
-  --surface-0: #141413;
-  --surface-1: #1a1a19;
-  --surface-2: #232322;
-  --text-primary: #faf9f5;
-  --text-secondary: #b0aea5;
-  --text-tertiary: #7a7870;
-  --border-color: rgba(250,249,245,.08);
-}
-
-/* ===== Reset ===== */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;font-size:16px}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto} .fade-in{opacity:1!important;transform:none!important;transition:none!important}}
-body{font-family:var(--font-body);background:var(--surface-0);color:var(--text-primary);line-height:1.7;-webkit-font-smoothing:antialiased}
-h1,h2,h3,h4,h5,h6{font-family:var(--font-heading);line-height:1.3;font-weight:700}
-a{color:var(--brand-orange);text-decoration:none}
-a:hover{text-decoration:underline}
-img{max-width:100%;display:block}
-
-/* ===== Bilingual ===== */
-html[lang="zh-CN"] [data-lang="en"],
-html[lang="en"] [data-lang="zh"]{display:none!important}
-html[lang="zh-CN"] span[data-lang="zh"],
-html[lang="en"] span[data-lang="en"]{display:inline!important}
-html[lang="zh-CN"] li[data-lang="zh"],
-html[lang="en"] li[data-lang="en"]{display:list-item!important}
-
-/* ===== Nav ===== */
-.nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:rgba(250,249,245,.8);border-bottom:1px solid var(--border-color);transition:background .2s}
-html[data-theme="dark"] .nav{background:rgba(20,20,19,.8)}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .nav{background:rgba(20,20,19,.8)}}
-.nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between}
-.nav-logo{display:flex;align-items:center;gap:8px;font-family:var(--font-heading);font-weight:700;font-size:1.1rem;color:var(--text-primary)}
-.nav-logo svg{width:28px;height:28px}
-.nav-links{display:flex;align-items:center;gap:20px;font-family:var(--font-heading);font-size:.85rem}
-.nav-links a{color:var(--text-secondary);transition:color .15s}
-.nav-links a:hover{color:var(--brand-orange);text-decoration:none}
-.nav-btn{background:none;border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:4px 10px;cursor:pointer;color:var(--text-secondary);font-family:var(--font-heading);font-size:.8rem;transition:all .15s;display:flex;align-items:center;gap:4px}
-.nav-btn:hover{border-color:var(--brand-orange);color:var(--brand-orange)}
-.nav-btn svg{width:16px;height:16px}
+/* ===== Page-specific: reduced motion for animations ===== */
+@media(prefers-reduced-motion:reduce){.fade-in{opacity:1!important;transform:none!important;transition:none!important}}
 
 /* ===== Container ===== */
 .container{max-width:1100px;margin:0 auto;padding:0 24px}
@@ -195,11 +121,6 @@ section{padding:80px 0}
 .ref-list li{padding:8px 0;border-bottom:1px solid var(--border-color);font-size:.88rem;color:var(--text-secondary);line-height:1.5}
 .ref-list li span.ref-num{font-family:var(--font-heading);font-weight:600;color:var(--brand-orange);margin-right:8px}
 
-/* ===== Footer ===== */
-.footer{background:var(--brand-dark);color:rgba(250,249,245,.7);padding:40px 0;text-align:center;font-size:.85rem}
-.footer a{color:var(--brand-orange)}
-.footer-inner{display:flex;flex-direction:column;align-items:center;gap:12px}
-
 /* ===== Fade-in animation ===== */
 .fade-in{opacity:0;transform:translateY(16px);transition:opacity .3s ease,transform .3s ease}
 .fade-in.visible{opacity:1;transform:translateY(0)}
@@ -210,7 +131,6 @@ section{padding:80px 0}
   .chart-container{height:300px}
 }
 @media(max-width:768px){
-  .nav-links a.nav-section-link{display:none}
   section{padding:56px 0}
   .hero{padding:72px 0 56px}
   .rules-grid{grid-template-columns:1fr}
@@ -276,7 +196,9 @@ section{padding:80px 0}
       <a href="#rules" class="nav-section-link" data-lang="en">Rules</a>
       <a href="#results" class="nav-section-link" data-lang="zh">结果</a>
       <a href="#results" class="nav-section-link" data-lang="en">Results</a>
-      <a href="blog/ai-people-pleasing.html">Blog</a>
+      <a href="install/">Install</a>
+      <a href="linter/">Linter</a>
+      <a href="blog/">Blog</a>
       <button class="nav-btn" id="theme-toggle" aria-label="Toggle theme">
         <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>
         <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>

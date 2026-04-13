@@ -6,29 +6,8 @@
 <title>Blog | Moyu Research</title>
 <meta name="description" content="Moyu Research blog — AI coding behavior experiments and findings.">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared.css">
 <style>
-:root{--brand-dark:#141413;--brand-light:#faf9f5;--brand-orange:#d97757;--brand-blue:#6a9bcc;--brand-green:#788c5d;--surface-0:#faf9f5;--surface-1:#fff;--surface-2:#f2f1ec;--text-primary:#141413;--text-secondary:#5c5b56;--text-tertiary:#9c9a91;--border-color:rgba(20,20,19,.1);--font-heading:'Poppins','PingFang SC',sans-serif;--font-body:'Lora','Noto Serif SC',Georgia,serif;--radius-sm:6px;--radius:10px;--radius-lg:14px;--shadow-sm:0 1px 3px rgba(0,0,0,.06);--shadow-md:0 4px 12px rgba(0,0,0,.07);--code-bg:#1e1e1e;--code-text:#d4d4d4}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--surface-0:#141413;--surface-1:#1a1a19;--surface-2:#232322;--text-primary:#faf9f5;--text-secondary:#b0aea5;--text-tertiary:#7a7870;--border-color:rgba(250,249,245,.08)}}
-html[data-theme="dark"]{--surface-0:#141413;--surface-1:#1a1a19;--surface-2:#232322;--text-primary:#faf9f5;--text-secondary:#b0aea5;--text-tertiary:#7a7870;--border-color:rgba(250,249,245,.08)}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;font-size:16px}
-body{font-family:var(--font-body);background:var(--surface-0);color:var(--text-primary);line-height:1.7;-webkit-font-smoothing:antialiased}
-h1,h2,h3{font-family:var(--font-heading);line-height:1.3;font-weight:700}
-a{color:var(--brand-orange);text-decoration:none}a:hover{text-decoration:underline}
-
-.nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:rgba(250,249,245,.8);border-bottom:1px solid var(--border-color);transition:background .2s}
-html[data-theme="dark"] .nav{background:rgba(20,20,19,.8)}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .nav{background:rgba(20,20,19,.8)}}
-.nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between}
-.nav-logo{display:flex;align-items:center;gap:8px;font-family:var(--font-heading);font-weight:700;font-size:1.1rem;color:var(--text-primary)}
-.nav-logo svg{width:28px;height:28px}
-.nav-links{display:flex;align-items:center;gap:20px;font-family:var(--font-heading);font-size:.85rem}
-.nav-links a{color:var(--text-secondary);transition:color .15s}
-.nav-links a:hover{color:var(--brand-orange);text-decoration:none}
-.nav-btn{background:none;border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:4px 10px;cursor:pointer;color:var(--text-secondary);font-family:var(--font-heading);font-size:.8rem;transition:all .15s;display:flex;align-items:center;gap:4px}
-.nav-btn:hover{border-color:var(--brand-orange);color:var(--brand-orange)}
-.nav-btn svg{width:16px;height:16px}
-
 .container{max-width:760px;margin:0 auto;padding:80px 24px}
 .container h1{font-size:2rem;margin-bottom:48px}
 
@@ -40,7 +19,6 @@ html[data-theme="dark"] .nav{background:rgba(20,20,19,.8)}
 .post-card .post-meta{color:var(--text-tertiary);font-size:.85rem;margin-bottom:12px}
 .post-card p{color:var(--text-secondary);font-size:.95rem;line-height:1.6}
 
-footer{text-align:center;padding:24px;color:var(--text-tertiary);font-size:.8rem;border-top:1px solid var(--border-color);margin-top:80px}
 </style>
 </head>
 <body>
@@ -68,8 +46,9 @@ footer{text-align:center;padding:24px;color:var(--text-tertiary);font-size:.8rem
   </a>
   <div class="nav-links">
     <a href="../">Research</a>
-    <a href="./" style="color:var(--brand-orange)">Blog</a>
-    <a href="https://github.com/uucz/moyu">GitHub</a>
+    <a href="../install/">Install</a>
+    <a href="../linter/">Linter</a>
+    <a href="./" class="active">Blog</a>
     <button class="nav-btn" onclick="let t=document.documentElement;t.dataset.theme=t.dataset.theme==='dark'?'light':'dark'" aria-label="Toggle theme">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>
     </button>
@@ -86,9 +65,9 @@ footer{text-align:center;padding:24px;color:var(--text-tertiary);font-size:.8rem
   </div>
 </div>
 
-<footer>
-<p>Moyu Research · 2026 · <a href="https://github.com/uucz/moyu">GitHub</a></p>
-</footer>
+<footer class="footer"><div class="footer-inner">
+<p>Moyu &middot; 2026 &middot; <a href="https://github.com/uucz/moyu">GitHub</a></p>
+</div></footer>
 
 </body>
 </html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Install | Moyu</title>
+<meta name="description" content="Install Moyu anti-over-engineering rules for your AI coding assistant.">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared.css">
+<style>
+.container{max-width:900px;margin:0 auto;padding:80px 24px}
+.page-title{font-size:2.2rem;margin-bottom:12px}
+.page-sub{color:var(--text-secondary);font-size:1.05rem;margin-bottom:48px;line-height:1.6}
+
+.install-box{display:inline-flex;align-items:center;gap:12px;background:var(--code-bg);color:#e0e0e0;padding:14px 22px;border-radius:var(--radius);font-family:'Fira Code','Courier New',monospace;font-size:1rem;cursor:pointer;transition:box-shadow .2s;box-shadow:var(--shadow-sm);margin-bottom:40px}
+.install-box:hover{box-shadow:var(--shadow-md)}
+.install-box .copy-icon{width:18px;height:18px;opacity:.5;transition:opacity .15s;flex-shrink:0}
+.install-box:hover .copy-icon{opacity:1}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--brand-dark);color:var(--brand-light);padding:10px 24px;border-radius:var(--radius);font-family:var(--font-heading);font-size:.85rem;opacity:0;transition:all .25s;pointer-events:none;z-index:200}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.section-title{font-size:1.4rem;margin:48px 0 16px;padding-top:24px;border-top:1px solid var(--border-color)}
+.section-title:first-of-type{border-top:none;margin-top:0}
+
+.platform-table{width:100%;border-collapse:collapse;font-size:.9rem;margin:16px 0 32px}
+.platform-table th,.platform-table td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--border-color)}
+.platform-table th{font-family:var(--font-heading);font-weight:600;background:var(--surface-2)}
+.platform-table tbody tr:hover{background:var(--surface-2)}
+.platform-table code{background:var(--surface-2);padding:2px 6px;border-radius:4px;font-size:.82rem}
+
+.flag-list{list-style:none;padding:0;margin:16px 0 32px}
+.flag-list li{padding:10px 0;border-bottom:1px solid var(--border-color);display:flex;gap:16px}
+.flag-list code{background:var(--surface-2);padding:3px 8px;border-radius:4px;font-family:'Fira Code','Courier New',monospace;font-size:.85rem;flex-shrink:0}
+.flag-list .flag-desc{color:var(--text-secondary);font-size:.9rem}
+
+.code-block{background:var(--code-bg);color:var(--code-text);padding:20px;border-radius:var(--radius);font-family:'Fira Code','Courier New',monospace;font-size:.85rem;line-height:1.7;overflow-x:auto;margin:16px 0 32px}
+
+@media(max-width:768px){
+  .container{padding:60px 16px}
+  .page-title{font-size:1.7rem}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="nav-inner">
+  <a href="../" class="nav-logo">
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g fill="#c96a47">
+        <rect x="0" y="9" width="4" height="4"/><rect x="0" y="13" width="4" height="4"/>
+        <rect x="0" y="17" width="4" height="4"/><rect x="0" y="21" width="4" height="4"/>
+        <rect x="4" y="11" width="4" height="4"/><rect x="4" y="19" width="4" height="4"/>
+      </g>
+      <g fill="var(--brand-orange)">
+        <rect x="8" y="9" width="4" height="4"/><rect x="12" y="9" width="4" height="4"/><rect x="16" y="9" width="4" height="4"/>
+        <rect x="8" y="13" width="4" height="4"/><rect x="12" y="13" width="4" height="4"/><rect x="16" y="13" width="4" height="4"/>
+        <rect x="20" y="13" width="4" height="4"/><rect x="24" y="13" width="4" height="4"/>
+        <rect x="8" y="17" width="4" height="4"/><rect x="12" y="17" width="4" height="4"/><rect x="16" y="17" width="4" height="4"/>
+        <rect x="20" y="17" width="4" height="4"/><rect x="24" y="17" width="4" height="4"/>
+        <rect x="8" y="21" width="4" height="4"/><rect x="12" y="21" width="4" height="4"/><rect x="16" y="21" width="4" height="4"/>
+      </g>
+      <rect x="20" y="13" width="4" height="4" fill="#fff"/>
+      <rect x="22" y="13" width="2" height="2" fill="#141413"/>
+    </svg>
+    <span>Moyu</span>
+  </a>
+  <div class="nav-links">
+    <a href="../">Research</a>
+    <a href="./" class="active">Install</a>
+    <a href="../linter/">Linter</a>
+    <a href="../blog/">Blog</a>
+    <button class="nav-btn" onclick="let t=document.documentElement;t.dataset.theme=t.dataset.theme==='dark'?'light':'dark'" aria-label="Toggle theme">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>
+    </button>
+    <button class="nav-btn" id="lang-toggle">
+      <span data-lang="zh">EN</span>
+      <span data-lang="en">中</span>
+    </button>
+  </div>
+</div></nav>
+
+<div class="container">
+
+<h1 class="page-title">
+  <span data-lang="zh">安装 Moyu</span>
+  <span data-lang="en">Install Moyu</span>
+</h1>
+<p class="page-sub">
+  <span data-lang="zh">一条命令，为你的 AI 编码助手安装反过度工程规则。</span>
+  <span data-lang="en">One command to install anti-over-engineering rules for your AI coding assistant.</span>
+</p>
+
+<!-- Quick install -->
+<div class="install-box" onclick="navigator.clipboard.writeText('npx moyu-dev');document.getElementById('toast').classList.add('show');setTimeout(()=>document.getElementById('toast').classList.remove('show'),1500)">
+  <span>$ npx moyu-dev</span>
+  <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+</div>
+<div class="toast" id="toast">Copied!</div>
+
+<!-- How it works -->
+<h2 class="section-title">
+  <span data-lang="zh">工作原理</span>
+  <span data-lang="en">How It Works</span>
+</h2>
+<p style="color:var(--text-secondary);margin-bottom:16px;font-size:.95rem">
+  <span data-lang="zh">CLI 自动检测当前目录下的 AI 工具，从 GitHub 获取对应的规则文件并安装。零依赖。</span>
+  <span data-lang="en">The CLI auto-detects AI tools in your project directory, fetches the matching rule files from GitHub, and installs them. Zero dependencies.</span>
+</p>
+
+<!-- Platforms table -->
+<h2 class="section-title">
+  <span data-lang="zh">支持的平台</span>
+  <span data-lang="en">Supported Platforms</span>
+</h2>
+
+<table class="platform-table">
+<thead>
+  <tr>
+    <th><span data-lang="zh">平台</span><span data-lang="en">Platform</span></th>
+    <th><span data-lang="zh">检测标记</span><span data-lang="en">Detect Marker</span></th>
+    <th><span data-lang="zh">安装路径</span><span data-lang="en">Install Path</span></th>
+  </tr>
+</thead>
+<tbody>
+  <tr><td>Cursor</td><td><code>.cursor/</code></td><td><code>.cursor/rules/moyu.mdc</code></td></tr>
+  <tr><td>VS Code / Copilot</td><td><code>.vscode/</code></td><td><code>.github/copilot-instructions.md</code></td></tr>
+  <tr><td>Windsurf</td><td><code>.windsurf/</code></td><td><code>.windsurf/rules/moyu.md</code></td></tr>
+  <tr><td>Cline</td><td><code>.cline/</code></td><td><code>.cline/rules/moyu.md</code></td></tr>
+  <tr><td>Codex</td><td><code>AGENTS.md</code></td><td><code>AGENTS.md</code></td></tr>
+  <tr><td>Kiro</td><td><code>.kiro/</code></td><td><code>.kiro/steering/moyu.md</code></td></tr>
+  <tr><td>Aider</td><td><code>.aider/</code></td><td><code>.aider/CONVENTIONS.md</code></td></tr>
+  <tr><td>Continue</td><td><code>.continue/</code></td><td><code>.continue/rules/moyu.md</code></td></tr>
+</tbody>
+</table>
+
+<!-- CLI flags -->
+<h2 class="section-title">
+  <span data-lang="zh">CLI 选项</span>
+  <span data-lang="en">CLI Options</span>
+</h2>
+
+<ul class="flag-list">
+  <li><code>--all</code><span class="flag-desc"><span data-lang="zh">为所有支持的工具安装（不仅是检测到的）</span><span data-lang="en">Install for all supported tools, not just detected ones</span></span></li>
+  <li><code>--lang en</code><span class="flag-desc"><span data-lang="zh">安装英文版规则（默认中文）</span><span data-lang="en">Install English variants (default: Chinese)</span></span></li>
+  <li><code>--list</code><span class="flag-desc"><span data-lang="zh">列出所有支持的平台</span><span data-lang="en">Show all supported platforms</span></span></li>
+  <li><code>--claude</code><span class="flag-desc"><span data-lang="zh">显示 Claude Code 安装命令</span><span data-lang="en">Show Claude Code install command</span></span></li>
+</ul>
+
+<!-- Claude Code -->
+<h2 class="section-title">Claude Code</h2>
+<p style="color:var(--text-secondary);margin-bottom:16px;font-size:.95rem">
+  <span data-lang="zh">Claude Code 使用 skill 安装模式：</span>
+  <span data-lang="en">Claude Code uses skill-based installation:</span>
+</p>
+<div class="code-block">claude skill install --url https://github.com/uucz/moyu --skill moyu</div>
+
+<p style="color:var(--text-secondary);font-size:.9rem">
+  <span data-lang="zh">可选变体：<code>moyu-lite</code>（3 条规则）、<code>moyu-strict</code>（团队强制模式）、<code>moyu-en</code>（英文）、<code>moyu-ja</code>（日文）</span>
+  <span data-lang="en">Variants: <code>moyu-lite</code> (3 rules), <code>moyu-strict</code> (team enforcement), <code>moyu-ja</code> (Japanese), <code>moyu-ko</code> (Korean), <code>moyu-fr</code> (French)</span>
+</p>
+
+<!-- Linter -->
+<h2 class="section-title">
+  <span data-lang="zh">Moyu Linter (GitHub Action)</span>
+  <span data-lang="en">Moyu Linter (GitHub Action)</span>
+</h2>
+<p style="color:var(--text-secondary);margin-bottom:16px;font-size:.95rem">
+  <span data-lang="zh">自动检测 PR 中的过度工程信号。<a href="../linter/">了解更多</a></span>
+  <span data-lang="en">Auto-detect over-engineering signals in pull requests. <a href="../linter/">Learn more</a></span>
+</p>
+<div class="code-block">- uses: uucz/moyu/linter@main
+  with:
+    github-token: ${{ secrets.GITHUB_TOKEN }}</div>
+
+</div>
+
+<footer class="footer"><div class="footer-inner">
+  <p>Moyu &middot; 2026 &middot; <a href="https://github.com/uucz/moyu">GitHub</a></p>
+</div></footer>
+
+<script>
+const langBtn=document.getElementById('lang-toggle');
+if(langBtn)langBtn.addEventListener('click',()=>{const h=document.documentElement;h.lang=h.lang==='zh-CN'?'en':'zh-CN'});
+</script>
+</body>
+</html>
