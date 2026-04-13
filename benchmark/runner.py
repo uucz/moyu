@@ -83,7 +83,7 @@ MODELS = {
     },
 }
 
-CONDITIONS = ["control", "baseline-concise", "moyu-lite", "moyu-standard", "moyu-strict"]
+CONDITIONS = ["neutral", "control", "baseline-concise", "moyu-lite", "moyu-standard", "moyu-strict"]
 SCENARIOS = [f"s{i}" for i in range(1, 13)]
 TRIALS = [1, 2, 3]
 TEMPERATURE = 0.7

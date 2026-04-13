@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Moyu Linter | Anti-Over-Engineering for PRs</title>
+<meta name="description" content="Moyu Linter: a GitHub Action that detects over-engineering signals in pull requests.">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared.css">
+<style>
+.container{max-width:900px;margin:0 auto;padding:80px 24px}
+.page-title{font-size:2.2rem;margin-bottom:12px}
+.page-sub{color:var(--text-secondary);font-size:1.05rem;margin-bottom:48px;line-height:1.6}
+
+.section-title{font-size:1.4rem;margin:48px 0 16px;padding-top:24px;border-top:1px solid var(--border-color)}
+.section-title:first-of-type{border-top:none;margin-top:0}
+
+.signal-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0 32px}
+.signal-card{background:var(--surface-1);border:1px solid var(--border-color);border-radius:var(--radius);padding:20px;transition:transform .2s,box-shadow .2s}
+.signal-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.signal-card h3{font-size:.95rem;margin-bottom:8px;color:var(--text-primary)}
+.signal-card p{font-size:.85rem;color:var(--text-secondary);line-height:1.5}
+
+.code-block{background:var(--code-bg);color:var(--code-text);padding:20px;border-radius:var(--radius);font-family:'Fira Code','Courier New',monospace;font-size:.85rem;line-height:1.7;overflow-x:auto;margin:16px 0 32px}
+
+.score-table{width:100%;border-collapse:collapse;font-size:.9rem;margin:16px 0 32px}
+.score-table th,.score-table td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--border-color)}
+.score-table th{font-family:var(--font-heading);font-weight:600;background:var(--surface-2)}
+.score-table tbody tr:hover{background:var(--surface-2)}
+
+.sample-report{background:var(--surface-1);border:1px solid var(--border-color);border-radius:var(--radius);padding:24px;margin:16px 0 32px;font-size:.9rem}
+.sample-report h3{font-size:1.1rem;margin-bottom:12px}
+.sample-report table{width:100%;border-collapse:collapse;margin:12px 0}
+.sample-report th,.sample-report td{padding:8px 12px;text-align:left;border-bottom:1px solid var(--border-color);font-size:.85rem}
+.sample-report th{font-weight:600}
+.sample-report blockquote{border-left:3px solid var(--brand-orange);padding:8px 16px;margin:12px 0;color:var(--text-secondary);font-size:.85rem}
+
+@media(max-width:768px){
+  .container{padding:60px 16px}
+  .page-title{font-size:1.7rem}
+  .signal-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="nav-inner">
+  <a href="../" class="nav-logo">
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g fill="#c96a47">
+        <rect x="0" y="9" width="4" height="4"/><rect x="0" y="13" width="4" height="4"/>
+        <rect x="0" y="17" width="4" height="4"/><rect x="0" y="21" width="4" height="4"/>
+        <rect x="4" y="11" width="4" height="4"/><rect x="4" y="19" width="4" height="4"/>
+      </g>
+      <g fill="var(--brand-orange)">
+        <rect x="8" y="9" width="4" height="4"/><rect x="12" y="9" width="4" height="4"/><rect x="16" y="9" width="4" height="4"/>
+        <rect x="8" y="13" width="4" height="4"/><rect x="12" y="13" width="4" height="4"/><rect x="16" y="13" width="4" height="4"/>
+        <rect x="20" y="13" width="4" height="4"/><rect x="24" y="13" width="4" height="4"/>
+        <rect x="8" y="17" width="4" height="4"/><rect x="12" y="17" width="4" height="4"/><rect x="16" y="17" width="4" height="4"/>
+        <rect x="20" y="17" width="4" height="4"/><rect x="24" y="17" width="4" height="4"/>
+        <rect x="8" y="21" width="4" height="4"/><rect x="12" y="21" width="4" height="4"/><rect x="16" y="21" width="4" height="4"/>
+      </g>
+      <rect x="20" y="13" width="4" height="4" fill="#fff"/>
+      <rect x="22" y="13" width="2" height="2" fill="#141413"/>
+    </svg>
+    <span>Moyu</span>
+  </a>
+  <div class="nav-links">
+    <a href="../">Research</a>
+    <a href="../install/">Install</a>
+    <a href="./" class="active">Linter</a>
+    <a href="../blog/">Blog</a>
+    <button class="nav-btn" onclick="let t=document.documentElement;t.dataset.theme=t.dataset.theme==='dark'?'light':'dark'" aria-label="Toggle theme">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>
+    </button>
+    <button class="nav-btn" id="lang-toggle">
+      <span data-lang="zh">EN</span>
+      <span data-lang="en">中</span>
+    </button>
+  </div>
+</div></nav>
+
+<div class="container">
+
+<h1 class="page-title">
+  <span data-lang="zh">Moyu Linter</span>
+  <span data-lang="en">Moyu Linter</span>
+</h1>
+<p class="page-sub">
+  <span data-lang="zh">GitHub Action：自动检测 PR 中的过度工程信号。零依赖，即插即用。</span>
+  <span data-lang="en">A GitHub Action that detects over-engineering signals in your pull requests. Zero dependencies.</span>
+</p>
+
+<!-- Quick setup -->
+<h2 class="section-title">
+  <span data-lang="zh">快速配置</span>
+  <span data-lang="en">Quick Setup</span>
+</h2>
+<p style="color:var(--text-secondary);margin-bottom:12px;font-size:.95rem">
+  <span data-lang="zh">创建 <code>.github/workflows/moyu-lint.yml</code>：</span>
+  <span data-lang="en">Create <code>.github/workflows/moyu-lint.yml</code>:</span>
+</p>
+<div class="code-block">name: Moyu Lint
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: uucz/moyu/linter@main
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}</div>
+
+<!-- 6 signals -->
+<h2 class="section-title">
+  <span data-lang="zh">6 个检测信号</span>
+  <span data-lang="en">6 Detection Signals</span>
+</h2>
+
+<div class="signal-grid">
+  <div class="signal-card">
+    <h3><span data-lang="zh">不必要的文档字符串</span><span data-lang="en">Unnecessary Docstrings</span></h3>
+    <p><span data-lang="zh">检测为已有函数添加的 docstring / JSDoc，而非新函数。</span><span data-lang="en">Docstrings added to existing functions, not new ones.</span></p>
+  </div>
+  <div class="signal-card">
+    <h3><span data-lang="zh">过度错误处理</span><span data-lang="en">Excessive Error Handling</span></h3>
+    <p><span data-lang="zh">新增代码中 try/catch/except 占比过高（>20%）。</span><span data-lang="en">High ratio of try/catch/except in added code (&gt;20%).</span></p>
+  </div>
+  <div class="signal-card">
+    <h3><span data-lang="zh">未请求的新文件</span><span data-lang="en">New Files Created</span></h3>
+    <p><span data-lang="zh">PR 中创建了全新文件，可能超出需求范围。</span><span data-lang="en">Entirely new files that may exceed the requested scope.</span></p>
+  </div>
+  <div class="signal-card">
+    <h3><span data-lang="zh">类型检查膨胀</span><span data-lang="en">Type-Check Bloat</span></h3>
+    <p><span data-lang="zh">过多的 isinstance / typeof / type() 检查。</span><span data-lang="en">Excessive isinstance / typeof / type() checks.</span></p>
+  </div>
+  <div class="signal-card">
+    <h3><span data-lang="zh">不必要的抽象</span><span data-lang="en">Unnecessary Abstractions</span></h3>
+    <p><span data-lang="zh">新增 class / interface / 设计模式命名（Factory、Strategy 等）。</span><span data-lang="en">New class/interface declarations or design pattern names (Factory, Strategy, etc).</span></p>
+  </div>
+  <div class="signal-card">
+    <h3><span data-lang="zh">范围蔓延</span><span data-lang="en">Scope Creep</span></h3>
+    <p><span data-lang="zh">变更文件数远超 PR 标题/描述所涉及的范围。</span><span data-lang="en">Many files changed relative to PR title/description scope.</span></p>
+  </div>
+</div>
+
+<!-- Score guide -->
+<h2 class="section-title">
+  <span data-lang="zh">评分指南</span>
+  <span data-lang="en">Score Guide</span>
+</h2>
+
+<table class="score-table">
+<thead>
+  <tr>
+    <th><span data-lang="zh">分数</span><span data-lang="en">Score</span></th>
+    <th><span data-lang="zh">等级</span><span data-lang="en">Grade</span></th>
+    <th><span data-lang="zh">含义</span><span data-lang="en">Meaning</span></th>
+  </tr>
+</thead>
+<tbody>
+  <tr><td>0</td><td>🐟 Perfect</td><td><span data-lang="zh">无过度工程信号</span><span data-lang="en">No over-engineering detected</span></td></tr>
+  <tr><td>1-3</td><td>🐠 Minor</td><td><span data-lang="zh">少量信号，通常没问题</span><span data-lang="en">A few signals, probably fine</span></td></tr>
+  <tr><td>4-6</td><td>🐠 Moderate</td><td><span data-lang="zh">建议简化</span><span data-lang="en">Consider simplifying</span></td></tr>
+  <tr><td>7+</td><td>🐡 High</td><td><span data-lang="zh">PR 可能过度工程</span><span data-lang="en">PR may be over-engineered</span></td></tr>
+</tbody>
+</table>
+
+<!-- Sample report -->
+<h2 class="section-title">
+  <span data-lang="zh">示例报告</span>
+  <span data-lang="en">Sample Report</span>
+</h2>
+
+<div class="sample-report">
+  <h3>🐡 Moyu Lint Report</h3>
+  <p><strong>Score: 10</strong> — High — this PR may be over-engineered</p>
+  <table>
+    <tr><th>Signal</th><th>Score</th><th>Details</th></tr>
+    <tr><td>New files created</td><td>1</td><td><code>task_factory.py: new file (+30 lines)</code></td></tr>
+    <tr><td>Type-check bloat</td><td>1</td><td><code>task_factory.py: 3 type-checking lines added</code></td></tr>
+    <tr><td>Unnecessary abstractions</td><td>8</td><td><code>task_factory.py: 4 new class declarations</code></td></tr>
+  </table>
+  <blockquote><strong>Moyu says:</strong> The best code is the code you didn't write.</blockquote>
+</div>
+
+<!-- CLI usage -->
+<h2 class="section-title">
+  <span data-lang="zh">本地使用 (CLI)</span>
+  <span data-lang="en">Local Usage (CLI)</span>
+</h2>
+<div class="code-block"># Lint last commit
+node linter/index.mjs
+
+# Lint specific range
+node linter/index.mjs HEAD~3
+
+# Lint from stdin
+git diff main...HEAD | node linter/index.mjs --stdin
+
+# Set failure threshold
+node linter/index.mjs --threshold=5</div>
+
+</div>
+
+<footer class="footer"><div class="footer-inner">
+  <p>Moyu &middot; 2026 &middot; <a href="https://github.com/uucz/moyu">GitHub</a></p>
+</div></footer>
+
+<script>
+const langBtn=document.getElementById('lang-toggle');
+if(langBtn)langBtn.addEventListener('click',()=>{const h=document.documentElement;h.lang=h.lang==='zh-CN'?'en':'zh-CN'});
+</script>
+</body>
+</html>

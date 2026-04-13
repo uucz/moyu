@@ -1,0 +1,31 @@
+name: 'Moyu Lint'
+description: 'Detect over-engineering signals in pull requests'
+author: 'uucz'
+
+inputs:
+  threshold:
+    description: 'Score above which the action fails (0 = report only)'
+    required: false
+    default: '0'
+  github-token:
+    description: 'GitHub token for posting PR comments'
+    required: false
+    default: ${{ github.token }}
+  comment:
+    description: 'Whether to post a PR comment with the report'
+    required: false
+    default: 'true'
+
+outputs:
+  score:
+    description: 'Total over-engineering score'
+  report:
+    description: 'Markdown report'
+
+runs:
+  using: 'node20'
+  main: 'index.mjs'
+
+branding:
+  icon: 'minimize-2'
+  color: 'orange'
