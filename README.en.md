@@ -384,33 +384,28 @@ They solve different dimensions and **don't conflict — combine them**:
 
 ## Benchmark
 
-We ran 6 real coding tasks as controlled experiments. Same codebase, same AI model — the only difference is whether Moyu was active.
+10 models × 5 conditions × 12 scenarios × 3 trials = **1,460 controlled experiments**.
 
-### Code Output Comparison
+### Key Findings
 
-| Scenario | Task | Without Moyu | With Moyu | Reduction |
-|----------|------|:---:|:---:|:---:|
-| S1 | Fix null crash in `complete_task` | 4 lines | 4 lines | 0% |
-| S2 | Add `list_tasks_sorted` function | 15 lines | 5 lines | **67%** |
-| S3 | Add status filter to `search` | 27 lines | 4 lines | **85%** |
-| S4 | Add `export_csv` function | 35 lines | 10 lines | **71%** |
-| S5 | Add assignee filter to `list_tasks` | 17 lines | 17 lines | 0% |
-| S6 | Add `bulk_complete` function | 43 lines | 8 lines | **81%** |
-| **Total** | | **141 lines** | **48 lines** | **66%** |
+| Finding | Result |
+|---------|--------|
+| Most people-pleasing models | Sonnet 4 (OE 0.62), Haiku 4.5 (OE 0.60) |
+| Most restrained models | GPT-5.4 (OE 0.12), GPT-5 Codex (OE 0.12) |
+| Over-engineering score, control → Moyu | **0.20 → 0.10** (ANOVA p=0.026) |
+| Haiku 4.5 diff reduction | **49.4%** (22.4 → 11.3 lines changed) |
+| Haiku 4.5 OE signal elimination | **100%** (0.60 → 0.00) |
+| B-type scenarios (large changes genuinely needed) | p=0.81 — no significant difference |
 
-### Over-Engineering Signals
+### What This Actually Means
 
-| Signal | Without Moyu | With Moyu |
-|--------|:---:|:---:|
-| Unrequested docstrings | 4 | 0 |
-| Unrequested `raise` statements | 6 | 0 |
-| `isinstance` type checks | 2 | 0 |
-| Input validation blocks | 4 | 0 |
-| Cross-file imports | 1 | 0 |
+Moyu does **not** make every model write less code. Across all 10 models pooled, the reduction in lines of code is **not statistically significant** (126.1 → 124.8, p=0.25).
 
-> **5 categories of over-engineering signals reduced to zero**: unrequested docstrings 0, unrequested raise statements 0, isinstance checks 0, input validation blocks 0, cross-file imports 0.
+The real effect is narrower and more useful: Moyu removes people-pleasing artifacts — unrequested docstrings, `try`/`except` wrappers, `isinstance` checks, speculative validation — from the models that produce them. Models that are already restrained (GPT-5 Codex, GPT-5.4) show no change, because there was nothing to remove.
 
-> Full experiment data in [`benchmark/results.md`](./benchmark/results.md)
+Just as important, Moyu does **not** suppress legitimate work. On B-type scenarios, where a large change is actually warranted, the difference between conditions is statistically indistinguishable (p=0.81). Syntax validity is essentially unchanged (100% → 99.7%).
+
+> Full data and analysis in [`benchmark/`](./benchmark/) · interactive results on the [Research Page](https://uucz.github.io/moyu/) · deep dive on the [Blog](https://uucz.github.io/moyu/blog/ai-people-pleasing.html)
 
 ---
 

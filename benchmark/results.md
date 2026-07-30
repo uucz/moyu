@@ -1,6 +1,26 @@
 # 摸鱼 Benchmark Results
 
-## Experiment Design
+> **This document is the qualitative pilot study** — 12 experiments on a single model, kept for its side-by-side code examples.
+>
+> **The primary result is the multi-model study**: 10 models × 5 conditions × 12 scenarios × 3 trials = **1,460 controlled experiments**. See [`results/analysis.json`](./results/analysis.json) and the [Research Page](https://uucz.github.io/moyu/). Headline findings are summarised below; the per-scenario reductions in this document are **illustrative, not generalisable**.
+
+## Headline Results (1,460-experiment study)
+
+| Finding | Result |
+|---------|--------|
+| Lines of code, control → moyu-standard | 126.1 → 124.8 — **not statistically significant** (p=0.25, d=0.18) |
+| Over-engineering score, control → moyu-standard | **0.20 → 0.10** (ANOVA F=2.77, p=0.026) |
+| Most people-pleasing models | Sonnet 4 (OE 0.62), Haiku 4.5 (OE 0.60) |
+| Most restrained models | GPT-5.4 (OE 0.12), GPT-5 Codex (OE 0.12) |
+| Haiku 4.5 diff reduction | 22.4 → 11.3 lines (**49.4%**), OE 0.60 → 0.00 |
+| B-type scenarios (large change justified) | p=0.81 — no significant difference between conditions |
+| Syntax validity | 100% → 99.7% |
+
+**Interpretation.** Moyu does not reduce code volume across the board. It removes people-pleasing artifacts from models that produce them, leaves already-restrained models unchanged, and does not suppress legitimate large changes. Claims of a flat "N% less code" are not supported by this dataset.
+
+---
+
+## Pilot Study Design (12 experiments, single model)
 
 **Codebase**: A deliberately messy Python task manager (`app.py` + `helpers.py`) with verbose loops, no context managers, inconsistent patterns — designed to tempt AI into "improving" surrounding code.
 
@@ -9,19 +29,23 @@
 - **Control group**: Prompted with *"Do your best work. Make the code robust and professional."*
 - **摸鱼 group**: Prompted with *"Make the minimum change needed. Do not refactor, do not add docstrings, do not add validation beyond what's asked."*
 
-## Quantitative Results
+**Known limitation**: this control prompt biases toward verbosity, which inflates the measured gap. The multi-model study addresses this with a neutral `baseline-concise` condition — against which moyu-standard shows no significant difference (p=0.73).
+
+## Pilot Results
+
+> Single model, n=1 per cell. Directional only.
 
 | Scenario | Task | Control Lines | 摸鱼 Lines | Reduction |
 |----------|------|:---:|:---:|:---:|
 | S1 | Fix null crash in `complete_task` | 4 | 4 | 0% |
-| S2 | Add `list_tasks_sorted` function | 15 | 5 | **67%** |
-| S3 | Add status filter to `search` | 27 | 4 | **85%** |
-| S4 | Add `export_csv` function | 35 | 10 | **71%** |
+| S2 | Add `list_tasks_sorted` function | 15 | 5 | 67% |
+| S3 | Add status filter to `search` | 27 | 4 | 85% |
+| S4 | Add `export_csv` function | 35 | 10 | 71% |
 | S5 | Add assignee filter to `list_tasks` | 17 | 17 | 0% |
-| S6 | Add `bulk_complete` function | 43 | 8 | **81%** |
+| S6 | Add `bulk_complete` function | 43 | 8 | 81% |
 | **Total** | | **141** | **48** | **66%** |
 
-## Over-Engineering Signals
+## Over-Engineering Signals (pilot)
 
 | Signal | Control | 摸鱼 |
 |--------|:---:|:---:|
@@ -227,7 +251,7 @@ def bulk_complete(ids):
 
 ## Summary
 
-Across 6 scenarios, the control group produced **66% more code** than necessary. The over-engineering manifests as:
+Across these 6 pilot scenarios, the control group produced 66% more code than necessary. That figure describes this pilot only — see the headline results above for the multi-model finding. Qualitatively, the over-engineering manifests as:
 
 1. **Unsolicited documentation** — Docstrings for internal functions in a small module
 2. **Defensive programming** — Input validation, type checking, and custom exceptions for trusted internal callers
@@ -235,6 +259,6 @@ Across 6 scenarios, the control group produced **66% more code** than necessary.
 4. **Premature optimization** — Lookup dicts, conditional saves for lists that are typically < 100 items
 5. **Cross-module coupling** — Importing from other files when inline logic suffices
 
-The 摸鱼 group consistently delivered **working code that follows existing patterns**, with zero scope violations across all 6 experiments.
+The 摸鱼 group consistently delivered **working code that follows existing patterns**, with zero scope violations across all 6 pilot experiments.
 
 **Impact on developers**: Less code to review, fewer unnecessary abstractions to understand, fewer unrequested dependencies to maintain. The AI's restraint is the developer's freedom.

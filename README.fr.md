@@ -372,33 +372,28 @@ Ils résolvent des dimensions différentes et **ne sont pas en conflit — combi
 
 ## Benchmark
 
-Nous avons réalisé 6 tâches de codage réelles en expériences contrôlées. Même codebase, même modèle d'IA — la seule différence est si Moyu était actif ou non.
+10 modèles × 5 conditions × 12 scénarios × 3 essais = **1 460 expériences contrôlées**.
 
-### Comparaison du code produit
+### Résultats clés
 
-| Scénario | Tâche | Sans Moyu | Avec Moyu | Réduction |
-|----------|-------|:---:|:---:|:---:|
-| S1 | Corriger le crash null dans `complete_task` | 4 lignes | 4 lignes | 0% |
-| S2 | Ajouter la fonction `list_tasks_sorted` | 15 lignes | 5 lignes | **67%** |
-| S3 | Ajouter un filtre de statut à `search` | 27 lignes | 4 lignes | **85%** |
-| S4 | Ajouter la fonction `export_csv` | 35 lignes | 10 lignes | **71%** |
-| S5 | Ajouter un filtre d'assigné à `list_tasks` | 17 lignes | 17 lignes | 0% |
-| S6 | Ajouter la fonction `bulk_complete` | 43 lignes | 8 lignes | **81%** |
-| **Total** | | **141 lignes** | **48 lignes** | **66%** |
+| Constat | Résultat |
+|---------|----------|
+| Modèles les plus complaisants | Sonnet 4 (OE 0,62), Haiku 4.5 (OE 0,60) |
+| Modèles les plus sobres | GPT-5.4 (OE 0,12), GPT-5 Codex (OE 0,12) |
+| Score de sur-ingénierie, contrôle → Moyu | **0,20 → 0,10** (ANOVA p=0,026) |
+| Réduction du diff sur Haiku 4.5 | **49,4 %** (22,4 → 11,3 lignes modifiées) |
+| Élimination des signaux OE sur Haiku 4.5 | **100 %** (0,60 → 0,00) |
+| Scénarios de type B (gros changement justifié) | p=0,81 — aucune différence significative |
 
-### Signaux de sur-ingénierie
+### Ce que cela signifie réellement
 
-| Signal | Sans Moyu | Avec Moyu |
-|--------|:---:|:---:|
-| Docstrings non demandées | 4 | 0 |
-| Instructions `raise` non demandées | 6 | 0 |
-| Vérifications de type `isinstance` | 2 | 0 |
-| Blocs de validation d'entrée | 4 | 0 |
-| Imports inter-fichiers | 1 | 0 |
+Moyu ne fait **pas** écrire moins de code à tous les modèles. Tous modèles confondus, la réduction du nombre de lignes n'est **pas statistiquement significative** (126,1 → 124,8, p=0,25).
 
-> **5 catégories de signaux de sur-ingénierie réduites à zéro** : docstrings non demandées 0, instructions raise non demandées 0, vérifications isinstance 0, blocs de validation d'entrée 0, imports inter-fichiers 0.
+L'effet réel est plus étroit et plus utile : Moyu supprime les artefacts de complaisance — docstrings non demandées, blocs `try`/`except`, vérifications `isinstance`, validations spéculatives — chez les modèles qui en produisent. Les modèles déjà sobres (GPT-5 Codex, GPT-5.4) ne changent pas, car il n'y avait rien à supprimer.
 
-> Données expérimentales complètes dans [`benchmark/results.md`](./benchmark/results.md)
+Tout aussi important : Moyu n'entrave **pas** le travail légitime. Sur les scénarios de type B, où un changement important est réellement justifié, la différence entre conditions est statistiquement indiscernable (p=0,81). La validité syntaxique reste quasi inchangée (100 % → 99,7 %).
+
+> Données complètes et analyse dans [`benchmark/`](./benchmark/) · résultats interactifs sur la [page Research](https://uucz.github.io/moyu/) · analyse approfondie sur le [Blog](https://uucz.github.io/moyu/blog/ai-people-pleasing.html)
 
 ---
 
