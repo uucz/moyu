@@ -430,8 +430,8 @@ Moyu uses research-backed prompt techniques: positive instructions, pattern matc
 
 ## Roadmap
 
-- [ ] Moyu Linter: auto-detect over-engineering signals in AI output
-- [ ] GitHub Action: PR-level over-engineering checks
+- [x] Moyu Linter: auto-detect over-engineering signals in AI output
+- [x] GitHub Action: PR-level over-engineering checks
 - [ ] More language localizations
 
 ---

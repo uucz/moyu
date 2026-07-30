@@ -36,10 +36,10 @@
 1460 次控制实验证实：AI 编码助手存在系统性的过度工程倾向。它不是在认真工作，是在讨好你。三行规则就能治好它。
 
 ```bash
-npx moyu-dev
+claude skill install --url https://github.com/uucz/moyu --skill moyu
 ```
 
-> Cursor / VS Code / Windsurf / Cline / Codex / Kiro — 自动检测并安装。Claude Code 用户: `claude skill install --url https://github.com/uucz/moyu --skill moyu`
+> Cursor / VS Code / Windsurf / Cline / Codex / Kiro 等平台 → 复制对应规则文件即可，见 [安装](#安装)
 
 ---
 
@@ -423,8 +423,8 @@ NoPUA 改变 AI 为什么做，Moyu 约束 AI 做多少——出发点不同，�
 
 ## 未来方向
 
-- [ ] Moyu Linter：自动检测 AI 输出中的过度工程信号
-- [ ] GitHub Action：PR 级别的过度工程检查
+- [x] Moyu Linter：自动检测 AI 输出中的过度工程信号
+- [x] GitHub Action：PR 级别的过度工程检查
 - [ ] 更多语言本地化
 
 ---

@@ -50,6 +50,7 @@ claude skill install --url https://github.com/uucz/moyu --skill moyu-ja
 - [サポートプラットフォーム](#サポートプラットフォーム)
 - [ベンチマーク](#ベンチマーク)
 - [摸魚の科学的根拠](#摸魚の科学的根拠)
+- [ロードマップ](#ロードマップ)
 - [コミュニティ](#コミュニティ)
 - [貢献](#貢献)
 
@@ -342,6 +343,14 @@ NoPUA は AI が「なぜやるか」を変え、Moyu は「どこまでやる�
 - **AI コーディングアシスタントは Stack Overflow の回答より 2 倍冗長**（[LeadDev](https://leaddev.com/ai/ai-coding-assistants-are-twice-as-verbose-as-stack-overflow)）
 
 摸魚は研究で実証済みのプロンプト技術を使用：ポジティブな指示、パターンマッチング、決定点での制約反復、具体的な行動規範。
+
+---
+
+## ロードマップ
+
+- [x] Moyu Linter：AI 出力の過剰エンジニアリング信号を自動検出
+- [x] GitHub Action：PR レベルの過剰エンジニアリングチェック
+- [ ] さらなる言語のローカライズ
 
 ---
 

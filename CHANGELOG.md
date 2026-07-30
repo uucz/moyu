@@ -1,5 +1,28 @@
 # Changelog
 
+## v1.7.0 (2026-07-30)
+
+### Added
+- Moyu Linter: GitHub Action that scores over-engineering signals on pull requests and posts a report comment (`linter/`, `docs/linter/`)
+- English variants for 9 platforms: Antigravity, CodeBuddy, Cline, Continue, Kiro, OpenCode, VSCode, Windsurf, Aider
+- Root-level `rules/moyu.mdc` and `rules/moyu-en.mdc` for Open Plugins / cursor.directory auto-detection
+- GitHub Pages blog at `docs/blog/` with the "你的 AI 有讨好型人格" benchmark post and embedded charts
+- Install and Linter documentation pages (`docs/install/`, `docs/linter/`) plus shared stylesheet `docs/shared.css`
+- Pixel-art logo and refreshed hero artwork (`assets/logo.svg`, `assets/hero.svg`), demo GIF in all 5 READMEs
+- `bin/moyu.mjs` installer CLI (in-repo only — not published to npm, see Notes)
+
+### Changed
+- Benchmark results replaced with real 1460-experiment data across 10 models; removed placeholder figures
+- Research page and all README benchmark sections updated to match the real dataset
+- Cursor MDC rules: fixed `alwaysApply` frontmatter so rules load automatically
+- Blog design unified with the main site
+- Versions aligned across `package.json`, `.claude-plugin/plugin.json` and this changelog (previously 1.0.0 / 1.5.0 / 1.6.0)
+- `.claude-plugin/marketplace.json`: platforms 10 → 12 (Aider, Continue), languages 3 → 5 (Korean, French)
+- README.ja.md: added the missing Roadmap section, bringing it level with the other four languages
+
+### Notes
+- The `npx moyu-dev` command was previously advertised in `README.md` and the docs site, but the package was never published to npm. Those references now point at the working install routes instead. The CLI source remains in `bin/` for a future release.
+
 ## v1.6.0 (2026-03-27)
 
 ### Added

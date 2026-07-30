@@ -418,8 +418,8 @@ Moyu utilise des techniques de prompt validées par la recherche : instructions 
 
 ## Feuille de route
 
-- [ ] Moyu Linter : détection automatique des signaux de sur-ingénierie dans la sortie de l'IA
-- [ ] GitHub Action : vérifications de sur-ingénierie au niveau des PR
+- [x] Moyu Linter : détection automatique des signaux de sur-ingénierie dans la sortie de l'IA
+- [x] GitHub Action : vérifications de sur-ingénierie au niveau des PR
 - [ ] Plus de localisations linguistiques
 
 ---

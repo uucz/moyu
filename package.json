@@ -1,6 +1,6 @@
 {
   "name": "moyu-dev",
-  "version": "1.0.0",
+  "version": "1.7.0",
   "description": "Anti-over-engineering rules for AI coding assistants. Your AI has a people-pleasing personality — three rules cure it.",
   "bin": {
     "moyu": "bin/moyu.mjs"

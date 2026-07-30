@@ -12,7 +12,8 @@
 .page-title{font-size:2.2rem;margin-bottom:12px}
 .page-sub{color:var(--text-secondary);font-size:1.05rem;margin-bottom:48px;line-height:1.6}
 
-.install-box{display:inline-flex;align-items:center;gap:12px;background:var(--code-bg);color:#e0e0e0;padding:14px 22px;border-radius:var(--radius);font-family:'Fira Code','Courier New',monospace;font-size:1rem;cursor:pointer;transition:box-shadow .2s;box-shadow:var(--shadow-sm);margin-bottom:40px}
+.install-box{display:inline-flex;align-items:center;gap:12px;max-width:100%;background:var(--code-bg);color:#e0e0e0;padding:14px 22px;border-radius:var(--radius);font-family:'Fira Code','Courier New',monospace;font-size:1rem;cursor:pointer;transition:box-shadow .2s;box-shadow:var(--shadow-sm);margin-bottom:40px}
+.install-box span{overflow-wrap:anywhere;text-align:left}
 .install-box:hover{box-shadow:var(--shadow-md)}
 .install-box .copy-icon{width:18px;height:18px;opacity:.5;transition:opacity .15s;flex-shrink:0}
 .install-box:hover .copy-icon{opacity:1}
@@ -87,77 +88,62 @@
   <span data-lang="en">Install Moyu</span>
 </h1>
 <p class="page-sub">
-  <span data-lang="zh">一条命令，为你的 AI 编码助手安装反过度工程规则。</span>
-  <span data-lang="en">One command to install anti-over-engineering rules for your AI coding assistant.</span>
+  <span data-lang="zh">为你的 AI 编码助手安装反过度工程规则。Claude Code 一条命令，其他平台复制一个文件。</span>
+  <span data-lang="en">Install anti-over-engineering rules for your AI coding assistant. One command on Claude Code, one file copy everywhere else.</span>
 </p>
 
 <!-- Quick install -->
-<div class="install-box" onclick="navigator.clipboard.writeText('npx moyu-dev');document.getElementById('toast').classList.add('show');setTimeout(()=>document.getElementById('toast').classList.remove('show'),1500)">
-  <span>$ npx moyu-dev</span>
+<div class="install-box" onclick="navigator.clipboard.writeText('claude skill install --url https://github.com/uucz/moyu --skill moyu');document.getElementById('toast').classList.add('show');setTimeout(()=>document.getElementById('toast').classList.remove('show'),1500)">
+  <span>$ claude skill install --url https://github.com/uucz/moyu --skill moyu</span>
   <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
 </div>
 <div class="toast" id="toast">Copied!</div>
 
-<!-- How it works -->
-<h2 class="section-title">
-  <span data-lang="zh">工作原理</span>
-  <span data-lang="en">How It Works</span>
-</h2>
+<!-- Claude Code -->
+<h2 class="section-title">Claude Code</h2>
 <p style="color:var(--text-secondary);margin-bottom:16px;font-size:.95rem">
-  <span data-lang="zh">CLI 自动检测当前目录下的 AI 工具，从 GitHub 获取对应的规则文件并安装。零依赖。</span>
-  <span data-lang="en">The CLI auto-detects AI tools in your project directory, fetches the matching rule files from GitHub, and installs them. Zero dependencies.</span>
+  <span data-lang="zh">Claude Code、Codex CLI、Kiro、CodeBuddy、Antigravity、OpenCode 都使用 skill 安装模式：</span>
+  <span data-lang="en">Claude Code, Codex CLI, Kiro, CodeBuddy, Antigravity and OpenCode all use skill-based installation:</span>
+</p>
+<div class="code-block">claude skill install --url https://github.com/uucz/moyu --skill moyu</div>
+
+<p style="color:var(--text-secondary);font-size:.9rem">
+  <span data-lang="zh">可选变体：<code>moyu-lite</code>（3 条规则）、<code>moyu-strict</code>（团队强制模式）、<code>moyu-en</code>（英文）、<code>moyu-ja</code>（日文）、<code>moyu-ko</code>（韩文）、<code>moyu-fr</code>（法文）</span>
+  <span data-lang="en">Variants: <code>moyu-lite</code> (3 rules), <code>moyu-strict</code> (team enforcement), <code>moyu-ja</code> (Japanese), <code>moyu-ko</code> (Korean), <code>moyu-fr</code> (French)</span>
 </p>
 
 <!-- Platforms table -->
 <h2 class="section-title">
-  <span data-lang="zh">支持的平台</span>
-  <span data-lang="en">Supported Platforms</span>
+  <span data-lang="zh">其他平台：复制规则文件</span>
+  <span data-lang="en">Other Platforms: Copy the Rule File</span>
 </h2>
+<p style="color:var(--text-secondary);margin-bottom:16px;font-size:.95rem">
+  <span data-lang="zh">从仓库复制左列文件到你项目里的右列路径即可，无需安装任何东西。</span>
+  <span data-lang="en">Copy the file on the left from the repo to the path on the right in your project. Nothing to install.</span>
+</p>
 
 <table class="platform-table">
 <thead>
   <tr>
     <th><span data-lang="zh">平台</span><span data-lang="en">Platform</span></th>
-    <th><span data-lang="zh">检测标记</span><span data-lang="en">Detect Marker</span></th>
-    <th><span data-lang="zh">安装路径</span><span data-lang="en">Install Path</span></th>
+    <th><span data-lang="zh">仓库文件</span><span data-lang="en">Repo File</span></th>
+    <th><span data-lang="zh">项目路径</span><span data-lang="en">Project Path</span></th>
   </tr>
 </thead>
 <tbody>
-  <tr><td>Cursor</td><td><code>.cursor/</code></td><td><code>.cursor/rules/moyu.mdc</code></td></tr>
-  <tr><td>VS Code / Copilot</td><td><code>.vscode/</code></td><td><code>.github/copilot-instructions.md</code></td></tr>
-  <tr><td>Windsurf</td><td><code>.windsurf/</code></td><td><code>.windsurf/rules/moyu.md</code></td></tr>
-  <tr><td>Cline</td><td><code>.cline/</code></td><td><code>.cline/rules/moyu.md</code></td></tr>
-  <tr><td>Codex</td><td><code>AGENTS.md</code></td><td><code>AGENTS.md</code></td></tr>
-  <tr><td>Kiro</td><td><code>.kiro/</code></td><td><code>.kiro/steering/moyu.md</code></td></tr>
-  <tr><td>Aider</td><td><code>.aider/</code></td><td><code>.aider/CONVENTIONS.md</code></td></tr>
-  <tr><td>Continue</td><td><code>.continue/</code></td><td><code>.continue/rules/moyu.md</code></td></tr>
+  <tr><td>Cursor</td><td><code>cursor/rules/moyu.mdc</code></td><td><code>.cursor/rules/moyu.mdc</code></td></tr>
+  <tr><td>VS Code / Copilot</td><td><code>vscode/copilot-instructions.md</code></td><td><code>.github/copilot-instructions.md</code></td></tr>
+  <tr><td>Windsurf</td><td><code>windsurf/rules/moyu.md</code></td><td><code>.windsurf/rules/moyu.md</code></td></tr>
+  <tr><td>Cline</td><td><code>cline/moyu.md</code></td><td><code>.cline/rules/moyu.md</code></td></tr>
+  <tr><td>Codex</td><td><code>codex/moyu/SKILL.md</code></td><td><code>AGENTS.md</code></td></tr>
+  <tr><td>Kiro</td><td><code>kiro/steering/moyu.md</code></td><td><code>.kiro/steering/moyu.md</code></td></tr>
+  <tr><td>Aider</td><td><code>aider/CONVENTIONS.md</code></td><td><code>.aider/CONVENTIONS.md</code></td></tr>
+  <tr><td>Continue</td><td><code>continue/rules/moyu.md</code></td><td><code>.continue/rules/moyu.md</code></td></tr>
 </tbody>
 </table>
-
-<!-- CLI flags -->
-<h2 class="section-title">
-  <span data-lang="zh">CLI 选项</span>
-  <span data-lang="en">CLI Options</span>
-</h2>
-
-<ul class="flag-list">
-  <li><code>--all</code><span class="flag-desc"><span data-lang="zh">为所有支持的工具安装（不仅是检测到的）</span><span data-lang="en">Install for all supported tools, not just detected ones</span></span></li>
-  <li><code>--lang en</code><span class="flag-desc"><span data-lang="zh">安装英文版规则（默认中文）</span><span data-lang="en">Install English variants (default: Chinese)</span></span></li>
-  <li><code>--list</code><span class="flag-desc"><span data-lang="zh">列出所有支持的平台</span><span data-lang="en">Show all supported platforms</span></span></li>
-  <li><code>--claude</code><span class="flag-desc"><span data-lang="zh">显示 Claude Code 安装命令</span><span data-lang="en">Show Claude Code install command</span></span></li>
-</ul>
-
-<!-- Claude Code -->
-<h2 class="section-title">Claude Code</h2>
-<p style="color:var(--text-secondary);margin-bottom:16px;font-size:.95rem">
-  <span data-lang="zh">Claude Code 使用 skill 安装模式：</span>
-  <span data-lang="en">Claude Code uses skill-based installation:</span>
-</p>
-<div class="code-block">claude skill install --url https://github.com/uucz/moyu --skill moyu</div>
-
 <p style="color:var(--text-secondary);font-size:.9rem">
-  <span data-lang="zh">可选变体：<code>moyu-lite</code>（3 条规则）、<code>moyu-strict</code>（团队强制模式）、<code>moyu-en</code>（英文）、<code>moyu-ja</code>（日文）</span>
-  <span data-lang="en">Variants: <code>moyu-lite</code> (3 rules), <code>moyu-strict</code> (team enforcement), <code>moyu-ja</code> (Japanese), <code>moyu-ko</code> (Korean), <code>moyu-fr</code> (French)</span>
+  <span data-lang="zh">英文版把文件名换成 <code>-en</code> 后缀即可，例如 <code>cursor/rules/moyu-en.mdc</code>。</span>
+  <span data-lang="en">For English variants, use the <code>-en</code> suffix, e.g. <code>cursor/rules/moyu-en.mdc</code>.</span>
 </p>
 
 <!-- Linter -->

@@ -19,7 +19,9 @@
     "kiro",
     "codebuddy",
     "antigravity",
-    "opencode"
+    "opencode",
+    "aider",
+    "continue"
   ],
-  "languages": ["zh-CN", "en", "ja"]
+  "languages": ["zh-CN", "en", "ja", "ko", "fr"]
 }
