@@ -6,11 +6,13 @@
  */
 
 import { execFileSync } from 'child_process';
-import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { request } from 'https';
-import { join } from 'path';
-import { pathToFileURL } from 'url';
+import { dirname, join } from 'path';
+import { fileURLToPath, pathToFileURL } from 'url';
 import { analyzeDiff, loadConfig } from './signals.mjs';
+
+const LINTER_DIR = dirname(fileURLToPath(import.meta.url));
 
 // ---------------------------------------------------------------------------
 // Report generation
@@ -107,6 +109,80 @@ async function postOrUpdateComment(repo, prNumber, report, token) {
 }
 
 // ---------------------------------------------------------------------------
+// One-command hook installer (git pre-commit, Claude Code, Cursor)
+// ---------------------------------------------------------------------------
+
+export function installHook(target, { cwd = process.cwd(), threshold = 6 } = {}) {
+  const indexScript = join(LINTER_DIR, 'index.mjs');
+  const hookScript = join(LINTER_DIR, 'hook.mjs');
+
+  if (target === 'git') {
+    const hooksDir = join(cwd, '.git', 'hooks');
+    if (!existsSync(join(cwd, '.git'))) {
+      throw new Error('Not a git repository (.git not found in current directory).');
+    }
+    if (!existsSync(hooksDir)) mkdirSync(hooksDir, { recursive: true });
+    const hookPath = join(hooksDir, 'pre-commit');
+    const startMarker = '# >>> moyu-lint >>>';
+    const endMarker = '# <<< moyu-lint <<<';
+    const block = `${startMarker}\nnode "${indexScript}" --staged --threshold=${threshold}\n${endMarker}`;
+
+    let existing = existsSync(hookPath) ? readFileSync(hookPath, 'utf-8') : '#!/bin/sh\n';
+    if (existing.includes(startMarker)) {
+      const re = new RegExp(`${startMarker}[\\s\\S]*?${endMarker}`);
+      existing = existing.replace(re, block);
+    } else {
+      existing = `${existing.trimEnd()}\n\n${block}\n`;
+    }
+    writeFileSync(hookPath, existing);
+    chmodSync(hookPath, 0o755);
+    return { target, path: hookPath, status: 'installed' };
+  }
+
+  if (target === 'claude') {
+    const settingsPath = join(cwd, '.claude', 'settings.json');
+    mkdirSync(dirname(settingsPath), { recursive: true });
+    const settings = existsSync(settingsPath) ? JSON.parse(readFileSync(settingsPath, 'utf-8')) : {};
+    settings.hooks = settings.hooks || {};
+    settings.hooks.Stop = Array.isArray(settings.hooks.Stop) ? settings.hooks.Stop : [];
+
+    const cmd = `node "${hookScript}" --mode=stop --threshold=${threshold}`;
+    const already = settings.hooks.Stop.some(
+      (entry) => Array.isArray(entry.hooks) && entry.hooks.some((h) => typeof h.command === 'string' && h.command.includes('linter/hook.mjs'))
+    );
+    if (!already) {
+      settings.hooks.Stop.push({
+        matcher: '',
+        hooks: [{ type: 'command', command: cmd, timeout: 5 }],
+      });
+      writeFileSync(settingsPath, `${JSON.stringify(settings, null, 2)}\n`);
+      return { target, path: settingsPath, status: 'installed' };
+    }
+    return { target, path: settingsPath, status: 'already-installed' };
+  }
+
+  if (target === 'cursor') {
+    const hooksPath = join(cwd, '.cursor', 'hooks.json');
+    mkdirSync(dirname(hooksPath), { recursive: true });
+    const cfg = existsSync(hooksPath) ? JSON.parse(readFileSync(hooksPath, 'utf-8')) : { version: 1, hooks: {} };
+    cfg.version = cfg.version || 1;
+    cfg.hooks = cfg.hooks || {};
+    cfg.hooks.stop = Array.isArray(cfg.hooks.stop) ? cfg.hooks.stop : [];
+
+    const cmd = `node "${hookScript}" --mode=cursor-stop --threshold=${threshold}`;
+    const already = cfg.hooks.stop.some((h) => typeof h.command === 'string' && h.command.includes('linter/hook.mjs'));
+    if (!already) {
+      cfg.hooks.stop.push({ command: cmd });
+      writeFileSync(hooksPath, `${JSON.stringify(cfg, null, 2)}\n`);
+      return { target, path: hooksPath, status: 'installed' };
+    }
+    return { target, path: hooksPath, status: 'already-installed' };
+  }
+
+  throw new Error(`Unknown hook target "${target}". Expected one of: git, claude, cursor.`);
+}
+
+// ---------------------------------------------------------------------------
 // Git diff helper
 // ---------------------------------------------------------------------------
 
@@ -119,24 +195,27 @@ function runGitDiff(gitArgs) {
 
 function printHelp() {
   console.log(`
-  Moyu Lint — detect over-engineering signals in diffs and PRs
+  Moyu Lint — detect over-engineering signals in diffs, PRs, and agent hooks
 
   Usage:
     node linter/index.mjs [diff-target] [options]
 
   Modes:
-    <ref>               Diff against git ref (default: HEAD~1)
-    --staged            Lint staged changes (ideal for git pre-commit)
-    --working           Lint all uncommitted working-tree changes (git diff HEAD)
-    --stdin             Read unified diff from stdin
+    <ref>                     Diff against git ref (default: HEAD~1)
+    --staged                  Lint staged changes (ideal for git pre-commit)
+    --working                 Lint all uncommitted working-tree changes (git diff HEAD)
+    --stdin                   Read unified diff from stdin
+
+  Setup:
+    --init                    Create a starter .moyurc.json in the current directory
+    --install-hook=TARGET     Install hook for: git | claude | cursor
 
   Options:
-    --threshold=N       Exit with code 1 if score exceeds N (default: 0 = report only)
-    --max-files=N       Scope-creep file threshold (default: 8)
-    --ignore=a,b        Comma-separated glob patterns to ignore
-    --json              Output structured JSON instead of markdown
-    --init              Create a starter .moyurc.json in the current directory
-    -h, --help          Show this help
+    --threshold=N             Exit with code 1 / block if score exceeds N (default: 0 for CLI, 6 for hooks)
+    --max-files=N             Scope-creep file threshold (default: 8)
+    --ignore=a,b              Comma-separated glob patterns to ignore
+    --json                    Output structured JSON instead of markdown
+    -h, --help                Show this help
 `);
 }
 
@@ -166,6 +245,18 @@ export async function main() {
       enabled: true,
     }, null, 2)}\n`);
     console.log('Created .moyurc.json');
+    return;
+  }
+
+  const installHookArg = args.find((a) => a.startsWith('--install-hook='));
+  if (installHookArg) {
+    const target = installHookArg.slice('--install-hook='.length).trim();
+    const thresholdArg = args.find((a) => a.startsWith('--threshold='));
+    const hookThreshold = thresholdArg ? parseInt(thresholdArg.split('=')[1], 10) : 6;
+    const res = installHook(target, { cwd: process.cwd(), threshold: hookThreshold });
+    console.log(res.status === 'already-installed'
+      ? `Moyu ${target} hook is already configured in ${res.path}`
+      : `Installed Moyu ${target} hook in ${res.path} (threshold=${hookThreshold})`);
     return;
   }
 

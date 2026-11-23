@@ -233,9 +233,11 @@ npx skills add uucz/moyu --skill moyu-strict
 
 实验表明单靠 Prompt 无法保证所有模型克制。Moyu 额外提供零依赖的确定性 diff 检测器（[`linter/`](./linter/README.md)）：
 
-- **Claude Code Stop Hook**：在 AI 结束回合前自动检查 `git diff`，发现过度工程信号（多余 docstring、投机抽象、整文件重写、范围蔓延等）直接要求裁剪。通过上述 `/plugin install` 自动启用，或手动配置 `.claude/settings.json`。
-- **本地 Git Pre-Commit**：`node linter/index.mjs --staged --threshold=6`
-- **GitHub Action（PR 检查）**：在 workflow 中引入 `uses: uucz/moyu/linter@main`
+- **一键接入 Hook**（幂等合并、不覆盖现有配置）：
+  - Claude Code：`node linter/index.mjs --install-hook=claude`（或通过 `/plugin install` 自动启用）
+  - Cursor IDE：`node linter/index.mjs --install-hook=cursor`（写入 `.cursor/hooks.json`）
+  - Git Pre-Commit：`node linter/index.mjs --install-hook=git`（适用于任何 AI 工具）
+- **GitHub Action（PR 检查）**：在 workflow 中引入 `uses: uucz/moyu/linter@main`（自带浅克隆 PR Diff API 兜底）
 
 ### 通用 AGENTS.md
 
@@ -443,11 +445,10 @@ NoPUA 改变 AI 为什么做，Moyu 约束 AI 做多少——出发点不同，�
 
 ## 未来方向
 
-- [x] Moyu Linter：自动检测 diff 中的 7 类过度工程信号（含测试套件、浅克隆 API 兜底与 `.moyurc.json` 配置）
+- [x] Moyu Linter：自动检测 diff 中的 7 类过度工程信号（含 16 项单元测试、浅克隆 API 兜底与 `.moyurc.json`）
 - [x] GitHub Action：PR 级别的过度工程检查（Node 24）
-- [x] Claude Code Agent Hooks：`Stop` / `PostToolUse` 确定性护栏与通用 `AGENTS.md` 模板
-- [ ] 更多编辑器/Agent Hook 适配器（Cursor / Codex / 通用 `pre-commit` 一键接入）
-- [ ] 社区贡献的新语言本地化与更多真实场景测试案例
+- [x] Agent & Git Hooks 一键安装：原生支持 Claude Code、Cursor IDE 与 Git `pre-commit`，外加通用 `AGENTS.md` 模板
+- [ ] 社区贡献的新语言本地化、更多编辑器 Hook 适配与真实场景测试案例
 
 ---
 

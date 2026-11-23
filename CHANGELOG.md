@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.9.0 (2026-11-22)
+
+### Added
+- **One-command hook installer** (`node linter/index.mjs --install-hook=git|claude|cursor`): idempotently configures `.git/hooks/pre-commit`, `.claude/settings.json`, or `.cursor/hooks.json` without overwriting existing user hooks
+- **Cursor IDE `stop` hook support** (`linter/hook.mjs --mode=cursor-stop`): speaks Cursor's native `.cursor/hooks.json` protocol (`followup_message` + `loop_count` / `status` recursion guards)
+- **Bilingual Blog #2** (`docs/blog/from-prompts-to-hooks.html` + `docs/blog/index.html`): full Chinese/English toggle with `?lang=en` direct URL support
+
+### Changed
+- Pointed `package.json` `bin` entry to `moyu-lint` (`linter/index.mjs`) and aligned docs & tests (16 unit tests passing)
+
+### Removed
+- Removed unpublished, superseded `bin/moyu.mjs` installer CLI (`npx skills add uucz/moyu` is now the standard cross-platform skill installer)
+
 ## v1.8.1 (2026-11-22)
 
 ### Added

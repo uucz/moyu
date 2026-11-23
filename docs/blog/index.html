@@ -52,6 +52,10 @@
     <button class="nav-btn" onclick="let t=document.documentElement;t.dataset.theme=t.dataset.theme==='dark'?'light':'dark'" aria-label="Toggle theme">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>
     </button>
+    <button class="nav-btn" id="lang-toggle">
+      <span data-lang="zh">EN</span>
+      <span data-lang="en">中</span>
+    </button>
   </div>
 </div></nav>
 
@@ -59,9 +63,15 @@
   <h1>Blog</h1>
 
   <div class="post-card">
-    <h2><a href="from-prompts-to-hooks.html">为什么三行 Prompt 管不住所有 AI：从 1460 次实验到确定性 Agent Hooks</a></h2>
-    <p class="post-meta">2026-11-22</p>
-    <p>8 个月后的工程复盘：纯 Prompt 只是概率约束，Moyu v1.8 用零依赖 Claude Code Stop Hook、7 信号 PR Linter 与精简 AGENTS.md 建立确定性防线。</p>
+    <h2>
+      <a href="from-prompts-to-hooks.html"><span data-lang="zh">为什么三行 Prompt 管不住所有 AI：从 1460 次实验到确定性 Agent Hooks</span></a>
+      <a href="from-prompts-to-hooks.html?lang=en"><span data-lang="en">Why 3 Lines of Prompt Aren't Enough: From 1,460 Experiments to Deterministic Agent Hooks</span></a>
+    </h2>
+    <p class="post-meta">2026-11-22 · ZH / EN</p>
+    <p>
+      <span data-lang="zh">8 个月后的工程复盘：纯 Prompt 只是概率约束，Moyu v1.9 用零依赖 Claude Code &amp; Cursor Stop Hook、Git pre-commit 与 7 信号 PR Linter 建立确定性防线。</span>
+      <span data-lang="en">Eight months after 1,460 trials: why prompts alone can't stop over-engineering, and how Moyu v1.9 adds zero-dependency Claude Code, Cursor &amp; Git hooks.</span>
+    </p>
   </div>
 
   <div class="post-card">
@@ -74,6 +84,16 @@
 <footer class="footer"><div class="footer-inner">
 <p>Moyu &middot; 2026 &middot; <a href="https://github.com/uucz/moyu">GitHub</a></p>
 </div></footer>
+
+<script>
+const langBtn = document.getElementById('lang-toggle');
+const q = new URLSearchParams(location.search).get('lang');
+if (q === 'en') document.documentElement.lang = 'en';
+if (langBtn) langBtn.addEventListener('click', () => {
+  const h = document.documentElement;
+  h.lang = h.lang === 'zh-CN' ? 'en' : 'zh-CN';
+});
+</script>
 
 </body>
 </html>

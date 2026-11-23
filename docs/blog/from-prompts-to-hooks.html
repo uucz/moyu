@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>为什么三行 Prompt 管不住所有 AI：从 1460 次实验到确定性 Agent Hooks | Moyu Research</title>
-<meta name="description" content="8 个月后的工程复盘：为什么纯 Prompt 规则不够用，以及我们如何用零依赖 Claude Code Stop Hook 和 7 信号 PR Linter 做确定性兜底。">
-<meta property="og:title" content="为什么三行 Prompt 管不住所有 AI：从 1460 次实验到确定性 Agent Hooks">
-<meta property="og:description" content="纯 Prompt 是概率约束，确定性 Hook 才是硬护栏。零 API Key、零依赖、毫秒级拦截 AI 过度工程。">
+<title>Why 3 Lines of Prompt Aren't Enough: From 1,460 Experiments to Deterministic Agent Hooks | Moyu</title>
+<meta name="description" content="Eight months after 1,460 AI coding trials: why prompts alone can't stop over-engineering, and how Moyu v1.9 adds zero-dependency Claude Code, Cursor & Git hooks.">
+<meta property="og:title" content="Why 3 Lines of Prompt Aren't Enough: Deterministic Agent Hooks for AI Over-Engineering">
+<meta property="og:description" content="Prompts lower probability; deterministic hooks enforce boundaries. Zero API keys, zero dependencies, millisecond git diff guardrails.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://uucz.github.io/moyu/blog/from-prompts-to-hooks.html">
 <meta name="twitter:card" content="summary_large_image">
@@ -72,17 +72,23 @@ p code,li code{background:var(--surface-2);padding:2px 6px;border-radius:4px}
     <button class="nav-btn" onclick="let t=document.documentElement;t.dataset.theme=t.dataset.theme==='dark'?'light':'dark'" aria-label="Toggle theme">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>
     </button>
+    <button class="nav-btn" id="lang-toggle">
+      <span data-lang="zh">EN</span>
+      <span data-lang="en">中</span>
+    </button>
   </div>
 </div></nav>
 
 <article>
 
+<!-- ==================== CHINESE ==================== -->
+<div data-lang="zh">
 <h1>为什么三行 Prompt 管不住所有 AI</h1>
-<p class="subtitle">从 1460 次实验到确定性 Agent Hooks：Moyu v1.8 工程复盘</p>
-<p class="meta">2026-11-22 · Moyu Research · <a href="https://github.com/uucz/moyu/releases/tag/v1.8.0">v1.8 Release</a></p>
+<p class="subtitle">从 1460 次实验到确定性 Agent Hooks：Moyu v1.9 工程复盘</p>
+<p class="meta">2026-11-22 · Moyu Research · <a href="https://github.com/uucz/moyu/releases">Releases</a></p>
 
 <div class="tldr">
-<strong>TL;DR</strong>：半年前我们的 1460 次实验其实已经揭示了一个不舒服的事实——单靠 Prompt 约束，只能“大概率”减少特定模型的讨好行为，无法从机制上阻止整文件重写和范围蔓延。Moyu v1.8 从纯规则包升级为<strong>双层防线</strong>：精简的 <code>AGENTS.md</code> / Skill 做软约束，加上零依赖、毫秒级的 <strong>Claude Code Stop Hook + PR Linter + Git pre-commit</strong> 做确定性兜底。
+<strong>TL;DR</strong>：半年前我们的 1460 次实验其实已经揭示了一个不舒服的事实——单靠 Prompt 约束，只能“大概率”减少特定模型的讨好行为，无法从机制上阻止整文件重写和范围蔓延。Moyu v1.9 从纯规则包升级为<strong>双层防线</strong>：精简的 <code>AGENTS.md</code> / Skill 做软约束，加上零依赖、毫秒级的 <strong>Claude Code / Cursor Stop Hook + Git pre-commit + PR Linter</strong> 做确定性兜底。
 </div>
 
 <h2>一、我们自己数据里藏着的“反面教训”</h2>
@@ -99,23 +105,23 @@ p code,li code{background:var(--surface-2);padding:2px 6px;border-radius:4px}
 
 <h2>二、双层防线：软约束定边界，硬护栏兜底</h2>
 
-<p>因此 Moyu v1.8 放弃了“继续把 Prompt 写得更长更玄学”的方向，改为非常朴素的工程架构：</p>
+<p>因此 Moyu 放弃了“继续把 Prompt 写得更长更玄学”的方向，改为非常朴素的工程架构：</p>
 
 <table>
 <tr><th>层级</th><th>载体</th><th>作用</th><th>运行成本</th></tr>
 <tr><td><strong>Layer 1 · 软约束</strong></td><td><code>npx skills add uucz/moyu</code> 或 18 行 <code>AGENTS.md</code></td><td>开工前给 Agent 划清边界（只改被要求的、最简方案、不确定就问）</td><td>极低 token</td></tr>
-<tr><td><strong>Layer 2 · 硬护栏</strong></td><td>Claude Code <code>Stop</code> / <code>PostToolUse</code> Hook + Git <code>pre-commit</code> + PR GitHub Action</td><td>基于 <code>git diff</code> 做确定性 7 信号评分，超阈值直接打回让 AI 自行裁剪</td><td>零 API Key、零依赖、毫秒级</td></tr>
+<tr><td><strong>Layer 2 · 硬护栏</strong></td><td>Claude Code <code>Stop</code> / Cursor <code>stop</code> Hook + Git <code>pre-commit</code> + PR Action</td><td>基于 <code>git diff</code> 做确定性 7 信号评分，超阈值直接打回让 AI 自行裁剪</td><td>零 API Key、零依赖、毫秒级</td></tr>
 </table>
 
-<h2>三、为什么是 Stop Hook？</h2>
+<h2>三、为什么是 Agent Stop Hook？</h2>
 
 <p>以前 PR Linter 有个天然滞后：等 PR 已经提上去了再评论“你写了 4 个 Factory 类”，人类还是要二次返工。</p>
 
-<p>接入 Claude Code 的 <code>Stop</code> Hook 后，流程变了：在 Agent 准备结束当前回合、把控制权交还给你之前，<code>linter/hook.mjs</code> 会自动扫一遍工作区的 <code>git diff HEAD</code>。如果检测到明显过度工程信号（默认阈值 6 分），Hook 返回标准的 <code>{"decision": "block", "reason": "..."}</code>，把具体超标项直接喂回给 Agent，让它<strong>在你看到代码之前自己删掉多余的戏</strong>。</p>
+<p>接入 <strong>Claude Code `Stop` Hook</strong> 或 <strong>Cursor `stop` Hook</strong> 后，流程变了：在 Agent 准备结束当前回合、把控制权交还给你之前，<code>linter/hook.mjs</code> 会自动扫一遍工作区的 <code>git diff HEAD</code>。如果检测到明显过度工程信号（默认阈值 6 分），Hook 直接把具体超标项喂回给 Agent，让它<strong>在你看到代码之前自己删掉多余的戏</strong>。</p>
 
 <p>为了保证绝不干扰正常开发，我们做了四条工程克制设计：</p>
 <ol>
-<li><strong>防死循环保护</strong>：读取 <code>stop_hook_active</code> 标志，若已触发过一次打回则直接放行，绝不把会话锁死。</li>
+<li><strong>防死循环保护</strong>：检查 Claude 的 <code>stop_hook_active</code> 与 Cursor 的 <code>loop_count</code> 标志，触发一次后直接放行，绝不锁死会话。</li>
 <li><strong>低误报过滤</strong>：自动跳过锁文件、构建产物、Markdown 文档、测试文件；不再误报普通 TypeScript <code>type</code> 别名或单个业务 <code>interface</code>。</li>
 <li><strong>新增“整文件重写”检测</strong>：专门抓 AI 在单个大 hunk 里对称增删 35+ 行的坏习惯。</li>
 <li><strong>随时可静默退出</strong>：支持仓库根目录 <code>.moyurc.json</code> 精细配置，或环境变量 <code>MOYU_HOOK_DISABLED=1</code> 一键绕过。</li>
@@ -126,25 +132,97 @@ p code,li code{background:var(--surface-2);padding:2px 6px;border-radius:4px}
 <p><strong>1. 跨平台安装 Skill（自动识别 Claude Code / Cursor / Codex / Copilot 等）：</strong></p>
 <pre>npx skills add uucz/moyu</pre>
 
-<p><strong>2. Claude Code 原生插件（自动带 Stop Hook）：</strong></p>
-<pre>/plugin marketplace add uucz/moyu
-/plugin install moyu@uucz-moyu</pre>
+<p><strong>2. 一行安装硬护栏 Hook（支持 Git / Claude Code / Cursor，幂等合并、不覆盖现有配置）：</strong></p>
+<pre>node linter/index.mjs --install-hook=claude
+node linter/index.mjs --install-hook=cursor
+node linter/index.mjs --install-hook=git</pre>
 
 <p><strong>3. 通用 AGENTS.md（不到 20 行，零角色扮演废话）：</strong></p>
 <pre>curl -o AGENTS.md https://raw.githubusercontent.com/uucz/moyu/main/templates/AGENTS.md
 ln -s AGENTS.md CLAUDE.md</pre>
 
-<p><strong>4. 本地 Git Pre-Commit / CI PR 检查（不挑任何 AI 工具）：</strong></p>
-<pre># 本地检查暂存区改动
-node linter/index.mjs --staged --threshold=6
-
-# 或在 .github/workflows/moyu-lint.yml 中引入：
-# - uses: uucz/moyu/linter@main</pre>
+<p><strong>4. GitHub Action（PR 级检查，带浅克隆 PR Diff API 兜底）：</strong></p>
+<pre>- uses: uucz/moyu/linter@main
+  with:
+    github-token: ${{ secrets.GITHUB_TOKEN }}</pre>
 
 <div class="cta">
 <h2>克制应该由机制保障，而不只靠祈祷</h2>
-<p>全部规则、Hook、Linter 与 14 项单元测试完全开源，零外部依赖。</p>
+<p>全部规则、Hook、Linter 与 16 项单元测试完全开源，零外部依赖。</p>
 <a href="https://github.com/uucz/moyu" class="cta-btn">查看 GitHub 仓库 →</a>
+</div>
+</div>
+
+<!-- ==================== ENGLISH ==================== -->
+<div data-lang="en">
+<h1>Why 3 Lines of Prompt Aren't Enough</h1>
+<p class="subtitle">From 1,460 controlled experiments to deterministic Agent Hooks — Moyu v1.9 postmortem</p>
+<p class="meta">2026-11-22 · Moyu Research · <a href="https://github.com/uucz/moyu/releases">Releases</a></p>
+
+<div class="tldr">
+<strong>TL;DR</strong>: Our 1,460-trial benchmark earlier this year revealed an uncomfortable truth — prompt-only guardrails reduce people-pleasing artifacts on verbose models, but cannot reliably stop whole-file rewrites or scope creep across models. Moyu v1.9 pairs lean, zero-theatrics rules (<code>AGENTS.md</code> / Skill) with a zero-dependency deterministic layer: <strong>Claude Code &amp; Cursor stop hooks + git pre-commit + PR Linter</strong>.
+</div>
+
+<h2>1. The Uncomfortable Lessons in Our Own Data</h2>
+
+<p>Back in March, we ran 1,460 controlled trials across 10 models, 5 prompt conditions, and 12 coding scenarios. The numbers refused to give us a viral "66% less code everywhere" headline — instead, they left three sharper engineering lessons:</p>
+
+<ul>
+<li><strong>Prompts are probabilistic</strong>: Pooled across all 10 models, <code>moyu-standard</code>'s raw LOC reduction wasn't statistically significant (126.1 → 124.8, p=0.25). Even with a 300-line ruleset, Sonnet 4 still occasionally rewrote entire files for small tasks.</li>
+<li><strong>Long theatrical prompts backfire</strong>: The 300-line ruleset degraded smaller models (LongCat Flash Lite), and a community reader (<a href="https://github.com/uucz/moyu/discussions/19">Discussion #19</a>) rightly questioned persona-heavy wording. In fact, our stripped-down 3-rule <code>moyu-lite</code> beat the 300-line prompt on mean diff size (10.7 vs 15.7 lines).</li>
+<li><strong>Distribution commoditized</strong>: By late 2026, <code>AGENTS.md</code> and <code>npx skills add</code> converged the rule-file layer. Mirroring markdown prompts across 12 folders is no longer a product moat.</li>
+</ul>
+
+<blockquote>Writing "don't over-engineer" ten times in markdown only lowers probability. Running a deterministic diff check before the agent yields control actually enforces the boundary.</blockquote>
+
+<h2>2. Two-Layer Defense: Soft Rules + Deterministic Guardrails</h2>
+
+<p>Instead of writing longer, more theatrical prompts, Moyu v1.9 splits responsibility into two simple layers:</p>
+
+<table>
+<tr><th>Layer</th><th>Mechanism</th><th>Role</th><th>Runtime Cost</th></tr>
+<tr><td><strong>Layer 1 · Soft</strong></td><td><code>npx skills add uucz/moyu</code> or 18-line <code>AGENTS.md</code></td><td>Set clear boundaries before coding (scope, simplicity, ask first)</td><td>Tiny token footprint</td></tr>
+<tr><td><strong>Layer 2 · Hard</strong></td><td>Claude Code <code>Stop</code> / Cursor <code>stop</code> hook + git <code>pre-commit</code> + PR Action</td><td>Deterministic 7-signal analysis on <code>git diff</code>; asks agent to trim bloat before you review</td><td>Zero API keys, zero deps, milliseconds</td></tr>
+</table>
+
+<h2>3. Why In-Loop Stop Hooks Beat Post-Hoc PR Comments</h2>
+
+<p>A PR linter alone arrives too late — by the time a comment warns about four speculative <code>Factory</code> classes, the developer is already reviewing bloated code.</p>
+
+<p>With a <strong>Claude Code `Stop` hook</strong> or <strong>Cursor `stop` hook</strong>, <code>linter/hook.mjs</code> inspects <code>git diff HEAD</code> right before the agent finishes its turn. When over-engineering signals exceed the threshold (default 6), the hook feeds the exact findings back into the agent loop (<code>decision: "block"</code> in Claude Code, <code>followup_message</code> in Cursor) so the model trims unrequested extras <strong>before you ever see the diff</strong>.</p>
+
+<p>Four guardrails keep the guardrail itself from getting annoying:</p>
+<ol>
+<li><strong>Recursion protection</strong>: Honors Claude Code's <code>stop_hook_active</code> and Cursor's <code>loop_count</code> so it never traps an agent in a loop.</li>
+<li><strong>Low false positives</strong>: Skips lockfiles, build outputs, docs, test files, and ordinary TypeScript <code>type</code> aliases.</li>
+<li><strong>Whole-file rewrite detector</strong>: Specifically flags symmetric single-hunk rewrites (&ge;35 lines added and removed on an existing file).</li>
+<li><strong>Instant opt-out</strong>: Configurable via <code>.moyurc.json</code> or bypassed anytime with <code>MOYU_HOOK_DISABLED=1</code>.</li>
+</ol>
+
+<h2>4. Set Up in 30 Seconds</h2>
+
+<p><strong>1. Install the skill across agents (Claude Code, Cursor, Codex, Copilot, etc.):</strong></p>
+<pre>npx skills add uucz/moyu --skill moyu-en</pre>
+
+<p><strong>2. One-command deterministic hook setup (idempotent, preserves existing hooks):</strong></p>
+<pre>node linter/index.mjs --install-hook=claude
+node linter/index.mjs --install-hook=cursor
+node linter/index.mjs --install-hook=git</pre>
+
+<p><strong>3. Drop-in 18-line <code>AGENTS.md</code> (zero roleplay):</strong></p>
+<pre>curl -o AGENTS.md https://raw.githubusercontent.com/uucz/moyu/main/templates/AGENTS-en.md
+ln -s AGENTS.md CLAUDE.md</pre>
+
+<p><strong>4. PR Linting GitHub Action (Node 24, with PR Diff API fallback for shallow clones):</strong></p>
+<pre>- uses: uucz/moyu/linter@main
+  with:
+    github-token: ${{ secrets.GITHUB_TOKEN }}</pre>
+
+<div class="cta">
+<h2>Enforce Restraint Deterministically</h2>
+<p>Zero dependencies, zero LLM API keys required, backed by 16 unit tests.</p>
+<a href="https://github.com/uucz/moyu" class="cta-btn">View on GitHub →</a>
+</div>
 </div>
 
 </article>
@@ -152,6 +230,29 @@ node linter/index.mjs --staged --threshold=6
 <footer class="footer"><div class="footer-inner">
 <p>Moyu &middot; 2026 &middot; <a href="https://github.com/uucz/moyu">GitHub</a></p>
 </div></footer>
+
+<script>
+(function(){
+  const h = document.documentElement;
+  const params = new URLSearchParams(location.search);
+  const q = params.get('lang');
+  function applyLang(lang){
+    h.lang = lang;
+    document.title = lang === 'en'
+      ? "Why 3 Lines of Prompt Aren't Enough: Deterministic Agent Hooks | Moyu"
+      : '为什么三行 Prompt 管不住所有 AI：从 1460 次实验到确定性 Agent Hooks | Moyu';
+  }
+  if(q === 'en') applyLang('en');
+  else if(q === 'zh' || q === 'zh-CN') applyLang('zh-CN');
+  else if(localStorage.getItem('moyu-lang')) applyLang(localStorage.getItem('moyu-lang'));
+  const btn = document.getElementById('lang-toggle');
+  if(btn) btn.addEventListener('click', () => {
+    const next = h.lang === 'zh-CN' ? 'en' : 'zh-CN';
+    localStorage.setItem('moyu-lang', next);
+    applyLang(next);
+  });
+})();
+</script>
 
 </body>
 </html>

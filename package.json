@@ -1,14 +1,14 @@
 {
   "name": "moyu-dev",
-  "version": "1.8.1",
-  "description": "Anti-over-engineering rules and deterministic Agent Hooks / PR Linter for AI coding assistants.",
+  "version": "1.9.0",
+  "description": "Anti-over-engineering rules and deterministic Agent Hooks (Claude Code, Cursor, Git) / PR Linter for AI coding assistants.",
   "scripts": {
     "test": "node --test linter/test/linter.test.mjs"
   },
   "bin": {
-    "moyu": "bin/moyu.mjs"
+    "moyu-lint": "linter/index.mjs"
   },
-  "keywords": ["ai", "coding", "cursor", "claude", "copilot", "windsurf", "cline", "prompt", "rules", "over-engineering"],
+  "keywords": ["ai", "coding", "cursor", "claude", "copilot", "windsurf", "cline", "prompt", "rules", "hooks", "linter", "over-engineering"],
   "repository": {
     "type": "git",
     "url": "https://github.com/uucz/moyu"
@@ -16,5 +16,5 @@
   "homepage": "https://uucz.github.io/moyu/",
   "license": "MIT",
   "author": "uucz",
-  "files": ["bin/", "README.md", "LICENSE"]
+  "files": ["linter/", "hooks/", "templates/", "README.md", "LICENSE"]
 }

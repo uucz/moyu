@@ -25,42 +25,39 @@ jobs:
           threshold: 0 # Set > 0 to fail CI when score exceeds threshold
 ```
 
-## 2. Claude Code Agent Hook (In-Loop Guardrail)
+## 2. One-Command Agent & Git Hooks (Claude Code, Cursor, Git)
 
-Catch over-engineering *before* the agent finishes its turn.
-
-Add to `.claude/settings.json` (or install Moyu as a Claude Code plugin — `hooks/hooks.json` configures this automatically):
-
-```json
-{
-  "hooks": {
-    "Stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node ./linter/hook.mjs --mode=stop --threshold=6",
-            "timeout": 5
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-- **`--mode=stop`** (default): Checks `git diff HEAD` when Claude tries to end a turn. Blocks with concrete trim instructions if score exceeds threshold. Automatically steps aside when `stop_hook_active` is `true` so it never loops.
-- **`--mode=post-tool`**: Non-blocking nudge after `Edit` / `Write` calls via `additionalContext`.
-- Set `MOYU_HOOK_DISABLED=1` or `"enabled": false` in `.moyurc.json` to bypass anytime.
-
-## 3. CLI & Git Pre-Commit
+Catch over-engineering *before* the agent finishes its turn (or before a git commit). All installers merge idempotently and preserve your existing hooks:
 
 ```bash
+# Claude Code Stop hook (.claude/settings.json)
+node linter/index.mjs --install-hook=claude
+
+# Cursor IDE stop hook (.cursor/hooks.json)
+node linter/index.mjs --install-hook=cursor
+
+# Git pre-commit hook (.git/hooks/pre-commit)
+node linter/index.mjs --install-hook=git
+
+# Optional: custom score threshold (default: 6)
+node linter/index.mjs --install-hook=claude --threshold=4
+```
+
+- **`--mode=stop`** (Claude Code): Checks `git diff HEAD` before Claude ends a turn. Returns `decision: "block"` with trim instructions if score exceeds threshold; steps aside when `stop_hook_active` is `true`.
+- **`--mode=cursor-stop`** (Cursor IDE): Checks `git diff HEAD` on Cursor `stop` events and returns `followup_message` when `loop_count === 0`.
+- **`--mode=post-tool`** (Claude Code): Non-blocking nudge after `Edit` / `Write` calls via `additionalContext`.
+- Set `MOYU_HOOK_DISABLED=1` or `"enabled": false` in `.moyurc.json` to bypass anytime.
+
+## 3. CLI & Config
+
+```bash
+# Scaffold .moyurc.json
+node linter/index.mjs --init
+
 # Lint last commit
 node linter/index.mjs
 
-# Lint staged changes (ideal for .git/hooks/pre-commit)
+# Lint staged changes (git pre-commit)
 node linter/index.mjs --staged --threshold=6
 
 # Lint all uncommitted changes

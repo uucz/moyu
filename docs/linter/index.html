@@ -119,29 +119,21 @@ jobs:
 
 <!-- Agent Hooks -->
 <h2 class="section-title">
-  <span data-lang="zh">2. Claude Code Agent Hook（生成期实时拦截）</span>
-  <span data-lang="en">2. Claude Code Agent Hook (In-Loop Guardrail)</span>
+  <span data-lang="zh">2. 一键接入 Agent &amp; Git Hooks（Claude Code / Cursor / Git）</span>
+  <span data-lang="en">2. One-Command Agent &amp; Git Hooks (Claude Code / Cursor / Git)</span>
 </h2>
 <p style="color:var(--text-secondary);margin-bottom:12px;font-size:.95rem">
-  <span data-lang="zh">单靠 Prompt 无法保证所有模型克制（1460 次实验已证实）。接入 <code>Stop</code> Hook 后，Moyu 会在 Agent 结束当前回合前检查 <code>git diff</code>，超阈值时要求 AI 自行裁剪多余改动（内置 <code>stop_hook_active</code> 防死循环保护）：</span>
-  <span data-lang="en">Prompts alone cannot guarantee restraint across every model. Wiring the <code>Stop</code> hook lets Moyu inspect <code>git diff</code> before the agent finishes and ask it to trim unrequested bloat (with built-in <code>stop_hook_active</code> loop protection):</span>
+  <span data-lang="zh">单靠 Prompt 无法保证所有模型克制。一行命令即可把确定性 <code>git diff</code> 护栏幂等接入 Claude Code（<code>.claude/settings.json</code>）、Cursor（<code>.cursor/hooks.json</code>）或 Git <code>pre-commit</code>（保留原有配置，内置防死循环保护）：</span>
+  <span data-lang="en">Prompts alone cannot guarantee restraint across every model. Install deterministic <code>git diff</code> guardrails into Claude Code (<code>.claude/settings.json</code>), Cursor (<code>.cursor/hooks.json</code>), or Git <code>pre-commit</code> with one idempotent command (preserves existing hooks, built-in recursion guards):</span>
 </p>
-<div class="code-block">{
-  "hooks": {
-    "Stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node ./linter/hook.mjs --mode=stop --threshold=6",
-            "timeout": 5
-          }
-        ]
-      }
-    ]
-  }
-}</div>
+<div class="code-block"># Claude Code Stop hook
+node linter/index.mjs --install-hook=claude
+
+# Cursor IDE stop hook
+node linter/index.mjs --install-hook=cursor
+
+# Git pre-commit hook (works with any AI tool)
+node linter/index.mjs --install-hook=git</div>
 
 <!-- 7 signals -->
 <h2 class="section-title">

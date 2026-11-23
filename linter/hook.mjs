@@ -1,15 +1,16 @@
 #!/usr/bin/env node
 
 /**
- * Moyu Agent Hook — deterministic over-engineering guardrail for Claude Code hooks.
+ * Moyu Agent Hook — deterministic over-engineering guardrail for AI coding agents.
  *
  * Protocols supported:
- *   --mode=stop       (default) Inspects uncommitted git diff when Claude finishes a turn.
- *                     Blocks stop (with actionable trim instructions) if score > threshold.
- *   --mode=post-tool  Inspects the single edited file after Edit/Write/MultiEdit.
- *                     Non-blocking: injects concise additionalContext if signals appear.
+ *   --mode=stop         (default) Claude Code Stop hook. Inspects uncommitted git diff.
+ *                       Blocks stop with actionable trim instructions if score > threshold.
+ *   --mode=post-tool    Claude Code PostToolUse hook. Non-blocking additionalContext nudge.
+ *   --mode=cursor-stop  Cursor IDE stop hook (.cursor/hooks.json). Returns followup_message
+ *                       when over threshold (with loop_count == 0 guard).
  *
- * Fails open (exits 0 silently) on non-git folders, disabled config, or stop_hook_active=true.
+ * Fails open (exits 0 silently) on non-git folders, disabled config, or recursion guards.
  */
 
 import { execFileSync } from 'child_process';
@@ -27,7 +28,6 @@ function getGitDiff(cwd, filePath = null) {
   try {
     return execFileSync('git', ['diff', 'HEAD', ...targetArgs], execOpts);
   } catch {
-    // Repo may have no commits yet — fall back to staged diff
     try {
       return execFileSync('git', ['diff', '--cached', ...targetArgs], execOpts);
     } catch {
@@ -68,15 +68,22 @@ export function evaluateHookPayload(payload, options = {}) {
   if (!payload || typeof payload !== 'object') return null;
   if (process.env.MOYU_HOOK_DISABLED === '1') return null;
 
-  const cwd = payload.cwd || process.cwd();
+  const cwd = payload.cwd || payload.workspace_roots?.[0] || process.cwd();
   const config = loadConfig(cwd);
   if (config.enabled === false) return null;
 
-  const mode = options.mode || (payload.hook_event_name === 'PostToolUse' || payload.event === 'PostToolUse' ? 'post-tool' : 'stop');
+  const mode = options.mode
+    || (payload.hook_event_name === 'PostToolUse' || payload.event === 'PostToolUse' ? 'post-tool'
+      : (payload.hook_event_name === 'stop' || 'loop_count' in payload) ? 'cursor-stop'
+      : 'stop');
 
-  // Guard against infinite Stop-hook recursion
+  // Guard against infinite recursion
   if (mode === 'stop' && payload.stop_hook_active === true) {
     return null;
+  }
+  if (mode === 'cursor-stop') {
+    if (payload.status === 'aborted' || payload.status === 'error') return null;
+    if ((payload.loop_count ?? 0) > 0 || payload.stop_hook_active === true) return null;
   }
 
   const envThreshold = process.env.MOYU_HOOK_THRESHOLD ? parseInt(process.env.MOYU_HOOK_THRESHOLD, 10) : null;
@@ -119,6 +126,12 @@ export function evaluateHookPayload(payload, options = {}) {
         hookEventName: 'PostToolUse',
         additionalContext: `Moyu guardrail warning (score ${analysis.totalScore} > ${threshold}): ${summary}. Keep only the minimal changes requested by the user.`,
       },
+    };
+  }
+
+  if (mode === 'cursor-stop') {
+    return {
+      followup_message: `Moyu over-engineering guard triggered (score ${analysis.totalScore} > threshold ${threshold}). Detected: ${summary}. Review git diff and revert any unrequested docstrings, defensive checks, speculative abstractions, or out-of-scope edits unless explicitly asked.`,
     };
   }
 

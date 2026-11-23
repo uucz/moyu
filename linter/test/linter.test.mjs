@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 
@@ -16,7 +16,7 @@ import {
   detectUnnecessaryDocstrings,
   parseDiff,
 } from '../signals.mjs';
-import { generateReport } from '../index.mjs';
+import { generateReport, installHook } from '../index.mjs';
 import { evaluateHookPayload } from '../hook.mjs';
 
 const LINTER_CLI = resolve('linter/index.mjs');
@@ -283,6 +283,77 @@ test('CLI --init scaffolds a valid .moyurc.json and does not overwrite existing 
     const second = spawnSync(process.execPath, [LINTER_CLI, '--init'], { cwd: tmpDir, encoding: 'utf-8' });
     assert.equal(second.status, 0);
     assert.match(second.stdout, /already exists/);
+  } finally {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('Cursor stop hook returns followup_message and respects loop_count & status guards', () => {
+  const badDiff = makeDiff('src/factory.ts', [
+    'export class TaskFactory {}',
+    'export class TaskStrategy {}',
+    'export class TaskBuilder {}',
+    'export class TaskFacade {}',
+  ]);
+
+  const res = evaluateHookPayload(
+    { status: 'completed', loop_count: 0, workspace_roots: [process.cwd()] },
+    { mode: 'cursor-stop', threshold: 4, diffText: badDiff }
+  );
+  assert.match(res.followup_message, /Moyu over-engineering guard triggered/);
+
+  assert.equal(
+    evaluateHookPayload({ status: 'completed', loop_count: 1, workspace_roots: [process.cwd()] }, { mode: 'cursor-stop', threshold: 4, diffText: badDiff }),
+    null
+  );
+  assert.equal(
+    evaluateHookPayload({ status: 'aborted', loop_count: 0, workspace_roots: [process.cwd()] }, { mode: 'cursor-stop', threshold: 4, diffText: badDiff }),
+    null
+  );
+});
+
+test('installHook sets up git pre-commit, Claude Code, and Cursor hooks idempotently', () => {
+  const tmpDir = mkdtempSync(join(tmpdir(), 'moyu-install-hook-'));
+  try {
+    execFileSync('git', ['init'], { cwd: tmpDir, stdio: 'ignore' });
+
+    // Git pre-commit preserves existing script and stays idempotent
+    const preCommit = join(tmpDir, '.git', 'hooks', 'pre-commit');
+    writeFileSync(preCommit, '#!/bin/sh\necho "existing check"\n');
+    const g1 = installHook('git', { cwd: tmpDir, threshold: 5 });
+    assert.equal(g1.status, 'installed');
+    const content1 = readFileSync(preCommit, 'utf-8');
+    assert.match(content1, /existing check/);
+    assert.match(content1, /--staged --threshold=5/);
+    assert.ok((statSync(preCommit).mode & 0o111) !== 0);
+
+    // Re-running updates threshold without duplicating block
+    installHook('git', { cwd: tmpDir, threshold: 7 });
+    const content2 = readFileSync(preCommit, 'utf-8');
+    assert.equal(content2.split('# >>> moyu-lint >>>').length - 1, 1);
+    assert.match(content2, /--staged --threshold=7/);
+
+    // Claude Code hook merges safely and is idempotent
+    const c1 = installHook('claude', { cwd: tmpDir, threshold: 6 });
+    assert.equal(c1.status, 'installed');
+    assert.ok(existsSync(join(tmpDir, '.claude', 'settings.json')));
+    const claudeCfg = JSON.parse(readFileSync(join(tmpDir, '.claude', 'settings.json'), 'utf-8'));
+    assert.equal(claudeCfg.hooks.Stop.length, 1);
+    assert.match(claudeCfg.hooks.Stop[0].hooks[0].command, /--mode=stop --threshold=6/);
+
+    const c2 = installHook('claude', { cwd: tmpDir, threshold: 6 });
+    assert.equal(c2.status, 'already-installed');
+
+    // Cursor hook merges safely and is idempotent
+    const u1 = installHook('cursor', { cwd: tmpDir, threshold: 6 });
+    assert.equal(u1.status, 'installed');
+    const cursorCfg = JSON.parse(readFileSync(join(tmpDir, '.cursor', 'hooks.json'), 'utf-8'));
+    assert.equal(cursorCfg.version, 1);
+    assert.equal(cursorCfg.hooks.stop.length, 1);
+    assert.match(cursorCfg.hooks.stop[0].command, /--mode=cursor-stop --threshold=6/);
+
+    const u2 = installHook('cursor', { cwd: tmpDir, threshold: 6 });
+    assert.equal(u2.status, 'already-installed');
   } finally {
     rmSync(tmpDir, { recursive: true, force: true });
   }

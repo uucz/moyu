@@ -229,9 +229,11 @@ Or manually copy `skills/moyu-en/SKILL.md` to `.claude/skills/moyu/SKILL.md`
 
 Our 1,460-experiment benchmark showed that prompts alone cannot guarantee small diffs across every model. Moyu ships a zero-dependency deterministic diff analyzer ([`linter/`](./linter/README.md)):
 
-- **Claude Code Stop Hook**: Inspects `git diff` before Claude ends a turn and asks it to trim unrequested bloat (auto-wired via Claude Code plugin, or configure `.claude/settings.json`).
-- **Git Pre-Commit**: `node linter/index.mjs --staged --threshold=6`
-- **GitHub Action**: `uses: uucz/moyu/linter@main` on PRs
+- **One-Command Hook Setup** (idempotent, preserves existing hooks):
+  - Claude Code: `node linter/index.mjs --install-hook=claude` (or auto-wired via `/plugin install`)
+  - Cursor IDE: `node linter/index.mjs --install-hook=cursor` (`.cursor/hooks.json`)
+  - Git Pre-Commit: `node linter/index.mjs --install-hook=git` (works with any AI tool)
+- **GitHub Action**: `uses: uucz/moyu/linter@main` on PRs (with shallow-clone PR Diff API fallback)
 
 ### Universal `AGENTS.md`
 
@@ -443,11 +445,10 @@ Moyu uses research-backed prompt techniques: positive instructions, pattern matc
 
 ## Roadmap
 
-- [x] Moyu Linter: deterministic detection of 7 over-engineering signals (with unit tests, PR API fallback & `.moyurc.json`)
+- [x] Moyu Linter: deterministic detection of 7 over-engineering signals (16 unit tests, PR API fallback & `.moyurc.json`)
 - [x] GitHub Action: PR-level over-engineering checks (Node 24)
-- [x] Claude Code Agent Hooks (`Stop` / `PostToolUse`) & universal `AGENTS.md` templates
-- [ ] More editor / agent hook adapters & one-line `pre-commit` integration
-- [ ] Community-contributed localizations and real-world linter test fixtures
+- [x] One-command Agent & Git Hooks: Claude Code, Cursor IDE, Git `pre-commit`, plus universal `AGENTS.md` templates
+- [ ] Community-contributed localizations, additional editor hooks, and real-world linter test fixtures
 
 ---
 
