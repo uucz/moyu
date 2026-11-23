@@ -87,14 +87,14 @@
   <span data-lang="en">Moyu Linter</span>
 </h1>
 <p class="page-sub">
-  <span data-lang="zh">GitHub Action：自动检测 PR 中的过度工程信号。零依赖，即插即用。</span>
-  <span data-lang="en">A GitHub Action that detects over-engineering signals in your pull requests. Zero dependencies.</span>
+  <span data-lang="zh">确定性反过度工程护栏：同时支持 GitHub Action PR 检查、Claude Code Agent Hooks 与本地 git pre-commit。零依赖，Node 20/24 原生运行。</span>
+  <span data-lang="en">Deterministic anti-over-engineering guardrail: works as a GitHub Action, Claude Code Agent Hook, and local git pre-commit check. Zero dependencies.</span>
 </p>
 
 <!-- Quick setup -->
 <h2 class="section-title">
-  <span data-lang="zh">快速配置</span>
-  <span data-lang="en">Quick Setup</span>
+  <span data-lang="zh">1. GitHub Action（PR 级检查）</span>
+  <span data-lang="en">1. GitHub Action (PR Linting)</span>
 </h2>
 <p style="color:var(--text-secondary);margin-bottom:12px;font-size:.95rem">
   <span data-lang="zh">创建 <code>.github/workflows/moyu-lint.yml</code>：</span>
@@ -114,38 +114,69 @@ jobs:
           fetch-depth: 0
       - uses: uucz/moyu/linter@main
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}</div>
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          threshold: 0</div>
 
-<!-- 6 signals -->
+<!-- Agent Hooks -->
 <h2 class="section-title">
-  <span data-lang="zh">6 个检测信号</span>
-  <span data-lang="en">6 Detection Signals</span>
+  <span data-lang="zh">2. Claude Code Agent Hook（生成期实时拦截）</span>
+  <span data-lang="en">2. Claude Code Agent Hook (In-Loop Guardrail)</span>
+</h2>
+<p style="color:var(--text-secondary);margin-bottom:12px;font-size:.95rem">
+  <span data-lang="zh">单靠 Prompt 无法保证所有模型克制（1460 次实验已证实）。接入 <code>Stop</code> Hook 后，Moyu 会在 Agent 结束当前回合前检查 <code>git diff</code>，超阈值时要求 AI 自行裁剪多余改动（内置 <code>stop_hook_active</code> 防死循环保护）：</span>
+  <span data-lang="en">Prompts alone cannot guarantee restraint across every model. Wiring the <code>Stop</code> hook lets Moyu inspect <code>git diff</code> before the agent finishes and ask it to trim unrequested bloat (with built-in <code>stop_hook_active</code> loop protection):</span>
+</p>
+<div class="code-block">{
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ./linter/hook.mjs --mode=stop --threshold=6",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}</div>
+
+<!-- 7 signals -->
+<h2 class="section-title">
+  <span data-lang="zh">7 个检测信号（自动过滤测试/锁文件/非代码文件）</span>
+  <span data-lang="en">7 Detection Signals (Auto-Skips Tests, Lockfiles &amp; Docs)</span>
 </h2>
 
 <div class="signal-grid">
   <div class="signal-card">
     <h3><span data-lang="zh">不必要的文档字符串</span><span data-lang="en">Unnecessary Docstrings</span></h3>
-    <p><span data-lang="zh">检测为已有函数添加的 docstring / JSDoc，而非新函数。</span><span data-lang="en">Docstrings added to existing functions, not new ones.</span></p>
+    <p><span data-lang="zh">检测为已有函数补加的 docstring / JSDoc 块，或超长注水文档（&gt;12 行/函数）。</span><span data-lang="en">Docstring/JSDoc blocks added to existing functions, or bloated docs (&gt;12 lines/func).</span></p>
   </div>
   <div class="signal-card">
     <h3><span data-lang="zh">过度错误处理</span><span data-lang="en">Excessive Error Handling</span></h3>
-    <p><span data-lang="zh">新增代码中 try/catch/except 占比过高（>20%）。</span><span data-lang="en">High ratio of try/catch/except in added code (&gt;20%).</span></p>
+    <p><span data-lang="zh">新增业务代码中 try/catch/except/raise 占比超过 25%（自动跳过测试文件）。</span><span data-lang="en">&gt;25% of added non-test code lines are try/catch/except/raise.</span></p>
   </div>
   <div class="signal-card">
     <h3><span data-lang="zh">未请求的新文件</span><span data-lang="en">New Files Created</span></h3>
-    <p><span data-lang="zh">PR 中创建了全新文件，可能超出需求范围。</span><span data-lang="en">Entirely new files that may exceed the requested scope.</span></p>
+    <p><span data-lang="zh">新建超过 15 行的非测试代码文件，可能超出需求范围。</span><span data-lang="en">New non-test code files (&gt;15 lines) that may exceed the requested scope.</span></p>
   </div>
   <div class="signal-card">
     <h3><span data-lang="zh">类型检查膨胀</span><span data-lang="en">Type-Check Bloat</span></h3>
-    <p><span data-lang="zh">过多的 isinstance / typeof / type() 检查。</span><span data-lang="en">Excessive isinstance / typeof / type() checks.</span></p>
+    <p><span data-lang="zh">新增 3 处以上运行时 isinstance / typeof / Array.isArray 检查（忽略注释）。</span><span data-lang="en">3+ runtime isinstance / typeof / Array.isArray checks added (comments ignored).</span></p>
   </div>
   <div class="signal-card">
     <h3><span data-lang="zh">不必要的抽象</span><span data-lang="en">Unnecessary Abstractions</span></h3>
-    <p><span data-lang="zh">新增 class / interface / 设计模式命名（Factory、Strategy 等）。</span><span data-lang="en">New class/interface declarations or design pattern names (Factory, Strategy, etc).</span></p>
+    <p><span data-lang="zh">投机性设计模式声明（Factory、Strategy、Builder 等）或单文件新增 3+ class/interface（不误报普通 TS <code>type</code> 别名）。</span><span data-lang="en">Speculative pattern classes (Factory, Strategy, Builder, etc.) or 3+ classes/interfaces in one file (ordinary TS <code>type</code> aliases ignored).</span></p>
+  </div>
+  <div class="signal-card">
+    <h3><span data-lang="zh">整文件重写</span><span data-lang="en">Whole-File Rewrite</span></h3>
+    <p><span data-lang="zh">对已有文件在单个大 hunk 中对称增删 35+ 行（捕获 AI "改一行重写全文件" 模式）。</span><span data-lang="en">Existing file with &gt;=35 symmetric lines added/removed in one hunk (catches full-file rewrites).</span></p>
   </div>
   <div class="signal-card">
     <h3><span data-lang="zh">范围蔓延</span><span data-lang="en">Scope Creep</span></h3>
-    <p><span data-lang="zh">变更文件数远超 PR 标题/描述所涉及的范围。</span><span data-lang="en">Many files changed relative to PR title/description scope.</span></p>
+    <p><span data-lang="zh">非锁文件改动数量超限（默认 8 个），或简短标题 PR 改动超 5 个文件。</span><span data-lang="en">Non-lockfile changes exceeding <code>maxFiles</code> (default 8), or short PR title touching &gt;5 files.</span></p>
   </div>
 </div>
 
@@ -191,20 +222,20 @@ jobs:
 
 <!-- CLI usage -->
 <h2 class="section-title">
-  <span data-lang="zh">本地使用 (CLI)</span>
-  <span data-lang="en">Local Usage (CLI)</span>
+  <span data-lang="zh">本地使用 (CLI &amp; 配置)</span>
+  <span data-lang="en">Local Usage (CLI &amp; Config)</span>
 </h2>
-<div class="code-block"># Lint last commit
-node linter/index.mjs
+<div class="code-block"># Lint staged changes (git pre-commit)
+node linter/index.mjs --staged --threshold=6
 
-# Lint specific range
-node linter/index.mjs HEAD~3
+# Lint all uncommitted changes
+node linter/index.mjs --working
 
-# Lint from stdin
-git diff main...HEAD | node linter/index.mjs --stdin
+# Lint from stdin as JSON
+git diff main...HEAD | node linter/index.mjs --stdin --json
 
-# Set failure threshold
-node linter/index.mjs --threshold=5</div>
+# Optional .moyurc.json in repo root:
+# { "threshold": 0, "hookThreshold": 6, "maxFiles": 8, "ignore": ["generated/**"] }</div>
 
 </div>
 

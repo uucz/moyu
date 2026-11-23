@@ -1,75 +1,24 @@
 #!/usr/bin/env node
 
 /**
- * Moyu Lint — detect over-engineering signals in PRs.
- * Zero dependencies. Works as GitHub Action or standalone CLI.
- *
- * GitHub Action: reads GITHUB_EVENT_PATH for PR context
- * CLI: reads diff from stdin or git diff
+ * Moyu Lint — detect over-engineering signals in PRs and local git diffs.
+ * Zero dependencies. Works as GitHub Action, git pre-commit check, or standalone CLI.
  */
 
-import { execSync } from 'child_process';
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { execFileSync } from 'child_process';
+import { readFileSync, writeFileSync } from 'fs';
 import { request } from 'https';
-import {
-  detectUnnecessaryDocstrings,
-  detectExcessiveErrorHandling,
-  detectNewFiles,
-  detectTypeCheckBloat,
-  detectUnnecessaryAbstractions,
-  detectScopeCreep,
-} from './signals.mjs';
-
-// ---------------------------------------------------------------------------
-// Diff parser
-// ---------------------------------------------------------------------------
-
-function parseDiff(diffText) {
-  const files = [];
-  let current = null;
-
-  for (const line of diffText.split('\n')) {
-    // New file in diff
-    if (line.startsWith('diff --git')) {
-      if (current) files.push(current);
-      const match = line.match(/b\/(.+)$/);
-      current = { path: match ? match[1] : '?', added: [], removed: [], isNew: false };
-      continue;
-    }
-    if (!current) continue;
-
-    if (line.startsWith('new file mode')) {
-      current.isNew = true;
-      continue;
-    }
-
-    // Hunk header: @@ -a,b +c,d @@
-    if (line.startsWith('@@')) {
-      const m = line.match(/@@ -\d+(?:,\d+)? \+(\d+)/);
-      if (m) current._lineNum = parseInt(m[1], 10);
-      continue;
-    }
-
-    if (line.startsWith('+') && !line.startsWith('+++')) {
-      current.added.push({ num: current._lineNum || 0, content: line.slice(1) });
-      if (current._lineNum) current._lineNum++;
-    } else if (line.startsWith('-') && !line.startsWith('---')) {
-      current.removed.push({ content: line.slice(1) });
-    } else {
-      if (current._lineNum) current._lineNum++;
-    }
-  }
-  if (current) files.push(current);
-  return files;
-}
+import { pathToFileURL } from 'url';
+import { analyzeDiff, loadConfig } from './signals.mjs';
 
 // ---------------------------------------------------------------------------
 // Report generation
 // ---------------------------------------------------------------------------
 
-function generateReport(results, totalScore, prTitle) {
+export function generateReport(analysis) {
+  const { totalScore, results } = analysis;
   const FISH = totalScore === 0 ? '🐟' : totalScore <= 3 ? '🐠' : '🐡';
-  const grade =
+  const gradeDesc =
     totalScore === 0 ? 'Perfect — no over-engineering detected'
     : totalScore <= 3 ? 'Minor — a few signals detected'
     : totalScore <= 6 ? 'Moderate — consider simplifying'
@@ -77,7 +26,7 @@ function generateReport(results, totalScore, prTitle) {
 
   let md = `<!-- moyu-lint -->\n`;
   md += `## ${FISH} Moyu Lint Report\n\n`;
-  md += `**Score: ${totalScore}** — ${grade}\n\n`;
+  md += `**Score: ${totalScore}** — ${gradeDesc}\n\n`;
 
   if (totalScore === 0) {
     md += `> Three rules, zero over-engineering. Well done!\n`;
@@ -96,7 +45,7 @@ function generateReport(results, totalScore, prTitle) {
   }
 
   md += `\n> **Moyu says:** The best code is the code you didn't write.\n`;
-  md += `> Run \`npx moyu-dev\` to install anti-over-engineering rules.\n`;
+  md += `> Install anti-over-engineering rules: \`npx skills add uucz/moyu\`\n`;
   return md;
 }
 
@@ -139,7 +88,6 @@ async function postOrUpdateComment(repo, prNumber, report, token) {
   const MARKER = '<!-- moyu-lint -->';
   const commentsPath = `/repos/${repo}/issues/${prNumber}/comments`;
 
-  // Find existing comment
   const comments = await githubApi('GET', `${commentsPath}?per_page=100`, null, token);
   const existing = comments.find((c) => c.body && c.body.includes(MARKER));
 
@@ -151,11 +99,51 @@ async function postOrUpdateComment(repo, prNumber, report, token) {
 }
 
 // ---------------------------------------------------------------------------
+// Git diff helper
+// ---------------------------------------------------------------------------
+
+function runGitDiff(gitArgs) {
+  return execFileSync('git', ['diff', ...gitArgs], {
+    encoding: 'utf-8',
+    maxBuffer: 10 * 1024 * 1024,
+  });
+}
+
+function printHelp() {
+  console.log(`
+  Moyu Lint — detect over-engineering signals in diffs and PRs
+
+  Usage:
+    node linter/index.mjs [diff-target] [options]
+
+  Modes:
+    <ref>               Diff against git ref (default: HEAD~1)
+    --staged            Lint staged changes (ideal for git pre-commit)
+    --working           Lint all uncommitted working-tree changes (git diff HEAD)
+    --stdin             Read unified diff from stdin
+
+  Options:
+    --threshold=N       Exit with code 1 if score exceeds N (default: 0 = report only)
+    --max-files=N       Scope-creep file threshold (default: 8)
+    --ignore=a,b        Comma-separated glob patterns to ignore
+    --json              Output structured JSON instead of markdown
+    -h, --help          Show this help
+`);
+}
+
+// ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
 
-async function main() {
-  const isGitHubAction = !!process.env.GITHUB_ACTIONS;
+export async function main() {
+  const args = process.argv.slice(2);
+  if (args.includes('--help') || args.includes('-h')) {
+    printHelp();
+    return;
+  }
+
+  const isGitHubAction = Boolean(process.env.GITHUB_ACTIONS) && !args.includes('--stdin') && !args.includes('--staged') && !args.includes('--working');
+  const config = loadConfig(process.cwd());
 
   let diffText = '';
   let prTitle = '';
@@ -163,76 +151,91 @@ async function main() {
   let prNumber = null;
   let repo = '';
   let token = '';
-  let threshold = 0;
+  let threshold = config.threshold || 0;
+  let maxFiles = config.maxFiles || 8;
+  let ignore = [...config.ignore];
   let shouldComment = true;
+  let jsonMode = args.includes('--json');
 
   if (isGitHubAction) {
-    // GitHub Action mode
     const eventPath = process.env.GITHUB_EVENT_PATH;
-    const event = JSON.parse(readFileSync(eventPath, 'utf-8'));
+    const event = eventPath ? JSON.parse(readFileSync(eventPath, 'utf-8')) : {};
 
     prNumber = event.pull_request?.number || event.number;
     prTitle = event.pull_request?.title || '';
     prBody = event.pull_request?.body || '';
-    repo = process.env.GITHUB_REPOSITORY;
+    repo = process.env.GITHUB_REPOSITORY || '';
     token = process.env.INPUT_GITHUB_TOKEN || process.env['INPUT_GITHUB-TOKEN'] || process.env.GITHUB_TOKEN || '';
-    threshold = parseInt(process.env.INPUT_THRESHOLD || '0', 10);
+    if (process.env.INPUT_THRESHOLD) threshold = parseInt(process.env.INPUT_THRESHOLD, 10);
+    if (process.env.INPUT_IGNORE) {
+      ignore.push(...process.env.INPUT_IGNORE.split(',').map((s) => s.trim()).filter(Boolean));
+    }
     shouldComment = (process.env.INPUT_COMMENT || 'true') !== 'false';
 
     const baseSha = event.pull_request?.base?.sha;
     const headSha = event.pull_request?.head?.sha;
 
     if (baseSha && headSha) {
-      // Fetch full history for the diff
-      try { execSync('git fetch --depth=100 origin', { stdio: 'pipe' }); } catch {}
-      diffText = execSync(`git diff ${baseSha}...${headSha}`, { encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 });
+      try { execFileSync('git', ['fetch', '--depth=100', 'origin'], { stdio: 'pipe' }); } catch {}
+      diffText = runGitDiff([`${baseSha}...${headSha}`]);
     } else {
-      diffText = execSync('git diff HEAD~1', { encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 });
+      diffText = runGitDiff(['HEAD~1']);
     }
   } else {
-    // CLI mode: read from git diff or stdin
-    const args = process.argv.slice(2);
-    threshold = parseInt(args.find((a) => a.startsWith('--threshold='))?.split('=')[1] || '0', 10);
+    const thresholdArg = args.find((a) => a.startsWith('--threshold='));
+    if (thresholdArg) threshold = parseInt(thresholdArg.split('=')[1], 10);
+
+    const maxFilesArg = args.find((a) => a.startsWith('--max-files='));
+    if (maxFilesArg) maxFiles = parseInt(maxFilesArg.split('=')[1], 10);
+
+    const ignoreArg = args.find((a) => a.startsWith('--ignore='));
+    if (ignoreArg) {
+      ignore.push(...ignoreArg.slice('--ignore='.length).split(',').map((s) => s.trim()).filter(Boolean));
+    }
 
     if (args.includes('--stdin')) {
-      diffText = readFileSync('/dev/stdin', 'utf-8');
+      diffText = readFileSync(0, 'utf-8');
+    } else if (args.includes('--staged')) {
+      diffText = runGitDiff(['--cached']);
+    } else if (args.includes('--working')) {
+      diffText = runGitDiff(['HEAD']);
     } else {
       const diffTarget = args.find((a) => !a.startsWith('--')) || 'HEAD~1';
-      diffText = execSync(`git diff ${diffTarget}`, { encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 });
+      diffText = runGitDiff([diffTarget]);
     }
     shouldComment = false;
   }
 
   if (!diffText.trim()) {
-    console.log('No diff found. Nothing to lint.');
+    if (jsonMode) {
+      console.log(JSON.stringify({ totalScore: 0, grade: 'Perfect', results: [], filesAnalyzed: 0, filesIgnored: 0 }));
+    } else {
+      console.log('No diff found. Nothing to lint.');
+    }
     return;
   }
 
-  // Parse and analyze
-  const files = parseDiff(diffText);
-  const results = [
-    detectUnnecessaryDocstrings(files),
-    detectExcessiveErrorHandling(files),
-    detectNewFiles(files),
-    detectTypeCheckBloat(files),
-    detectUnnecessaryAbstractions(files),
-    detectScopeCreep(files, prTitle, prBody),
-  ];
+  const analysis = analyzeDiff(diffText, {
+    prTitle,
+    prBody,
+    maxFiles,
+    ignore,
+    disableSignals: config.disableSignals,
+  });
+  const report = generateReport(analysis);
 
-  const totalScore = results.reduce((sum, r) => sum + r.score, 0);
-  const report = generateReport(results, totalScore, prTitle);
-
-  // Output
-  console.log(report);
+  if (jsonMode) {
+    console.log(JSON.stringify(analysis, null, 2));
+  } else {
+    console.log(report);
+  }
 
   if (isGitHubAction) {
-    // Set outputs
     const outputFile = process.env.GITHUB_OUTPUT;
     if (outputFile) {
-      writeFileSync(outputFile, `score=${totalScore}\nreport<<EOF\n${report}\nEOF\n`, { flag: 'a' });
+      writeFileSync(outputFile, `score=${analysis.totalScore}\nreport<<EOF\n${report}\nEOF\n`, { flag: 'a' });
     }
 
-    // Post PR comment
     if (shouldComment && prNumber && token) {
       try {
         await postOrUpdateComment(repo, prNumber, report, token);
@@ -241,16 +244,19 @@ async function main() {
         console.log(`Warning: could not post comment: ${e.message}`);
       }
     }
+  }
 
-    // Fail if over threshold
-    if (threshold > 0 && totalScore > threshold) {
-      console.log(`Score ${totalScore} exceeds threshold ${threshold}`);
-      process.exit(1);
+  if (threshold > 0 && analysis.totalScore > threshold) {
+    if (!jsonMode) {
+      console.error(`Score ${analysis.totalScore} exceeds threshold ${threshold}`);
     }
+    process.exit(1);
   }
 }
 
-main().catch((e) => {
-  console.error(`Error: ${e.message}`);
-  process.exit(1);
-});
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((e) => {
+    console.error(`Error: ${e.message}`);
+    process.exit(1);
+  });
+}

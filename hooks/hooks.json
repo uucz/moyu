@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/linter/hook.mjs\" --mode=stop",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

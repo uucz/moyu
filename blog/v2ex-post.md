@@ -28,9 +28,9 @@
 
 统计方法：ANOVA + Bonferroni + Cohen's d。CSV 1460 行，全部开源。
 
-Claude Code 一行安装：
+一行安装（支持 Claude Code / Cursor / Codex 等）：
 ```bash
-claude skill install --url https://github.com/uucz/moyu --skill moyu
+npx skills add uucz/moyu
 ```
 
 项目：https://github.com/uucz/moyu

@@ -34,7 +34,7 @@
 Vous pensiez que l'IA allait vous libérer ? Elle a écrit 200 lignes. Vous avez passé 2 heures à relire. L'IA a fait des heures sup — et vous aussi.
 
 ```bash
-claude skill install --url https://github.com/uucz/moyu --skill moyu-fr
+npx skills add uucz/moyu --skill moyu-fr
 ```
 
 [English](./README.en.md) | [中文](./README.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md) | Français
@@ -196,32 +196,31 @@ Moyu ne fait pas que corriger le comportement de l'IA — c'est de la discipline
 
 > **Voie rapide** : La plupart des utilisateurs n'ont besoin que d'une seule commande :
 > ```bash
-> claude skill install --url https://github.com/uucz/moyu --skill moyu-fr
+> npx skills add uucz/moyu --skill moyu-fr
 > ```
-> Vous utilisez Cursor ? Copiez `cursor/rules/moyu-en.mdc` dans le dossier `.cursor/rules/` de votre projet.
-> Vous utilisez VSCode/Copilot ? Copiez `vscode/copilot-instructions.md` dans `.github/`.
-> Autres plateformes → [Installation détaillée](#claude-code--codex-cli--kiro--codebuddy--google-antigravity--opencode)
+> Plugin Claude Code (avec Stop Hook) : `/plugin marketplace add uucz/moyu` → `/plugin install moyu@uucz-moyu`.
+> Fichier universel `AGENTS.md` : copiez [`templates/AGENTS-en.md`](./templates/AGENTS-en.md) à la racine de votre projet.
 
-### Claude Code / Codex CLI / Kiro / CodeBuddy / Google Antigravity / OpenCode
+### Agent Skills CLI (Claude Code / Cursor / Codex / Copilot / Windsurf / Cline / Antigravity / OpenCode)
 
 ```bash
 # Français (standard)
-claude skill install --url https://github.com/uucz/moyu --skill moyu-fr
+npx skills add uucz/moyu --skill moyu-fr
 
 # English
-claude skill install --url https://github.com/uucz/moyu --skill moyu-en
+npx skills add uucz/moyu --skill moyu-en
 
 # 中文
-claude skill install --url https://github.com/uucz/moyu --skill moyu
+npx skills add uucz/moyu --skill moyu
 
 # 日本語
-claude skill install --url https://github.com/uucz/moyu --skill moyu-ja
+npx skills add uucz/moyu --skill moyu-ja
 
 # Lite (trois règles d'or + tableau comparatif uniquement)
-claude skill install --url https://github.com/uucz/moyu --skill moyu-lite
+npx skills add uucz/moyu --skill moyu-lite
 
 # Strict (s'arrête au L1 pour confirmation, pour l'application en équipe)
-claude skill install --url https://github.com/uucz/moyu --skill moyu-strict
+npx skills add uucz/moyu --skill moyu-strict
 ```
 
 Ou copiez manuellement `skills/moyu-en/SKILL.md` vers `.claude/skills/moyu/SKILL.md`
@@ -246,8 +245,8 @@ curl -o ~/.codex/skills/moyu/SKILL.md https://raw.githubusercontent.com/uucz/moy
 ### VSCode / GitHub Copilot
 
 ```bash
-mkdir -p .github/instructions
-curl -o .github/copilot-instructions.md https://raw.githubusercontent.com/uucz/moyu/main/vscode/copilot-instructions.md
+mkdir -p .github
+curl -o .github/copilot-instructions.md https://raw.githubusercontent.com/uucz/moyu/main/vscode/copilot-instructions-en.md
 ```
 
 ### Windsurf

@@ -37,9 +37,9 @@
 | GPT-5 Codex | OpenAI |
 | Grok 4.20 Beta | xAI |
 | Grok 4.1 Fast | xAI |
-| LongCat Flash Chat | DeepSeek |
-| LongCat Flash Thinking | DeepSeek |
-| LongCat Flash Lite | DeepSeek |
+| LongCat Flash Chat | Meituan |
+| LongCat Flash Thinking | Meituan |
+| LongCat Flash Lite | Meituan |
 
 ### 五种约束策略（Conditions）
 
@@ -189,9 +189,9 @@ B 类整体 ANOVA: p=0.81（无显著差异）
 
 ## 30 秒治好你的 AI
 
-**Claude Code / Codex CLI**（一行命令）：
+**Agent Skills CLI（Claude Code / Cursor / Codex 等一键安装）**：
 ```bash
-claude skill install --url https://github.com/uucz/moyu --skill moyu
+npx skills add uucz/moyu
 ```
 
 **Cursor**（复制一个文件）：

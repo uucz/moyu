@@ -31,10 +31,10 @@
 
 > **Moyu** (摸鱼, "to slack off") — an anti-over-engineering framework for AI coding agents.
 
-You thought AI would set you free? It wrote 200 lines. You spent 2 hours reviewing. The AI worked overtime — and so did you.
+You thought AI would set you free? It wrote 200 lines. You spent 2 hours reviewing. The AI worked overtime — and so did you. **Two-layer defense: soft rules (`SKILL.md` / `AGENTS.md`) + deterministic guardrails (Agent Hooks & PR Linter).**
 
 ```bash
-claude skill install --url https://github.com/uucz/moyu --skill moyu-en
+npx skills add uucz/moyu --skill moyu-en
 ```
 
 English | [中文](./README.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md) | [Français](./README.fr.md)
@@ -194,34 +194,51 @@ Moyu isn't just fixing AI behavior — it's engineering discipline. Even if futu
 
 ## Install
 
-> **Quick route**: Most users only need one command:
+> **Quick route**: Cross-platform one-liner via Agent Skills CLI (auto-detects installed tools):
 > ```bash
-> claude skill install --url https://github.com/uucz/moyu --skill moyu-en
+> npx skills add uucz/moyu --skill moyu-en
 > ```
-> Using Cursor? Copy `cursor/rules/moyu-en.mdc` to your project's `.cursor/rules/`.
-> Using VSCode/Copilot? Copy `vscode/copilot-instructions.md` to `.github/`.
-> Other platforms → [Detailed install](#claude-code--codex-cli--kiro--codebuddy--google-antigravity--opencode)
+> **Claude Code Plugin (with Stop Hook guardrail)**: `/plugin marketplace add uucz/moyu` → `/plugin install moyu@uucz-moyu`.
+> **Universal `AGENTS.md`** (Codex / Cursor / Copilot / Aider): copy [`templates/AGENTS-en.md`](./templates/AGENTS-en.md) to `AGENTS.md` (and `ln -s AGENTS.md CLAUDE.md` for Claude Code).
 
-### Claude Code / Codex CLI / Kiro / CodeBuddy / Google Antigravity / OpenCode
+### Agent Skills CLI (Claude Code / Cursor / Codex / Copilot / Windsurf / Cline / Antigravity / OpenCode)
 
 ```bash
 # English (standard)
-claude skill install --url https://github.com/uucz/moyu --skill moyu-en
+npx skills add uucz/moyu --skill moyu-en
 
 # Chinese
-claude skill install --url https://github.com/uucz/moyu --skill moyu
+npx skills add uucz/moyu --skill moyu
 
-# 日本語
-claude skill install --url https://github.com/uucz/moyu --skill moyu-ja
+# 日本語 / 한국어 / Français
+npx skills add uucz/moyu --skill moyu-ja
+npx skills add uucz/moyu --skill moyu-ko
+npx skills add uucz/moyu --skill moyu-fr
 
 # Lite (three iron rules + comparison table only)
-claude skill install --url https://github.com/uucz/moyu --skill moyu-lite
+npx skills add uucz/moyu --skill moyu-lite
 
 # Strict (stops at L1 for confirmation, for team enforcement)
-claude skill install --url https://github.com/uucz/moyu --skill moyu-strict
+npx skills add uucz/moyu --skill moyu-strict
 ```
 
 Or manually copy `skills/moyu-en/SKILL.md` to `.claude/skills/moyu/SKILL.md`
+
+### Deterministic Guardrails: Agent Hooks & PR Linter
+
+Our 1,460-experiment benchmark showed that prompts alone cannot guarantee small diffs across every model. Moyu ships a zero-dependency deterministic diff analyzer ([`linter/`](./linter/README.md)):
+
+- **Claude Code Stop Hook**: Inspects `git diff` before Claude ends a turn and asks it to trim unrequested bloat (auto-wired via Claude Code plugin, or configure `.claude/settings.json`).
+- **Git Pre-Commit**: `node linter/index.mjs --staged --threshold=6`
+- **GitHub Action**: `uses: uucz/moyu/linter@main` on PRs
+
+### Universal `AGENTS.md`
+
+```bash
+curl -o AGENTS.md https://raw.githubusercontent.com/uucz/moyu/main/templates/AGENTS-en.md
+# Share with Claude Code:
+ln -s AGENTS.md CLAUDE.md
+```
 
 ### Cursor
 
@@ -243,8 +260,8 @@ curl -o ~/.codex/skills/moyu/SKILL.md https://raw.githubusercontent.com/uucz/moy
 ### VSCode / GitHub Copilot
 
 ```bash
-mkdir -p .github/instructions
-curl -o .github/copilot-instructions.md https://raw.githubusercontent.com/uucz/moyu/main/vscode/copilot-instructions.md
+mkdir -p .github
+curl -o .github/copilot-instructions.md https://raw.githubusercontent.com/uucz/moyu/main/vscode/copilot-instructions-en.md
 ```
 
 ### Windsurf
@@ -425,8 +442,10 @@ Moyu uses research-backed prompt techniques: positive instructions, pattern matc
 
 ## Roadmap
 
-- [x] Moyu Linter: auto-detect over-engineering signals in AI output
-- [x] GitHub Action: PR-level over-engineering checks
+- [x] Moyu Linter: deterministic detection of 7 over-engineering signals (with unit tests & `.moyurc.json`)
+- [x] GitHub Action: PR-level over-engineering checks (Node 24)
+- [x] Claude Code Agent Hooks (`Stop` / `PostToolUse`) & universal `AGENTS.md` templates
+- [ ] Benchmark v2: neutral control runs, functional unit test pass rate, and longitudinal re-test on newer frontier models
 - [ ] More language localizations
 
 ---

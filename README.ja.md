@@ -32,7 +32,7 @@
 AI があれば楽できると思った？AI が 200 行書いて、あなたが 2 時間レビュー。AI も残業、あなたも残業。
 
 ```bash
-claude skill install --url https://github.com/uucz/moyu --skill moyu-ja
+npx skills add uucz/moyu --skill moyu-ja
 ```
 
 [English](./README.en.md) | [中文](./README.md) | 日本語 | [한국어](./README.ko.md) | [Français](./README.fr.md)
@@ -192,24 +192,26 @@ def bulk_complete(ids):
 
 ## インストール
 
-### Claude Code / Codex CLI / Kiro / CodeBuddy / Google Antigravity / OpenCode
+### Agent Skills CLI（Claude Code / Cursor / Codex / Copilot / Windsurf / Cline / Antigravity / OpenCode）
 
 ```bash
 # 日本語
-claude skill install --url https://github.com/uucz/moyu --skill moyu-ja
+npx skills add uucz/moyu --skill moyu-ja
 
 # 中文
-claude skill install --url https://github.com/uucz/moyu --skill moyu
+npx skills add uucz/moyu --skill moyu
 
 # English
-claude skill install --url https://github.com/uucz/moyu --skill moyu-en
+npx skills add uucz/moyu --skill moyu-en
 
 # ライト版（三つの鉄則 + 比較表のみ）
-claude skill install --url https://github.com/uucz/moyu --skill moyu-lite
+npx skills add uucz/moyu --skill moyu-lite
 
 # 厳格版（L1で確認停止、チーム強制執行向け）
-claude skill install --url https://github.com/uucz/moyu --skill moyu-strict
+npx skills add uucz/moyu --skill moyu-strict
 ```
+
+Claude Code プラグイン（Stop Hook ガードレール付き）：`/plugin marketplace add uucz/moyu` → `/plugin install moyu@uucz-moyu`。汎用 `AGENTS.md` テンプレートは [`templates/AGENTS-en.md`](./templates/AGENTS-en.md) を参照してください。
 
 ### Cursor
 

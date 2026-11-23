@@ -1,7 +1,10 @@
 {
   "name": "moyu-dev",
-  "version": "1.7.0",
-  "description": "Anti-over-engineering rules for AI coding assistants. Your AI has a people-pleasing personality — three rules cure it.",
+  "version": "1.8.0",
+  "description": "Anti-over-engineering rules and deterministic Agent Hooks / PR Linter for AI coding assistants.",
+  "scripts": {
+    "test": "node --test linter/test/linter.test.mjs"
+  },
   "bin": {
     "moyu": "bin/moyu.mjs"
   },

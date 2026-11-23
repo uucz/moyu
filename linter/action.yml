@@ -15,6 +15,10 @@ inputs:
     description: 'Whether to post a PR comment with the report'
     required: false
     default: 'true'
+  ignore:
+    description: 'Comma-separated glob patterns to exclude from linting'
+    required: false
+    default: ''
 
 outputs:
   score:
@@ -23,7 +27,7 @@ outputs:
     description: 'Markdown report'
 
 runs:
-  using: 'node20'
+  using: 'node24'
   main: 'index.mjs'
 
 branding:

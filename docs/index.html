@@ -224,7 +224,7 @@ section{padding:80px 0}
       <span data-lang="en">Moyu is an anti-over-engineering prompt strategy that keeps AI coding assistants from doing more than they should.</span>
     </p>
     <div class="install-box fade-in" id="install-cmd" title="Click to copy">
-      <span>claude skill install --url https://github.com/uucz/moyu --skill moyu</span>
+      <span>npx skills add uucz/moyu</span>
       <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
     </div>
     <div class="stats-grid fade-in" style="animation-delay:.1s">
@@ -449,7 +449,7 @@ section{padding:80px 0}
             </tr>
           </thead>
           <tbody>
-            <tr><td>Control</td><td data-lang="zh">无 system prompt</td><td data-lang="en">No system prompt</td></tr>
+            <tr><td>Control</td><td data-lang="zh">默认助手提示（"尽力写得健壮专业"）</td><td data-lang="en">Default helpful prompt ("do your best work, make it robust")</td></tr>
             <tr><td>Baseline-Concise</td><td data-lang="zh">"请简洁"</td><td data-lang="en">"Be concise"</td></tr>
             <tr><td>Moyu-Lite</td><td data-lang="zh">Moyu 精简版</td><td data-lang="en">Moyu Lite variant</td></tr>
             <tr><td>Moyu-Standard</td><td data-lang="zh">Moyu 标准版</td><td data-lang="en">Moyu Standard</td></tr>
@@ -511,9 +511,9 @@ section{padding:80px 0}
             <tr><td>GPT-5 Codex</td><td>OpenAI</td></tr>
             <tr><td>Grok 4.1 Fast</td><td>xAI</td></tr>
             <tr><td>Grok 4.20 Beta</td><td>xAI</td></tr>
-            <tr><td>LongCat Flash Chat</td><td>DeepSeek</td></tr>
-            <tr><td>LongCat Flash Thinking</td><td>DeepSeek</td></tr>
-            <tr><td>LongCat Flash Lite</td><td>DeepSeek</td></tr>
+            <tr><td>LongCat Flash Chat</td><td>Meituan</td></tr>
+            <tr><td>LongCat Flash Thinking</td><td>Meituan</td></tr>
+            <tr><td>LongCat Flash Lite</td><td>Meituan</td></tr>
           </tbody>
         </table>
       </div>
@@ -530,7 +530,7 @@ section{padding:80px 0}
           <tbody>
             <tr><td>LOC</td><td data-lang="zh">代码行数（不含空行和注释）</td><td data-lang="en">Lines of code (excl. blanks/comments)</td></tr>
             <tr><td>OE Score</td><td data-lang="zh">过度工程评分（0-10）</td><td data-lang="en">Over-engineering score (0-10)</td></tr>
-            <tr><td>Correctness</td><td data-lang="zh">功能正确性（通过测试比例）</td><td data-lang="en">Functional correctness (test pass rate)</td></tr>
+            <tr><td>Correctness</td><td data-lang="zh">语法正确率（Python 编译检查，非单元测试通过率）</td><td data-lang="en">Syntax validity (Python compile check, not unit test pass rate)</td></tr>
             <tr><td>OE Signals</td><td data-lang="zh">过度工程信号分解</td><td data-lang="en">Over-engineering signal decomposition</td></tr>
           </tbody>
         </table>
@@ -544,16 +544,14 @@ section{padding:80px 0}
       </summary>
       <div class="detail-body">
         <ul style="color:var(--text-secondary);font-size:.9rem;line-height:1.8;padding-left:20px">
-          <li data-lang="zh">单因素方差分析 (One-way ANOVA) 比较条件间差异</li>
-          <li data-lang="en">One-way ANOVA for comparing differences across conditions</li>
-          <li data-lang="zh">Tukey HSD 事后检验用于配对比较</li>
-          <li data-lang="en">Tukey HSD post-hoc tests for pairwise comparisons</li>
-          <li data-lang="zh">双因素方差分析检测模型x条件交互效应</li>
-          <li data-lang="en">Two-way ANOVA for model x condition interaction effects</li>
-          <li data-lang="zh">Cohen's d 计算效应量</li>
-          <li data-lang="en">Cohen's d for effect size calculations</li>
-          <li data-lang="zh">Bootstrap 置信区间 (n=1000)</li>
-          <li data-lang="en">Bootstrap confidence intervals (n=1000)</li>
+          <li data-lang="zh">单因素方差分析 (One-way ANOVA) 比较 5 种条件间整体差异</li>
+          <li data-lang="en">One-way ANOVA for comparing differences across all 5 conditions</li>
+          <li data-lang="zh">Bonferroni 校正的配对 Welch t 检验用于关键条件两两比较</li>
+          <li data-lang="en">Bonferroni-adjusted pairwise Welch t-tests for key condition pairs</li>
+          <li data-lang="zh">Cohen's d 效应量及解析 95% 置信区间</li>
+          <li data-lang="en">Cohen's d effect sizes with analytic 95% confidence intervals</li>
+          <li data-lang="zh">按模型分层的描述性统计（均值、标准差、样本量）</li>
+          <li data-lang="en">Per-model descriptive breakdowns (mean, std, n)</li>
         </ul>
       </div>
     </details>
@@ -794,7 +792,7 @@ section{padding:80px 0}
   const installCmd = document.getElementById('install-cmd');
   const toast = document.getElementById('toast');
   installCmd.addEventListener('click', function(){
-    navigator.clipboard.writeText('claude skill install --url https://github.com/uucz/moyu --skill moyu').then(function(){
+    navigator.clipboard.writeText('npx skills add uucz/moyu').then(function(){
       var lang = html.getAttribute('lang');
       toast.textContent = lang === 'zh-CN' ? 'Copied!' : 'Copied!';
       toast.classList.add('show');

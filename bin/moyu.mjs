@@ -113,8 +113,11 @@ async function main() {
   }
 
   if (args.includes('--claude')) {
-    console.log('  Run this command:');
-    console.log('  claude skill install --url https://github.com/uucz/moyu --skill moyu\n');
+    console.log('  Recommended (Agent Skills CLI — works for Claude Code & more):');
+    console.log('  npx skills add uucz/moyu\n');
+    console.log('  Or via Claude Code plugin marketplace:');
+    console.log('  /plugin marketplace add uucz/moyu');
+    console.log('  /plugin install moyu@uucz-moyu\n');
     return;
   }
 

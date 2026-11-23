@@ -1,163 +1,424 @@
 /**
- * Over-engineering signal detectors.
- * Each function takes a parsed diff and returns { signal, score, details }.
+ * Moyu Linter — diff parser, config loader, and over-engineering signal detectors.
+ * Zero dependencies. Designed for low false positives across Python, JS/TS, Go, Rust, Java, etc.
  */
 
+import { existsSync, readFileSync } from 'fs';
+import { join } from 'path';
+
+// ---------------------------------------------------------------------------
+// File classification & filtering
+// ---------------------------------------------------------------------------
+
+const CODE_EXTENSIONS = new Set([
+  '.py', '.js', '.jsx', '.ts', '.tsx', '.mjs', '.cjs',
+  '.go', '.rs', '.java', '.kt', '.swift', '.rb', '.php',
+  '.c', '.cc', '.cpp', '.h', '.hpp', '.cs', '.scala',
+]);
+
+const LOCKFILE_NAMES = new Set([
+  'package-lock.json', 'pnpm-lock.yaml', 'yarn.lock', 'bun.lock', 'bun.lockb',
+  'Cargo.lock', 'poetry.lock', 'Pipfile.lock', 'Gemfile.lock', 'composer.lock', 'go.sum',
+]);
+
+const DEFAULT_IGNORE = [
+  'node_modules/**',
+  'dist/**',
+  'build/**',
+  'coverage/**',
+  '.next/**',
+  'vendor/**',
+  '**/*.min.*',
+  '**/*.map',
+  '**/*.snap',
+];
+
+const TEST_PATH_RE = /(^|\/)(__tests__|tests?|spec|fixtures)\/|(\.|_)(test|spec)\.[^./]+$|\/test_[^/]+\.py$|^test_[^/]+\.py$/i;
+
+export function getExtension(filePath) {
+  const base = filePath.split('/').pop() || '';
+  const dot = base.lastIndexOf('.');
+  return dot > 0 ? base.slice(dot).toLowerCase() : '';
+}
+
+export function isLockfile(filePath) {
+  const base = filePath.split('/').pop() || '';
+  return LOCKFILE_NAMES.has(base);
+}
+
+export function isCodeFile(filePath) {
+  return CODE_EXTENSIONS.has(getExtension(filePath));
+}
+
+export function isTestFile(filePath) {
+  return TEST_PATH_RE.test(filePath);
+}
+
+function globToRegex(pattern) {
+  const escaped = pattern
+    .replace(/[.+^${}()|[\]\\]/g, '\\$&')
+    .replace(/\*\*\//g, '(?:.*/)?')
+    .replace(/\*\*/g, '.*')
+    .replace(/\*/g, '[^/]*')
+    .replace(/\?/g, '[^/]');
+  return new RegExp(`^${escaped}$`);
+}
+
+export function matchesAnyGlob(filePath, patterns) {
+  const normalized = filePath.replace(/^\.\//, '');
+  return patterns.some((p) => globToRegex(p).test(normalized));
+}
+
+export function loadConfig(cwd = process.cwd()) {
+  const configPath = join(cwd, '.moyurc.json');
+  const defaults = {
+    threshold: 0,
+    hookThreshold: 6,
+    maxFiles: 8,
+    ignore: [],
+    disableSignals: [],
+    enabled: true,
+  };
+  if (!existsSync(configPath)) return defaults;
+  try {
+    const raw = JSON.parse(readFileSync(configPath, 'utf-8'));
+    return {
+      ...defaults,
+      ...raw,
+      ignore: Array.isArray(raw.ignore) ? raw.ignore : [],
+      disableSignals: Array.isArray(raw.disableSignals) ? raw.disableSignals : [],
+    };
+  } catch {
+    return defaults;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Unified diff parser
+// ---------------------------------------------------------------------------
+
+export function parseDiff(diffText) {
+  const files = [];
+  let current = null;
+
+  for (const line of diffText.split('\n')) {
+    if (line.startsWith('diff --git')) {
+      if (current) files.push(current);
+      const match = line.match(/ b\/(.+)$/);
+      current = {
+        path: match ? match[1] : '?',
+        added: [],
+        removed: [],
+        hunks: 0,
+        isNew: false,
+        isDeleted: false,
+      };
+      continue;
+    }
+    if (!current) continue;
+
+    if (line.startsWith('new file mode')) {
+      current.isNew = true;
+      continue;
+    }
+    if (line.startsWith('deleted file mode')) {
+      current.isDeleted = true;
+      continue;
+    }
+    if (line.startsWith('@@')) {
+      current.hunks++;
+      const m = line.match(/@@ -\d+(?:,\d+)? \+(\d+)/);
+      if (m) current._lineNum = parseInt(m[1], 10);
+      continue;
+    }
+    if (line.startsWith('+') && !line.startsWith('+++')) {
+      current.added.push({ num: current._lineNum || 0, content: line.slice(1) });
+      if (current._lineNum) current._lineNum++;
+    } else if (line.startsWith('-') && !line.startsWith('---')) {
+      current.removed.push({ content: line.slice(1) });
+    } else if (!line.startsWith('\\')) {
+      if (current._lineNum) current._lineNum++;
+    }
+  }
+
+  if (current) files.push(current);
+  return files;
+}
+
+function stripInlineComment(line) {
+  // Lightweight strip for single-line comments without breaking URLs
+  const trimmed = line.trim();
+  if (trimmed.startsWith('//') || trimmed.startsWith('#') || trimmed.startsWith('*') || trimmed.startsWith('/*')) {
+    return '';
+  }
+  return line;
+}
+
+// ---------------------------------------------------------------------------
+// Signal detectors
+// ---------------------------------------------------------------------------
+
+const FUNC_DECL_RE = /^\s*(?:export\s+)?(?:default\s+)?(?:async\s+)?(?:def\s+\w+|function\s+\w+|class\s+\w+|fn\s+\w+|func\s+(?:\([^)]*\)\s*)?\w+|(?:public|private|protected|static|readonly|\s)*(?:async\s+)?\w+\s*\([^)]*\)\s*(?::\s*[^={]+)?\{|(?:const|let)\s+\w+\s*=\s*(?:async\s+)?(?:\([^)]*\)|\w+)\s*=>)/;
+
 /**
- * Detect docstrings/JSDoc added to existing functions (not new ones).
+ * 1. Detect docstrings/JSDoc blocks added to existing functions (or bloated docstrings).
  */
 export function detectUnnecessaryDocstrings(files) {
   const details = [];
   let score = 0;
 
   for (const file of files) {
-    const addedLines = file.added.map((l) => l.content);
-    const addedSet = new Set(file.added.map((l) => l.num));
+    if (!isCodeFile(file.path) || isTestFile(file.path) || file.isDeleted) continue;
+    const lines = file.added.map((l) => l.content);
+    if (lines.length === 0) continue;
 
-    // Find docstring blocks in added lines
-    const docPatterns = ['"""', "'''", '/**', '* @', '/// '];
+    let docBlocks = 0;
     let docLines = 0;
+    let inBlock = false;
+    let blockQuote = null;
 
-    for (const line of addedLines) {
-      const trimmed = line.trim();
-      if (docPatterns.some((p) => trimmed.startsWith(p) || trimmed.endsWith('"""') || trimmed.endsWith("'''"))) {
+    for (const raw of lines) {
+      const trimmed = raw.trim();
+      if (!inBlock) {
+        if (trimmed.startsWith('/**')) {
+          docBlocks++;
+          docLines++;
+          if (!trimmed.includes('*/')) {
+            inBlock = true;
+            blockQuote = '*/';
+          }
+        } else if (trimmed.startsWith('"""') || trimmed.startsWith("'''")) {
+          const q = trimmed.slice(0, 3);
+          docBlocks++;
+          docLines++;
+          // Multi-line triple-quoted string if closing quote is not on the same line
+          if (trimmed.length === 3 || !trimmed.slice(3).includes(q)) {
+            inBlock = true;
+            blockQuote = q;
+          }
+        }
+      } else {
         docLines++;
+        if (trimmed.includes(blockQuote)) {
+          inBlock = false;
+          blockQuote = null;
+        }
       }
     }
 
-    if (docLines === 0) continue;
+    if (docBlocks === 0) continue;
 
-    // Check if the surrounding function definition is also new
-    const funcPatterns = /^\s*(def |function |async function |const \w+ = |class )/;
-    const addedFuncs = addedLines.filter((l) => funcPatterns.test(l)).length;
+    const addedFuncs = lines.filter((l) => FUNC_DECL_RE.test(l)).length;
+    const unrequestedBlocks = Math.max(0, docBlocks - addedFuncs);
 
-    // If docstrings outnumber new functions, some are on existing code
-    const excess = Math.max(0, docLines - addedFuncs * 3); // Allow ~3 doc lines per new function
-    if (excess > 0) {
-      score += Math.ceil(excess / 3);
-      details.push(`${file.path}: ${excess} docstring lines added to existing code`);
+    if (unrequestedBlocks > 0) {
+      score += unrequestedBlocks;
+      details.push(`${file.path}: ${unrequestedBlocks} docstring block(s) added to existing code`);
+    } else if (addedFuncs > 0 && docLines > addedFuncs * 12) {
+      const bloat = Math.ceil((docLines - addedFuncs * 12) / 10);
+      score += bloat;
+      details.push(`${file.path}: ${docLines} docstring lines for ${addedFuncs} new function(s)`);
     }
   }
 
-  return { signal: 'Unnecessary docstrings', score, details };
+  return { id: 'docstrings', signal: 'Unnecessary docstrings', score, details };
 }
 
 /**
- * Detect excessive error handling (try/catch/except/raise/throw).
+ * 2. Detect excessive defensive error handling (try/catch/except/raise/throw).
  */
 export function detectExcessiveErrorHandling(files) {
   const details = [];
   let score = 0;
-
-  const errorPatterns = /\b(try\s*[:{]|catch\s*\(|except\s|raise\s|throw\s|\.catch\(|\.on\(['"]error)/;
+  const errorRe = /\b(try\s*[:{]|catch\s*\(|except\b|raise\s|throw\s|\.catch\(|\.on\(['"]error)/;
 
   for (const file of files) {
-    const addedLines = file.added.map((l) => l.content);
-    const totalAdded = addedLines.length;
-    if (totalAdded < 5) continue;
+    if (!isCodeFile(file.path) || isTestFile(file.path) || file.isDeleted) continue;
+    const codeLines = file.added.map((l) => stripInlineComment(l.content)).filter((l) => l.trim().length > 0);
+    if (codeLines.length < 8) continue;
 
-    const errorLines = addedLines.filter((l) => errorPatterns.test(l)).length;
-    const ratio = errorLines / totalAdded;
+    const errorLines = codeLines.filter((l) => errorRe.test(l)).length;
+    const ratio = errorLines / codeLines.length;
 
-    // Flag if >20% of added lines are error handling
-    if (ratio > 0.2 && errorLines >= 3) {
+    if (ratio > 0.25 && errorLines >= 3) {
       score += Math.ceil(errorLines / 3);
-      details.push(`${file.path}: ${errorLines}/${totalAdded} added lines are error handling (${Math.round(ratio * 100)}%)`);
+      details.push(`${file.path}: ${errorLines}/${codeLines.length} added code lines are error handling (${Math.round(ratio * 100)}%)`);
     }
   }
 
-  return { signal: 'Excessive error handling', score, details };
+  return { id: 'error-handling', signal: 'Excessive error handling', score, details };
 }
 
 /**
- * Detect entirely new files (potential scope creep).
+ * 3. Detect unrequested new non-test code files (potential scope creep).
  */
 export function detectNewFiles(files) {
   const details = [];
   let score = 0;
 
   for (const file of files) {
-    if (file.isNew && file.added.length > 10) {
+    if (!file.isNew || !isCodeFile(file.path) || isTestFile(file.path)) continue;
+    if (file.added.length > 15) {
       score += 1;
-      details.push(`${file.path}: new file (+${file.added.length} lines)`);
+      details.push(`${file.path}: new code file (+${file.added.length} lines)`);
     }
   }
 
-  return { signal: 'New files created', score, details };
+  return { id: 'new-files', signal: 'New files created', score, details };
 }
 
 /**
- * Detect type-checking bloat (isinstance, typeof, type()).
+ * 4. Detect runtime type-checking bloat (isinstance, typeof, type()).
  */
 export function detectTypeCheckBloat(files) {
   const details = [];
   let score = 0;
-
-  const typePatterns = /\b(isinstance\(|typeof\s|type\(\w+\)\s*(==|is|!=)|\.isArray\(|\.isString\(|\.isNumber\()/;
+  const typeRe = /\b(isinstance\(|typeof\s+\w|type\(\w+\)\s*(?:==|is|!=)|Array\.isArray\()/;
 
   for (const file of files) {
-    const addedLines = file.added.map((l) => l.content);
-    const typeChecks = addedLines.filter((l) => typePatterns.test(l)).length;
+    if (!isCodeFile(file.path) || isTestFile(file.path) || file.isDeleted) continue;
+    const typeChecks = file.added
+      .map((l) => stripInlineComment(l.content))
+      .filter((l) => typeRe.test(l)).length;
 
     if (typeChecks >= 3) {
       score += Math.ceil(typeChecks / 3);
-      details.push(`${file.path}: ${typeChecks} type-checking lines added`);
+      details.push(`${file.path}: ${typeChecks} runtime type checks added`);
     }
   }
 
-  return { signal: 'Type-check bloat', score, details };
+  return { id: 'type-checks', signal: 'Type-check bloat', score, details };
 }
 
 /**
- * Detect unnecessary abstractions (new classes, interfaces, design patterns).
+ * 5. Detect speculative abstractions (design pattern proliferation or multi-class explosion).
+ * Intentionally ignores ordinary TypeScript `type X = ...` aliases and single data classes/interfaces.
  */
 export function detectUnnecessaryAbstractions(files) {
   const details = [];
   let score = 0;
 
-  const abstractionPatterns = /^\s*(class\s+\w|interface\s+\w|abstract\s+class|type\s+\w+\s*=)/;
-  const patternNames = /\b(Factory|Strategy|Builder|Observer|Singleton|Adapter|Decorator|Proxy|Facade)\b/;
+  const classOrInterfaceRe = /^\s*(?:export\s+)?(?:default\s+)?(?:abstract\s+class|class|interface)\s+([A-Z]\w*)/;
+  const patternNameRe = /(Factory|Strategy|Builder|Observer|Singleton|Adapter|Decorator|Proxy|Facade|Abstract[A-Z]\w*|Base[A-Z]\w*(?:Handler|Manager|Service|Processor))/;
 
   for (const file of files) {
-    const addedLines = file.added.map((l) => l.content);
+    if (!isCodeFile(file.path) || isTestFile(file.path) || file.isDeleted) continue;
 
-    const newAbstractions = addedLines.filter((l) => abstractionPatterns.test(l));
-    const designPatterns = addedLines.filter((l) => patternNames.test(l));
+    const declaredTypes = [];
+    const patternDecls = [];
 
-    if (newAbstractions.length >= 1) {
-      score += newAbstractions.length;
-      details.push(`${file.path}: ${newAbstractions.length} new class/interface/type declarations`);
+    for (const { content } of file.added) {
+      const clean = stripInlineComment(content);
+      const m = clean.match(classOrInterfaceRe);
+      if (m) {
+        const name = m[1];
+        declaredTypes.push(name);
+        if (patternNameRe.test(name)) {
+          patternDecls.push(name);
+        }
+      }
     }
-    if (designPatterns.length >= 1) {
-      score += designPatterns.length;
-      details.push(`${file.path}: design pattern names detected (${designPatterns.map((l) => l.trim()).join(', ').slice(0, 80)})`);
+
+    if (patternDecls.length > 0) {
+      score += patternDecls.length * 2;
+      details.push(`${file.path}: speculative pattern abstraction(s) (${patternDecls.slice(0, 4).join(', ')})`);
+    }
+    if (declaredTypes.length >= 3) {
+      score += declaredTypes.length - 2;
+      details.push(`${file.path}: ${declaredTypes.length} new class/interface declarations in one file`);
     }
   }
 
-  return { signal: 'Unnecessary abstractions', score, details };
+  return { id: 'abstractions', signal: 'Unnecessary abstractions', score, details };
 }
 
 /**
- * Detect scope creep: many files changed relative to a focused PR.
+ * 6. Detect whole-file rewrites (high symmetric add/remove churn in a single hunk on an existing file).
  */
-export function detectScopeCreep(files, prTitle = '', prBody = '') {
+export function detectFileRewrite(files) {
   const details = [];
   let score = 0;
 
-  const changedFiles = files.length;
+  for (const file of files) {
+    if (file.isNew || file.isDeleted || !isCodeFile(file.path)) continue;
+    const added = file.added.length;
+    const removed = file.removed.length;
+    if (removed < 35 || added < 35) continue;
 
-  // Simple heuristic: more than 8 files in a single PR is suspicious
-  if (changedFiles > 8) {
-    score += Math.ceil((changedFiles - 8) / 3);
-    details.push(`${changedFiles} files changed — consider splitting this PR`);
+    const symmetry = Math.min(added, removed) / Math.max(added, removed);
+    if (file.hunks === 1 && symmetry >= 0.7) {
+      score += 2;
+      details.push(`${file.path}: possible whole-file rewrite (-${removed}/+${added} lines in 1 hunk)`);
+    }
   }
 
-  // Check if PR title/body mentions specific files or is very short
-  const titleWords = prTitle.split(/\s+/).length;
-  if (titleWords <= 3 && changedFiles > 5) {
-    score += 1;
-    details.push(`Short PR title ("${prTitle}") but ${changedFiles} files changed`);
+  return { id: 'file-rewrite', signal: 'Whole-file rewrite', score, details };
+}
+
+/**
+ * 7. Detect scope creep: many files modified relative to a focused change.
+ */
+export function detectScopeCreep(files, prTitle = '', _prBody = '', options = {}) {
+  const details = [];
+  let score = 0;
+  const maxFiles = options.maxFiles || 8;
+
+  const meaningfulFiles = files.filter((f) => !isLockfile(f.path));
+  const changedFiles = meaningfulFiles.length;
+
+  if (changedFiles > maxFiles) {
+    score += Math.ceil((changedFiles - maxFiles) / 3);
+    details.push(`${changedFiles} files changed (limit ${maxFiles}) — consider splitting this change`);
   }
 
-  return { signal: 'Scope creep', score, details };
+  const trimmedTitle = prTitle.trim();
+  if (trimmedTitle) {
+    const titleWords = trimmedTitle.split(/\s+/).length;
+    if (titleWords <= 3 && changedFiles > 5) {
+      score += 1;
+      details.push(`Short PR title ("${trimmedTitle}") but ${changedFiles} files changed`);
+    }
+  }
+
+  return { id: 'scope-creep', signal: 'Scope creep', score, details };
+}
+
+// ---------------------------------------------------------------------------
+// Orchestrator
+// ---------------------------------------------------------------------------
+
+export function analyzeDiff(diffText, options = {}) {
+  const ignorePatterns = [...DEFAULT_IGNORE, ...(options.ignore || [])];
+  const disabled = new Set(options.disableSignals || []);
+  const allFiles = parseDiff(diffText);
+  const files = allFiles.filter((f) => !matchesAnyGlob(f.path, ignorePatterns));
+
+  const detectors = [
+    () => detectUnnecessaryDocstrings(files),
+    () => detectExcessiveErrorHandling(files),
+    () => detectNewFiles(files),
+    () => detectTypeCheckBloat(files),
+    () => detectUnnecessaryAbstractions(files),
+    () => detectFileRewrite(files),
+    () => detectScopeCreep(files, options.prTitle || '', options.prBody || '', { maxFiles: options.maxFiles }),
+  ];
+
+  const results = detectors
+    .map((run) => run())
+    .filter((r) => !disabled.has(r.id));
+
+  const totalScore = results.reduce((sum, r) => sum + r.score, 0);
+  const grade =
+    totalScore === 0 ? 'Perfect'
+    : totalScore <= 3 ? 'Minor'
+    : totalScore <= 6 ? 'Moderate'
+    : 'High';
+
+  return {
+    totalScore,
+    grade,
+    results,
+    filesAnalyzed: files.length,
+    filesIgnored: allFiles.length - files.length,
+  };
 }

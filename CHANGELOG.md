@@ -1,5 +1,25 @@
 # Changelog
 
+## v1.8.0 (2026-11-22)
+
+### Added
+- **Claude Code Agent Hooks** (`linter/hook.mjs`, `hooks/hooks.json`): deterministic `Stop` and `PostToolUse` guardrails that inspect `git diff` in-loop before the agent finishes (with `stop_hook_active` recursion guard and `.moyurc.json` opt-out)
+- **Whole-file rewrite detector** (`detectFileRewrite`) in Moyu Linter to catch symmetric single-hunk file rewrites
+- **Linter CLI & config upgrades**: `--staged` (git pre-commit), `--working`, `--json`, `--max-files`, `--ignore`, and optional `.moyurc.json` config
+- **Universal `AGENTS.md` templates** (`templates/AGENTS.md`, `templates/AGENTS-en.md`) for Codex, Cursor, Copilot, Aider, and Claude Code symlinks
+- **Automated test suite & CI** (`linter/test/linter.test.mjs`, `.github/workflows/test.yml`) covering all 7 detectors, false-positive regressions, CLI flags, and Agent Hook protocols
+
+### Changed
+- **Moyu Linter false-positive reduction**: automatically skips lockfiles, build artifacts, markdown/docs, and test files for noisy code checks; stops falsely flagging ordinary TypeScript `type` aliases and single interfaces; uses block-level docstring analysis; upgraded GitHub Action runtime from `node20` to `node24`
+- **Modernized installation routes**: replaced non-existent `claude skill install` commands across all 5 READMEs, docs site, and blog posts with the working `npx skills add uucz/moyu`, native Claude Code plugin marketplace commands (`/plugin marketplace add uucz/moyu`), and `AGENTS.md`
+- **Plugin manifests**: updated `.claude-plugin/marketplace.json` and `.claude-plugin/plugin.json` to match official Claude Code plugin marketplace schemas and wire `hooks/hooks.json`
+
+### Fixed
+- Corrected model vendor attribution for LongCat Flash models (`DeepSeek` → `Meituan`) in `docs/index.html`, `docs/blog/ai-people-pleasing.html`, and `blog/benchmark-post-draft.md`
+- Aligned `docs/index.html` methodology section with actual benchmark scripts (Control prompt description, syntax validity vs unit tests, One-way ANOVA + Bonferroni t-tests + Cohen's d 95% CI)
+- Removed lingering `npx moyu-dev` CTA from PR comments in `linter/index.mjs` and replaced shell-interpolated `execSync` with safe `execFileSync`
+- Fixed stray `.github/instructions` directory creation in VSCode/Copilot install snippets
+
 ## v1.7.0 (2026-07-30)
 
 ### Added

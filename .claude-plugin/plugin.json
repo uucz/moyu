@@ -1,15 +1,20 @@
 {
   "name": "moyu",
-  "version": "1.7.0",
-  "description": "Anti-over-engineering skill for AI coding agents. Teaches your AI when to stop.",
-  "author": "uucz",
+  "version": "1.8.0",
+  "description": "Anti-over-engineering skill and deterministic Stop-hook guardrail for AI coding agents. Teaches your AI when to stop.",
+  "author": {
+    "name": "uucz",
+    "url": "https://github.com/uucz"
+  },
   "license": "MIT",
-  "homepage": "https://github.com/uucz/moyu",
+  "homepage": "https://uucz.github.io/moyu/",
   "repository": "https://github.com/uucz/moyu",
+  "hooks": "./hooks/hooks.json",
   "keywords": [
     "ai",
     "agent",
     "skill",
+    "hooks",
     "over-engineering",
     "minimalism",
     "coding",

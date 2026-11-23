@@ -44,9 +44,9 @@ Anthropic 家的模型讨好最严重，OpenAI 最克制。Sonnet 4 做 8 个小
 
 ### 安装
 
-Claude Code：
+Agent Skills CLI（支持 Claude Code / Cursor / Codex 等）：
 ```bash
-claude skill install --url https://github.com/uucz/moyu --skill moyu
+npx skills add uucz/moyu
 ```
 
 Cursor：

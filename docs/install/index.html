@@ -88,29 +88,62 @@
   <span data-lang="en">Install Moyu</span>
 </h1>
 <p class="page-sub">
-  <span data-lang="zh">为你的 AI 编码助手安装反过度工程规则。Claude Code 一条命令，其他平台复制一个文件。</span>
-  <span data-lang="en">Install anti-over-engineering rules for your AI coding assistant. One command on Claude Code, one file copy everywhere else.</span>
+  <span data-lang="zh">为你的 AI 编码助手安装反过度工程规则与确定性护栏。一行命令适配主流 Agent，或直接放入通用 AGENTS.md。</span>
+  <span data-lang="en">Install anti-over-engineering rules and deterministic guardrails for your AI coding assistant. One command across major agents, or drop in a universal AGENTS.md.</span>
 </p>
 
 <!-- Quick install -->
-<div class="install-box" onclick="navigator.clipboard.writeText('claude skill install --url https://github.com/uucz/moyu --skill moyu');document.getElementById('toast').classList.add('show');setTimeout(()=>document.getElementById('toast').classList.remove('show'),1500)">
-  <span>$ claude skill install --url https://github.com/uucz/moyu --skill moyu</span>
+<div class="install-box" onclick="navigator.clipboard.writeText('npx skills add uucz/moyu');document.getElementById('toast').classList.add('show');setTimeout(()=>document.getElementById('toast').classList.remove('show'),1500)">
+  <span>$ npx skills add uucz/moyu</span>
   <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
 </div>
 <div class="toast" id="toast">Copied!</div>
 
-<!-- Claude Code -->
-<h2 class="section-title">Claude Code</h2>
+<!-- Agent Skills CLI -->
+<h2 class="section-title">
+  <span data-lang="zh">推荐：Agent Skills CLI（跨平台一行安装）</span>
+  <span data-lang="en">Recommended: Agent Skills CLI (Cross-Platform)</span>
+</h2>
 <p style="color:var(--text-secondary);margin-bottom:16px;font-size:.95rem">
-  <span data-lang="zh">Claude Code、Codex CLI、Kiro、CodeBuddy、Antigravity、OpenCode 都使用 skill 安装模式：</span>
-  <span data-lang="en">Claude Code, Codex CLI, Kiro, CodeBuddy, Antigravity and OpenCode all use skill-based installation:</span>
+  <span data-lang="zh">自动检测并安装到 Claude Code、Cursor、Codex、Copilot、Windsurf、Cline、Antigravity、OpenCode 等工具：</span>
+  <span data-lang="en">Auto-detects and installs for Claude Code, Cursor, Codex, Copilot, Windsurf, Cline, Antigravity, OpenCode, and more:</span>
 </p>
-<div class="code-block">claude skill install --url https://github.com/uucz/moyu --skill moyu</div>
+<div class="code-block"># Standard (Chinese) / English / Lite / Strict
+npx skills add uucz/moyu --skill moyu
+npx skills add uucz/moyu --skill moyu-en
+npx skills add uucz/moyu --skill moyu-lite
+npx skills add uucz/moyu --skill moyu-strict</div>
 
 <p style="color:var(--text-secondary);font-size:.9rem">
-  <span data-lang="zh">可选变体：<code>moyu-lite</code>（3 条规则）、<code>moyu-strict</code>（团队强制模式）、<code>moyu-en</code>（英文）、<code>moyu-ja</code>（日文）、<code>moyu-ko</code>（韩文）、<code>moyu-fr</code>（法文）</span>
-  <span data-lang="en">Variants: <code>moyu-lite</code> (3 rules), <code>moyu-strict</code> (team enforcement), <code>moyu-ja</code> (Japanese), <code>moyu-ko</code> (Korean), <code>moyu-fr</code> (French)</span>
+  <span data-lang="zh">全部变体：<code>moyu</code>（中文）、<code>moyu-en</code>（英文）、<code>moyu-ja</code>（日文）、<code>moyu-ko</code>（韩文）、<code>moyu-fr</code>（法文）、<code>moyu-lite</code>（3 条规则）、<code>moyu-strict</code>（团队强制模式）</span>
+  <span data-lang="en">All variants: <code>moyu</code> (ZH), <code>moyu-en</code> (EN), <code>moyu-ja</code> (JA), <code>moyu-ko</code> (KO), <code>moyu-fr</code> (FR), <code>moyu-lite</code> (3 rules), <code>moyu-strict</code> (team enforcement)</span>
 </p>
+
+<!-- Claude Code Plugin + Hook -->
+<h2 class="section-title">
+  <span data-lang="zh">Claude Code 插件（含 Stop Hook 硬护栏）</span>
+  <span data-lang="en">Claude Code Plugin (Includes Stop Hook Guardrail)</span>
+</h2>
+<p style="color:var(--text-secondary);margin-bottom:16px;font-size:.95rem">
+  <span data-lang="zh">在 Claude Code 会话内安装完整插件，自动启用规则 Skill + 交付前 Stop Hook diff 检测：</span>
+  <span data-lang="en">Install as a native Claude Code plugin to get both the skill and automatic pre-stop diff guardrails:</span>
+</p>
+<div class="code-block">/plugin marketplace add uucz/moyu
+/plugin install moyu@uucz-moyu</div>
+
+<!-- AGENTS.md -->
+<h2 class="section-title">
+  <span data-lang="zh">通用标准：AGENTS.md</span>
+  <span data-lang="en">Universal Standard: AGENTS.md</span>
+</h2>
+<p style="color:var(--text-secondary);margin-bottom:16px;font-size:.95rem">
+  <span data-lang="zh">一份精简规则文件同时覆盖 Codex、Cursor、Copilot、Aider；Claude Code 创建软链即可共享：</span>
+  <span data-lang="en">One lean file covering Codex, Cursor, Copilot, and Aider; symlink for Claude Code to keep a single source of truth:</span>
+</p>
+<div class="code-block">curl -o AGENTS.md https://raw.githubusercontent.com/uucz/moyu/main/templates/AGENTS.md
+# English: templates/AGENTS-en.md
+# For Claude Code:
+ln -s AGENTS.md CLAUDE.md</div>
 
 <!-- Platforms table -->
 <h2 class="section-title">

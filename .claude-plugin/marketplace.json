@@ -1,27 +1,28 @@
 {
-  "name": "moyu",
-  "display_name": "摸鱼 (Moyu)",
-  "tagline": "Teach your AI agent when to stop over-engineering",
-  "category": "Productivity",
-  "tags": [
-    "anti-over-engineering",
-    "minimalism",
-    "code-quality",
-    "scope-control"
-  ],
-  "platforms": [
-    "claude-code",
-    "cursor",
-    "codex-cli",
-    "vscode",
-    "windsurf",
-    "cline",
-    "kiro",
-    "codebuddy",
-    "antigravity",
-    "opencode",
-    "aider",
-    "continue"
-  ],
-  "languages": ["zh-CN", "en", "ja", "ko", "fr"]
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "uucz-moyu",
+  "owner": {
+    "name": "uucz",
+    "url": "https://github.com/uucz"
+  },
+  "plugins": [
+    {
+      "name": "moyu",
+      "description": "Anti-over-engineering rules and deterministic Stop-hook guardrail for AI coding agents.",
+      "version": "1.8.0",
+      "author": {
+        "name": "uucz",
+        "url": "https://github.com/uucz"
+      },
+      "category": "productivity",
+      "tags": [
+        "anti-over-engineering",
+        "minimalism",
+        "code-quality",
+        "scope-control",
+        "hooks"
+      ],
+      "source": "./"
+    }
+  ]
 }

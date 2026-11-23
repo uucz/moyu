@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test-linter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Run Moyu Linter & Hook tests
+        run: node --test linter/test/linter.test.mjs
+      - name: Validate JSON manifests
+        run: |
+          node -e '
+            const fs = require("fs");
+            for (const f of ["package.json", ".claude-plugin/plugin.json", ".claude-plugin/marketplace.json", "hooks/hooks.json"]) {
+              JSON.parse(fs.readFileSync(f, "utf8"));
+            }
+            console.log("All manifests valid JSON.");
+          '

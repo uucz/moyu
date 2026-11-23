@@ -34,7 +34,7 @@
 AI가 당신을 자유롭게 해줄 줄 알았는가? AI는 200줄을 작성했다. 당신은 리뷰에 2시간을 썼다. AI가 야근을 했고 — 당신도 야근을 했다.
 
 ```bash
-claude skill install --url https://github.com/uucz/moyu --skill moyu-ko
+npx skills add uucz/moyu --skill moyu-ko
 ```
 
 [English](./README.en.md) | [中文](./README.md) | [日本語](./README.ja.md) | 한국어 | [Français](./README.fr.md)
@@ -196,32 +196,31 @@ Moyu는 단순히 AI 행동을 고치는 게 아니다 — 엔지니어링 규�
 
 > **빠른 설치**: 대부분의 사용자는 명령어 하나면 충분합니다:
 > ```bash
-> claude skill install --url https://github.com/uucz/moyu --skill moyu-ko
+> npx skills add uucz/moyu --skill moyu-ko
 > ```
-> Cursor를 사용하시나요? `cursor/rules/moyu-en.mdc`를 프로젝트의 `.cursor/rules/`에 복사하세요.
-> VSCode/Copilot을 사용하시나요? `vscode/copilot-instructions.md`를 `.github/`에 복사하세요.
-> 다른 플랫폼 → [상세 설치 안내](#claude-code--codex-cli--kiro--codebuddy--google-antigravity--opencode)
+> Claude Code 플러그인(Stop Hook 가드레일 포함): `/plugin marketplace add uucz/moyu` → `/plugin install moyu@uucz-moyu`.
+> 범용 `AGENTS.md`: [`templates/AGENTS-en.md`](./templates/AGENTS-en.md)를 프로젝트 루트에 복사하세요.
 
-### Claude Code / Codex CLI / Kiro / CodeBuddy / Google Antigravity / OpenCode
+### Agent Skills CLI (Claude Code / Cursor / Codex / Copilot / Windsurf / Cline / Antigravity / OpenCode)
 
 ```bash
 # 한국어 (표준)
-claude skill install --url https://github.com/uucz/moyu --skill moyu-ko
+npx skills add uucz/moyu --skill moyu-ko
 
 # English
-claude skill install --url https://github.com/uucz/moyu --skill moyu-en
+npx skills add uucz/moyu --skill moyu-en
 
 # 中文
-claude skill install --url https://github.com/uucz/moyu --skill moyu
+npx skills add uucz/moyu --skill moyu
 
 # 日本語
-claude skill install --url https://github.com/uucz/moyu --skill moyu-ja
+npx skills add uucz/moyu --skill moyu-ja
 
 # Lite (세 가지 철칙 + 비교표만)
-claude skill install --url https://github.com/uucz/moyu --skill moyu-lite
+npx skills add uucz/moyu --skill moyu-lite
 
 # Strict (L1에서 확인을 위해 중지, 팀 강제 적용용)
-claude skill install --url https://github.com/uucz/moyu --skill moyu-strict
+npx skills add uucz/moyu --skill moyu-strict
 ```
 
 또는 `skills/moyu-en/SKILL.md`를 `.claude/skills/moyu/SKILL.md`로 수동 복사
@@ -246,8 +245,8 @@ curl -o ~/.codex/skills/moyu/SKILL.md https://raw.githubusercontent.com/uucz/moy
 ### VSCode / GitHub Copilot
 
 ```bash
-mkdir -p .github/instructions
-curl -o .github/copilot-instructions.md https://raw.githubusercontent.com/uucz/moyu/main/vscode/copilot-instructions.md
+mkdir -p .github
+curl -o .github/copilot-instructions.md https://raw.githubusercontent.com/uucz/moyu/main/vscode/copilot-instructions-en.md
 ```
 
 ### Windsurf
