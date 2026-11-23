@@ -86,7 +86,8 @@ async function main() {
     console.log(`
   moyu — anti-over-engineering rules for AI coding assistants
 
-  Usage: npx moyu-dev [options]
+  Usage: node bin/moyu.mjs [options]
+  (Recommended for skills: npx skills add uucz/moyu)
 
   Options:
     --all        Install for all supported tools (not just detected ones)

@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.8.1 (2026-11-22)
+
+### Added
+- Blog post #2 on GitHub Pages (`docs/blog/from-prompts-to-hooks.html`): engineering retrospective on moving from prompt-only rules to deterministic Agent Hooks
+- `node linter/index.mjs --init` command to scaffold `.moyurc.json`
+- Dogfood GitHub Action workflow (`.github/workflows/moyu-lint.yml`) running Moyu Linter on repository pull requests
+- Live CI status badges in `README.md` and `README.en.md`
+
+### Fixed
+- **Research Page real data accuracy**: replaced approximated B-Type LOC chart (`locByCondition * 1.3`) in `docs/index.html` with exact S9–S11 means from `metrics.csv` (`btypeLocByCondition` in `docs/chart_data.js` and `benchmark/analyze.py`), and hid the unrun `0.0%` "Tests Passed" series from the Correctness chart
+- **Moyu Linter GitHub Action resilience**: added GitHub Pull Request Diff API fallback (`Accept: application/vnd.github.v3.diff`) for shallow checkouts / fork PRs, and replaced literal `EOF` delimiter in `GITHUB_OUTPUT` with a unique delimiter
+- Updated `.github/CONTRIBUTING.md`, `.github/ISSUE_TEMPLATE/bug_report.md`, and `bin/moyu.mjs` help text to remove outdated `npx moyu-dev` and 3-README references
+
 ## v1.8.0 (2026-11-22)
 
 ### Added

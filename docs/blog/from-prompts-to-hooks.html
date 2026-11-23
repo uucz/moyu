@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>为什么三行 Prompt 管不住所有 AI：从 1460 次实验到确定性 Agent Hooks | Moyu Research</title>
+<meta name="description" content="8 个月后的工程复盘：为什么纯 Prompt 规则不够用，以及我们如何用零依赖 Claude Code Stop Hook 和 7 信号 PR Linter 做确定性兜底。">
+<meta property="og:title" content="为什么三行 Prompt 管不住所有 AI：从 1460 次实验到确定性 Agent Hooks">
+<meta property="og:description" content="纯 Prompt 是概率约束，确定性 Hook 才是硬护栏。零 API Key、零依赖、毫秒级拦截 AI 过度工程。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://uucz.github.io/moyu/blog/from-prompts-to-hooks.html">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://uucz.github.io/moyu/blog/from-prompts-to-hooks.html">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared.css">
+<style>
+body{line-height:1.8}
+article{max-width:760px;margin:0 auto;padding:48px 24px 80px}
+article h1{font-size:2rem;margin-bottom:8px;letter-spacing:-.02em}
+@media(max-width:600px){article h1{font-size:1.5rem}}
+.subtitle{color:var(--text-tertiary);font-size:.95rem;margin-bottom:12px;font-style:italic}
+.meta{color:var(--text-tertiary);font-size:.85rem;margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--border-color)}
+.tldr{background:var(--surface-2);border-radius:var(--radius);padding:20px 24px;margin-bottom:40px;font-size:.95rem;line-height:1.7;border-left:3px solid var(--brand-orange)}
+article h2{font-size:1.4rem;margin:48px 0 16px;padding-top:24px;border-top:1px solid var(--border-color)}
+article h3{font-size:1.1rem;margin:24px 0 12px}
+article p{margin-bottom:16px}
+article ul,article ol{margin:0 0 16px 20px}
+article li{margin-bottom:6px}
+article strong{color:var(--brand-orange)}
+article blockquote{border-left:3px solid var(--brand-orange);padding:12px 20px;margin:20px 0;background:var(--surface-2);border-radius:0 var(--radius) var(--radius) 0;font-style:italic}
+article hr{border:none;border-top:1px solid var(--border-color);margin:40px 0}
+table{width:100%;border-collapse:collapse;margin:16px 0 24px;font-size:.9rem}
+th{background:var(--surface-2);font-family:var(--font-heading);font-weight:600;text-align:left;padding:10px 14px;border-bottom:2px solid var(--border-color)}
+td{padding:8px 14px;border-bottom:1px solid var(--border-color)}
+pre{background:var(--code-bg);color:var(--code-text);padding:16px 20px;border-radius:var(--radius);overflow-x:auto;margin:16px 0;font-size:.88rem;line-height:1.5}
+code{font-family:'SF Mono',Consolas,monospace;font-size:.88em}
+p code,li code{background:var(--surface-2);padding:2px 6px;border-radius:4px}
+.cta{background:var(--surface-2);border-radius:var(--radius);padding:32px;margin:40px 0;text-align:center}
+.cta h2{border:none;margin:0 0 12px;padding:0}
+.cta-btn{display:inline-block;background:var(--brand-orange);color:#fff;padding:12px 28px;border-radius:8px;font-family:var(--font-heading);font-weight:600;font-size:1rem;margin-top:8px;transition:opacity .15s}
+.cta-btn:hover{opacity:.85;text-decoration:none}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="nav-inner">
+  <a href="../" class="nav-logo">
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g fill="#c96a47">
+        <rect x="0" y="9" width="4" height="4"/><rect x="0" y="13" width="4" height="4"/>
+        <rect x="0" y="17" width="4" height="4"/><rect x="0" y="21" width="4" height="4"/>
+        <rect x="4" y="11" width="4" height="4"/><rect x="4" y="19" width="4" height="4"/>
+      </g>
+      <g fill="var(--brand-orange)">
+        <rect x="8" y="9" width="4" height="4"/><rect x="12" y="9" width="4" height="4"/><rect x="16" y="9" width="4" height="4"/>
+        <rect x="8" y="13" width="4" height="4"/><rect x="12" y="13" width="4" height="4"/><rect x="16" y="13" width="4" height="4"/>
+        <rect x="20" y="13" width="4" height="4"/><rect x="24" y="13" width="4" height="4"/>
+        <rect x="8" y="17" width="4" height="4"/><rect x="12" y="17" width="4" height="4"/><rect x="16" y="17" width="4" height="4"/>
+        <rect x="20" y="17" width="4" height="4"/><rect x="24" y="17" width="4" height="4"/>
+        <rect x="8" y="21" width="4" height="4"/><rect x="12" y="21" width="4" height="4"/><rect x="16" y="21" width="4" height="4"/>
+      </g>
+      <rect x="20" y="13" width="4" height="4" fill="#fff"/>
+      <rect x="22" y="13" width="2" height="2" fill="#141413"/>
+    </svg>
+    <span>Moyu</span>
+  </a>
+  <div class="nav-links">
+    <a href="../">Research</a>
+    <a href="../install/">Install</a>
+    <a href="../linter/">Linter</a>
+    <a href="./" class="active">Blog</a>
+    <button class="nav-btn" onclick="let t=document.documentElement;t.dataset.theme=t.dataset.theme==='dark'?'light':'dark'" aria-label="Toggle theme">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>
+    </button>
+  </div>
+</div></nav>
+
+<article>
+
+<h1>为什么三行 Prompt 管不住所有 AI</h1>
+<p class="subtitle">从 1460 次实验到确定性 Agent Hooks：Moyu v1.8 工程复盘</p>
+<p class="meta">2026-11-22 · Moyu Research · <a href="https://github.com/uucz/moyu/releases/tag/v1.8.0">v1.8 Release</a></p>
+
+<div class="tldr">
+<strong>TL;DR</strong>：半年前我们的 1460 次实验其实已经揭示了一个不舒服的事实——单靠 Prompt 约束，只能“大概率”减少特定模型的讨好行为，无法从机制上阻止整文件重写和范围蔓延。Moyu v1.8 从纯规则包升级为<strong>双层防线</strong>：精简的 <code>AGENTS.md</code> / Skill 做软约束，加上零依赖、毫秒级的 <strong>Claude Code Stop Hook + PR Linter + Git pre-commit</strong> 做确定性兜底。
+</div>
+
+<h2>一、我们自己数据里藏着的“反面教训”</h2>
+
+<p>今年 3 月，我们跑了 10 个模型 × 5 种条件 × 12 个场景的 1460 次实验。数据很诚实，没有给我们想要的“全模型代码量暴降 66%”神话，反而留下了三个非常扎心的工程教训：</p>
+
+<ul>
+<li><strong>Prompt 是概率性的</strong>：汇总 10 个模型后，<code>moyu-standard</code> 的总代码行数减少并不显著（126.1 → 124.8，p=0.25）。即使加上 300 行规则，Sonnet 4 依然会在部分任务里顺手重写整个文件。</li>
+<li><strong>冗长的角色扮演 Prompt 会适得其反</strong>：300 行复杂元指令让小模型（LongCat Flash Lite）表现变更差；社区用户（<a href="https://github.com/uucz/moyu/discussions/19">Discussion #19</a>）也敏锐指出，过于戏剧化的角色设定不如精简规则有效——事实上，实验里只有三条铁律的 <code>moyu-lite</code> 在 diff 缩减上反而优于 300 行完整版（10.7 vs 15.7 行）。</li>
+<li><strong>2026 下半年的行业现实</strong>：<code>AGENTS.md</code> 和 <code>npx skills add</code> 已经统一了规则分发层。把同样的原则复制成 12 个平台的 Markdown 文件，已经不再是壁垒。</li>
+</ul>
+
+<blockquote>你在 Markdown 里写十遍“不要过度工程”，也只是降低概率；在 Agent 交付前跑一次确定性 diff 检查，才是真正拦得住的护栏。</blockquote>
+
+<h2>二、双层防线：软约束定边界，硬护栏兜底</h2>
+
+<p>因此 Moyu v1.8 放弃了“继续把 Prompt 写得更长更玄学”的方向，改为非常朴素的工程架构：</p>
+
+<table>
+<tr><th>层级</th><th>载体</th><th>作用</th><th>运行成本</th></tr>
+<tr><td><strong>Layer 1 · 软约束</strong></td><td><code>npx skills add uucz/moyu</code> 或 18 行 <code>AGENTS.md</code></td><td>开工前给 Agent 划清边界（只改被要求的、最简方案、不确定就问）</td><td>极低 token</td></tr>
+<tr><td><strong>Layer 2 · 硬护栏</strong></td><td>Claude Code <code>Stop</code> / <code>PostToolUse</code> Hook + Git <code>pre-commit</code> + PR GitHub Action</td><td>基于 <code>git diff</code> 做确定性 7 信号评分，超阈值直接打回让 AI 自行裁剪</td><td>零 API Key、零依赖、毫秒级</td></tr>
+</table>
+
+<h2>三、为什么是 Stop Hook？</h2>
+
+<p>以前 PR Linter 有个天然滞后：等 PR 已经提上去了再评论“你写了 4 个 Factory 类”，人类还是要二次返工。</p>
+
+<p>接入 Claude Code 的 <code>Stop</code> Hook 后，流程变了：在 Agent 准备结束当前回合、把控制权交还给你之前，<code>linter/hook.mjs</code> 会自动扫一遍工作区的 <code>git diff HEAD</code>。如果检测到明显过度工程信号（默认阈值 6 分），Hook 返回标准的 <code>{"decision": "block", "reason": "..."}</code>，把具体超标项直接喂回给 Agent，让它<strong>在你看到代码之前自己删掉多余的戏</strong>。</p>
+
+<p>为了保证绝不干扰正常开发，我们做了四条工程克制设计：</p>
+<ol>
+<li><strong>防死循环保护</strong>：读取 <code>stop_hook_active</code> 标志，若已触发过一次打回则直接放行，绝不把会话锁死。</li>
+<li><strong>低误报过滤</strong>：自动跳过锁文件、构建产物、Markdown 文档、测试文件；不再误报普通 TypeScript <code>type</code> 别名或单个业务 <code>interface</code>。</li>
+<li><strong>新增“整文件重写”检测</strong>：专门抓 AI 在单个大 hunk 里对称增删 35+ 行的坏习惯。</li>
+<li><strong>随时可静默退出</strong>：支持仓库根目录 <code>.moyurc.json</code> 精细配置，或环境变量 <code>MOYU_HOOK_DISABLED=1</code> 一键绕过。</li>
+</ol>
+
+<h2>四、30 秒启用</h2>
+
+<p><strong>1. 跨平台安装 Skill（自动识别 Claude Code / Cursor / Codex / Copilot 等）：</strong></p>
+<pre>npx skills add uucz/moyu</pre>
+
+<p><strong>2. Claude Code 原生插件（自动带 Stop Hook）：</strong></p>
+<pre>/plugin marketplace add uucz/moyu
+/plugin install moyu@uucz-moyu</pre>
+
+<p><strong>3. 通用 AGENTS.md（不到 20 行，零角色扮演废话）：</strong></p>
+<pre>curl -o AGENTS.md https://raw.githubusercontent.com/uucz/moyu/main/templates/AGENTS.md
+ln -s AGENTS.md CLAUDE.md</pre>
+
+<p><strong>4. 本地 Git Pre-Commit / CI PR 检查（不挑任何 AI 工具）：</strong></p>
+<pre># 本地检查暂存区改动
+node linter/index.mjs --staged --threshold=6
+
+# 或在 .github/workflows/moyu-lint.yml 中引入：
+# - uses: uucz/moyu/linter@main</pre>
+
+<div class="cta">
+<h2>克制应该由机制保障，而不只靠祈祷</h2>
+<p>全部规则、Hook、Linter 与 14 项单元测试完全开源，零外部依赖。</p>
+<a href="https://github.com/uucz/moyu" class="cta-btn">查看 GitHub 仓库 →</a>
+</div>
+
+</article>
+
+<footer class="footer"><div class="footer-inner">
+<p>Moyu &middot; 2026 &middot; <a href="https://github.com/uucz/moyu">GitHub</a></p>
+</div></footer>
+
+</body>
+</html>

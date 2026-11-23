@@ -6,8 +6,9 @@
  */
 
 import { execFileSync } from 'child_process';
-import { readFileSync, writeFileSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { request } from 'https';
+import { join } from 'path';
 import { pathToFileURL } from 'url';
 import { analyzeDiff, loadConfig } from './signals.mjs';
 
@@ -53,7 +54,7 @@ export function generateReport(analysis) {
 // GitHub API helpers
 // ---------------------------------------------------------------------------
 
-function githubApi(method, path, body, token) {
+function githubApi(method, path, body, token, accept = 'application/vnd.github+json') {
   return new Promise((resolve, reject) => {
     const options = {
       hostname: 'api.github.com',
@@ -61,7 +62,7 @@ function githubApi(method, path, body, token) {
       method,
       headers: {
         'User-Agent': 'moyu-lint',
-        'Accept': 'application/vnd.github+json',
+        'Accept': accept,
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
@@ -73,6 +74,8 @@ function githubApi(method, path, body, token) {
       res.on('end', () => {
         if (res.statusCode >= 400) {
           reject(new Error(`GitHub API ${res.statusCode}: ${data.slice(0, 200)}`));
+        } else if (accept.includes('diff')) {
+          resolve(data);
         } else {
           resolve(data ? JSON.parse(data) : null);
         }
@@ -82,6 +85,11 @@ function githubApi(method, path, body, token) {
     if (body) req.write(JSON.stringify(body));
     req.end();
   });
+}
+
+async function fetchPrDiffViaApi(repo, prNumber, token) {
+  if (!repo || !prNumber || !token) return '';
+  return githubApi('GET', `/repos/${repo}/pulls/${prNumber}`, null, token, 'application/vnd.github.v3.diff');
 }
 
 async function postOrUpdateComment(repo, prNumber, report, token) {
@@ -127,6 +135,7 @@ function printHelp() {
     --max-files=N       Scope-creep file threshold (default: 8)
     --ignore=a,b        Comma-separated glob patterns to ignore
     --json              Output structured JSON instead of markdown
+    --init              Create a starter .moyurc.json in the current directory
     -h, --help          Show this help
 `);
 }
@@ -139,6 +148,24 @@ export async function main() {
   const args = process.argv.slice(2);
   if (args.includes('--help') || args.includes('-h')) {
     printHelp();
+    return;
+  }
+
+  if (args.includes('--init')) {
+    const target = join(process.cwd(), '.moyurc.json');
+    if (existsSync(target)) {
+      console.log('.moyurc.json already exists.');
+      return;
+    }
+    writeFileSync(target, `${JSON.stringify({
+      threshold: 0,
+      hookThreshold: 6,
+      maxFiles: 8,
+      ignore: ['generated/**'],
+      disableSignals: [],
+      enabled: true,
+    }, null, 2)}\n`);
+    console.log('Created .moyurc.json');
     return;
   }
 
@@ -176,8 +203,15 @@ export async function main() {
     const headSha = event.pull_request?.head?.sha;
 
     if (baseSha && headSha) {
-      try { execFileSync('git', ['fetch', '--depth=100', 'origin'], { stdio: 'pipe' }); } catch {}
-      diffText = runGitDiff([`${baseSha}...${headSha}`]);
+      try {
+        try { execFileSync('git', ['fetch', '--no-tags', '--depth=100', 'origin'], { stdio: 'pipe' }); } catch {}
+        diffText = runGitDiff([`${baseSha}...${headSha}`]);
+      } catch {
+        // Shallow clone or fork PR — fall back to GitHub PR Diff API
+        diffText = await fetchPrDiffViaApi(repo, prNumber, token);
+      }
+    } else if (prNumber && token) {
+      diffText = await fetchPrDiffViaApi(repo, prNumber, token);
     } else {
       diffText = runGitDiff(['HEAD~1']);
     }
@@ -233,7 +267,8 @@ export async function main() {
   if (isGitHubAction) {
     const outputFile = process.env.GITHUB_OUTPUT;
     if (outputFile) {
-      writeFileSync(outputFile, `score=${analysis.totalScore}\nreport<<EOF\n${report}\nEOF\n`, { flag: 'a' });
+      const delimiter = `MOYU_EOF_${Date.now()}`;
+      writeFileSync(outputFile, `score=${analysis.totalScore}\nreport<<${delimiter}\n${report}\n${delimiter}\n`, { flag: 'a' });
     }
 
     if (shouldComment && prNumber && token) {

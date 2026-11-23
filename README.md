@@ -18,6 +18,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/github/v/tag/uucz/moyu?label=version&style=flat-square&color=blue" alt="Version">
+  <a href="https://github.com/uucz/moyu/actions/workflows/test.yml"><img src="https://img.shields.io/github/actions/workflow/status/uucz/moyu/test.yml?label=CI&style=flat-square" alt="CI"></a>
   <img src="https://img.shields.io/badge/Claude_Code-black?style=flat-square&logo=anthropic&logoColor=white" alt="Claude Code">
   <img src="https://img.shields.io/badge/Cursor-000?style=flat-square&logo=cursor&logoColor=white" alt="Cursor">
   <img src="https://img.shields.io/badge/OpenAI_Codex-412991?style=flat-square&logo=openai&logoColor=white" alt="Codex">
@@ -442,11 +443,11 @@ NoPUA 改变 AI 为什么做，Moyu 约束 AI 做多少——出发点不同，�
 
 ## 未来方向
 
-- [x] Moyu Linter：自动检测 diff 中的 7 类过度工程信号（含测试套件与 `.moyurc.json` 配置）
+- [x] Moyu Linter：自动检测 diff 中的 7 类过度工程信号（含测试套件、浅克隆 API 兜底与 `.moyurc.json` 配置）
 - [x] GitHub Action：PR 级别的过度工程检查（Node 24）
 - [x] Claude Code Agent Hooks：`Stop` / `PostToolUse` 确定性护栏与通用 `AGENTS.md` 模板
-- [ ] Benchmark v2：接入 `neutral` 无提示对照组、真实单元测试通过率与新一代模型纵向复测
-- [ ] 更多语言本地化
+- [ ] 更多编辑器/Agent Hook 适配器（Cursor / Codex / 通用 `pre-commit` 一键接入）
+- [ ] 社区贡献的新语言本地化与更多真实场景测试案例
 
 ---
 

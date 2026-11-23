@@ -28,6 +28,13 @@ const BENCHMARK_DATA = {
     "moyu-standard": 124.8,
     "moyu-strict": 125.7
   },
+  "btypeLocByCondition": {
+    "control": 137.8,
+    "baseline-concise": 135.5,
+    "moyu-lite": 137.7,
+    "moyu-standard": 136.4,
+    "moyu-strict": 133.2
+  },
   "locByModelCondition": {
     "gpt-5-codex": {
       "control": 126.1,

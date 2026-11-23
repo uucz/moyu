@@ -467,6 +467,14 @@ def generate_chart_data_js(df, analysis):
         if len(a_data[a_data["condition"] == cond]) > 0
     }
 
+    # LOC means by condition (B-type: legitimate large changes)
+    b_data = df[df["scenario"].isin(B_SCENARIOS)]
+    js_data["btypeLocByCondition"] = {
+        cond: round(float(b_data[b_data["condition"] == cond]["loc"].mean()), 1)
+        for cond in CONDITION_ORDER
+        if len(b_data[b_data["condition"] == cond]) > 0
+    }
+
     # LOC by model × condition
     js_data["locByModelCondition"] = {}
     for model in df["model"].unique():

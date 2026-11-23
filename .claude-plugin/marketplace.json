@@ -9,7 +9,7 @@
     {
       "name": "moyu",
       "description": "Anti-over-engineering rules and deterministic Stop-hook guardrail for AI coding agents.",
-      "version": "1.8.0",
+      "version": "1.8.1",
       "author": {
         "name": "uucz",
         "url": "https://github.com/uucz"

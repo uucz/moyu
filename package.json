@@ -1,6 +1,6 @@
 {
   "name": "moyu-dev",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "Anti-over-engineering rules and deterministic Agent Hooks / PR Linter for AI coding assistants.",
   "scripts": {
     "test": "node --test linter/test/linter.test.mjs"

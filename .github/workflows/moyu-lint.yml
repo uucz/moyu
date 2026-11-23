@@ -1,0 +1,21 @@
+name: Moyu Lint
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./linter
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          threshold: 0

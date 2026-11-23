@@ -14,6 +14,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/github/v/tag/uucz/moyu?label=version&style=flat-square&color=blue" alt="Version">
+  <a href="https://github.com/uucz/moyu/actions/workflows/test.yml"><img src="https://img.shields.io/github/actions/workflow/status/uucz/moyu/test.yml?label=CI&style=flat-square" alt="CI"></a>
   <img src="https://img.shields.io/badge/Claude_Code-black?style=flat-square&logo=anthropic&logoColor=white" alt="Claude Code">
   <img src="https://img.shields.io/badge/Cursor-000?style=flat-square&logo=cursor&logoColor=white" alt="Cursor">
   <img src="https://img.shields.io/badge/OpenAI_Codex-412991?style=flat-square&logo=openai&logoColor=white" alt="Codex">
@@ -442,11 +443,11 @@ Moyu uses research-backed prompt techniques: positive instructions, pattern matc
 
 ## Roadmap
 
-- [x] Moyu Linter: deterministic detection of 7 over-engineering signals (with unit tests & `.moyurc.json`)
+- [x] Moyu Linter: deterministic detection of 7 over-engineering signals (with unit tests, PR API fallback & `.moyurc.json`)
 - [x] GitHub Action: PR-level over-engineering checks (Node 24)
 - [x] Claude Code Agent Hooks (`Stop` / `PostToolUse`) & universal `AGENTS.md` templates
-- [ ] Benchmark v2: neutral control runs, functional unit test pass rate, and longitudinal re-test on newer frontier models
-- [ ] More language localizations
+- [ ] More editor / agent hook adapters & one-line `pre-commit` integration
+- [ ] Community-contributed localizations and real-world linter test fixtures
 
 ---
 

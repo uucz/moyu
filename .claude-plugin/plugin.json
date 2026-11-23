@@ -1,6 +1,6 @@
 {
   "name": "moyu",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "Anti-over-engineering skill and deterministic Stop-hook guardrail for AI coding agents. Teaches your AI when to stop.",
   "author": {
     "name": "uucz",

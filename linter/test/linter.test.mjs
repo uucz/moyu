@@ -272,3 +272,18 @@ test('Hook CLI runs cleanly against a real temp git repository', () => {
     rmSync(tmpDir, { recursive: true, force: true });
   }
 });
+
+test('CLI --init scaffolds a valid .moyurc.json and does not overwrite existing config', () => {
+  const tmpDir = mkdtempSync(join(tmpdir(), 'moyu-init-test-'));
+  try {
+    const first = spawnSync(process.execPath, [LINTER_CLI, '--init'], { cwd: tmpDir, encoding: 'utf-8' });
+    assert.equal(first.status, 0);
+    assert.match(first.stdout, /Created \.moyurc\.json/);
+
+    const second = spawnSync(process.execPath, [LINTER_CLI, '--init'], { cwd: tmpDir, encoding: 'utf-8' });
+    assert.equal(second.status, 0);
+    assert.match(second.stdout, /already exists/);
+  } finally {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
