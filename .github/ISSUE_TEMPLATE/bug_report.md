@@ -1,22 +1,27 @@
 ---
 name: Bug Report
-about: Report a problem with Moyu
+about: Report a problem with Moyu rules, Linter, or Agent Hooks
 title: "[Bug] "
 labels: bug
 ---
 
-## Platform
+## Component / Platform
 
-- [ ] Claude Code
+- [ ] Claude Code (Skill / Plugin)
+- [ ] Claude Code Agent Hooks (`Stop` / `PostToolUse`)
+- [ ] Moyu Linter (GitHub Action / CLI)
 - [ ] Cursor
-- [ ] Codex CLI
+- [ ] OpenAI Codex / `AGENTS.md`
+- [ ] VS Code / GitHub Copilot
 - [ ] Other: ___
 
-## Skill Variant
+## Skill Variant (if applicable)
 
 - [ ] moyu (Chinese)
 - [ ] moyu-en (English)
 - [ ] moyu-ja (Japanese)
+- [ ] moyu-ko (Korean)
+- [ ] moyu-fr (French)
 - [ ] moyu-lite
 - [ ] moyu-strict
 

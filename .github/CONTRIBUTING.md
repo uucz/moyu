@@ -9,6 +9,12 @@ Thanks for your interest in contributing! Here's how you can help.
 git clone https://github.com/uucz/moyu.git
 cd moyu
 
+# Run Moyu Linter & Agent Hook tests (Node 20+ / 24, zero dependencies)
+npm test
+
+# Lint uncommitted changes locally
+node linter/index.mjs --working
+
 # Run benchmarks (optional, requires Python 3 + API keys)
 pip install -r benchmark/requirements.txt
 python benchmark/runner.py --model sonnet-4 --condition moyu-standard --scenario s1 --trial 1
@@ -18,18 +24,25 @@ python benchmark/analyze.py
 
 ## Ways to Contribute
 
+### Improve Moyu Linter & Agent Hooks
+
+The deterministic guardrails live in `linter/` (`signals.mjs`, `index.mjs`, `hook.mjs`) with tests in `linter/test/linter.test.mjs`:
+
+- Keep zero runtime dependencies
+- Add both true-positive and false-positive regression tests for any signal change
+- Run `npm test` before opening a PR
+
 ### Add a new platform
 
-1. Create a directory: `<platform>/moyu/SKILL.md`
+1. Create a directory: `<platform>/moyu/SKILL.md` (or the platform's native rule path)
 2. Adapt the skill content to the platform's format (see existing platforms for reference)
-3. Add install instructions to all three READMEs (`README.md`, `README.en.md`, `README.ja.md`)
-4. Update the supported platforms table in all three READMEs
+3. Update install instructions and the supported platforms table across all 5 READMEs (`README.md`, `README.en.md`, `README.ja.md`, `README.ko.md`, `README.fr.md`) and `docs/install/index.html`
 
 ### Add a new skill variant
 
 1. Create `skills/<variant-name>/SKILL.md`
 2. Add a slash command in `commands/<variant-name>.md`
-3. Update the variants table in all three READMEs
+3. Update the variants table in the READMEs
 
 ### Add a new language localization
 
@@ -38,20 +51,12 @@ python benchmark/analyze.py
 3. Add a `README.<lang>.md` (translate from `README.en.md`)
 4. Update the language switcher line in all existing READMEs
 
-### Add benchmark scenarios
+### Improve prompt wording or `AGENTS.md` templates
 
-1. Create a new prompt file in `benchmark/prompts/` (e.g., `s13.txt`)
-2. Describe a single, concrete coding task
-3. Run the benchmark: `python benchmark/runner.py --scenario s13 --condition control --trial 1`
-4. Run with Moyu: `python benchmark/runner.py --scenario s13 --condition moyu-standard --trial 1`
-5. Include results in your PR
-
-### Improve prompt wording
-
-The core skills are in `skills/moyu/SKILL.md` (Chinese) and `skills/moyu-en/SKILL.md` (English). Improvements should:
+Core skills live in `skills/moyu/SKILL.md` (Chinese) and `skills/moyu-en/SKILL.md` (English); universal templates live in `templates/AGENTS.md` and `templates/AGENTS-en.md`. Improvements should:
 
 - Keep changes minimal and focused
-- Maintain consistency across all language versions
+- Maintain consistency across language versions
 - Follow the Moyu philosophy (practice what we preach)
 
 ### Share your Before/After experience
@@ -63,10 +68,11 @@ Post in [Discussions > Show and Tell](https://github.com/uucz/moyu/discussions/c
 
 ## Pull Request Guidelines
 
-- One feature per PR
+- One feature or fix per PR
 - Keep diffs small (we practice what we preach)
-- Update all three READMEs (ZH, EN, JA) if applicable
-- Test skill installation: `claude skill install --url <your-fork> --skill moyu`
+- Run `npm test` if touching `linter/`, `hooks/`, or JSON manifests
+- Update all 5 READMEs (ZH, EN, JA, KO, FR) when changing install commands or supported platforms
+- Test skill installation: `npx skills add <your-fork>`
 
 ## Good First Issues
 
